@@ -1,0 +1,58 @@
+{
+  "id": "comeback-final",
+  "title": "最后的证明",
+  "description": "你们打进了淘汰赛，对手是当年把你挤下巅峰的队伍。所有人都等着看你倒下——只有你自己知道，为了这一刻你熬过了什么。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "comeback-midseason" }
+  ],
+  "options": [
+    {
+      "id": "clutch-comeback",
+      "label": "残局里站出来，亲手终结质疑",
+      "requirements": [
+        { "type": "PLAYER_STAT", "stat": "MORALE", "minimum": 55 }
+      ],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": [
+          { "attribute": "CLUTCH", "perPoint": 0.008 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "TROPHY_CHANGE", "trophy": "S_TIER", "delta": 1 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 20 },
+          { "type": "FLAG_ADD", "flagId": "COMEBACK_COMPLETE", "flag": { "id": "COMEBACK_COMPLETE", "name": "涅槃重生", "category": "ACHIEVEMENT" } }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -15 },
+          { "type": "FLAG_ADD", "flagId": "COMEBACK_FAILED", "flag": { "id": "COMEBACK_FAILED", "name": "复出失败", "category": "MENTAL" } }
+        ]
+      }
+    },
+    {
+      "id": "support-team",
+      "label": "把舞台让给年轻队友，自己打辅助",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          { "attribute": "GAME_SENSE", "perPoint": 0.006 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "TROPHY_CHANGE", "trophy": "S_TIER", "delta": 1 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 10 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ]
+      }
+    }
+  ],
+  "autoEffects": []
+}

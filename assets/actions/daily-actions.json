@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "actions": [
+    { "id": "faceit-grind", "type": "FACEIT_GRIND", "name": "Faceit 冲分", "description": "高强度对局磨炼枪法。", "durationHours": 4, "requirements": [{ "stat": "ENERGY", "minimum": 20 }], "allowedPeriods": ["NORMAL", "OFFSEASON", "TOURNAMENT_BREAK"] },
+    { "id": "stream", "type": "STREAM", "name": "直播", "description": "增加收入与曝光，也会积累压力。", "durationHours": 3, "requirements": [{ "stat": "ENERGY", "minimum": 10 }], "allowedPeriods": ["NORMAL", "OFFSEASON"] },
+    { "id": "rest", "type": "REST", "name": "休息", "description": "恢复精力与士气。", "durationHours": 8, "requirements": [], "allowedPeriods": ["NORMAL", "OFFSEASON", "TOURNAMENT_BREAK"] },
+    { "id": "review-demo", "type": "REVIEW_DEMO", "name": "复盘 Demo", "description": "拆解比赛细节，提升比赛理解。", "durationHours": 3, "requirements": [{ "stat": "ENERGY", "minimum": 15 }], "allowedPeriods": ["NORMAL", "OFFSEASON", "TOURNAMENT_BREAK"] }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "events": [
+    "comeback-final.json",
+    "comeback-injury.json",
+    "comeback-midseason.json",
+    "comeback-rust.json",
+    "grinder-faceit-grind.json",
+    "grinder-lower-tier.json",
+    "grinder-make-or-break.json",
+    "grinder-parttime-dilemma.json",
+    "prodigy-first-lan.json",
+    "prodigy-hype-pressure.json",
+    "prodigy-major-run.json",
+    "prodigy-title-shot.json",
+    "rookie-academy-offer.json",
+    "rookie-first-trial.json",
+    "rookie-regional-debut.json",
+    "rookie-scrim-rotation.json"
+  ],
+  "worldlines": [
+    "worldline_comeback.json",
+    "worldline_grinder.json",
+    "worldline_prodigy.json",
+    "worldline_rookie.json"
+  ]
+}

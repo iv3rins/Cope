@@ -1,0 +1,55 @@
+{
+  "id": "rookie-academy-offer",
+  "title": "青训合约",
+  "description": "试训表现不错，俱乐部开出青训合同。月薪不高，但这是踏入职业体系的第一步——你会搬进基地，开始每天十小时的训练。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "period": "TRANSFER_WINDOW",
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "rookie-first-trial" }
+  ],
+  "options": [
+    {
+      "id": "sign-academy",
+      "label": "签下青训合同",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "TEAM_TRANSFER", "teamId": "academy-1" },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 10 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 2000 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ],
+        "successNextEventId": "rookie-scrim-rotation"
+      }
+    },
+    {
+      "id": "wait-better-offer",
+      "label": "再等等，也许有更好的报价",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.4,
+        "modifiers": [
+          { "attribute": "GAME_SENSE", "perPoint": 0.005 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 6 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 12 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+        ],
+        "successNextEventId": "rookie-scrim-rotation"
+      }
+    }
+  ],
+  "autoEffects": []
+}

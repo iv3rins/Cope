@@ -1,0 +1,60 @@
+{
+  "id": "prodigy-title-shot",
+  "title": "首个冠军赛点",
+  "description": "你们闯进了 S 级赛事的决赛。赛点局，你握着狙击枪站在关键位置——这是你梦寐以求的时刻。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [],
+  "options": [
+    {
+      "id": "take-the-shot",
+      "label": "主动去拿那个关键首杀",
+      "requirements": [
+        { "type": "PLAYER_STAT", "stat": "STRESS", "maximum": 70 }
+      ],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": [
+          { "attribute": "CLUTCH", "perPoint": 0.008 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 20 },
+          { "type": "TROPHY_CHANGE", "trophy": "S_TIER", "delta": 1 },
+          { "type": "FLAG_ADD", "flagId": "T1_CHAMPION", "flag": { "id": "T1_CHAMPION", "name": "T1 冠军", "category": "ACHIEVEMENT" } }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -15 },
+          { "type": "FLAG_ADD", "flagId": "FINAL_CHOKE", "flag": { "id": "FINAL_CHOKE", "name": "决赛心魔", "category": "MENTAL" } }
+        ],
+        "successNextEventId": "prodigy-major-run",
+        "failureNextEventId": "prodigy-major-run"
+      }
+    },
+    {
+      "id": "play-safe",
+      "label": "让老将处理这个局面",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          { "attribute": "GAME_SENSE", "perPoint": 0.006 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "TROPHY_CHANGE", "trophy": "S_TIER", "delta": 1 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 8 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ],
+        "successNextEventId": "prodigy-major-run",
+        "failureNextEventId": "prodigy-major-run"
+      }
+    }
+  ],
+  "autoEffects": []
+}

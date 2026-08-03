@@ -1,0 +1,12 @@
+{
+  "id": "grinder",
+  "name": "底层之路",
+  "description": "没有天赋光环，只有日复一日的训练。每一步都艰难，但坚持终有回报。",
+  "startEventId": "grinder-faceit-grind",
+  "eventIds": [
+    "grinder-faceit-grind",
+    "grinder-parttime-dilemma",
+    "grinder-lower-tier",
+    "grinder-make-or-break"
+  ]
+}

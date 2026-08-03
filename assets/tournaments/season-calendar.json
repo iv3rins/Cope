@@ -1,0 +1,11 @@
+﻿{
+  "schemaVersion": 2,
+  "events": [
+    { "id": "cct-spring-series", "season": "FIRST_HALF", "name": "CCT 南美线上赛", "city": "线上赛", "tier": "T2", "qualification": "OPEN", "qualificationSource": "OPEN_ENTRY", "format": "BO3", "prizePool": 50000, "note": "青训队的第一站" },
+    { "id": "regional-spring", "season": "FIRST_HALF", "name": "南美地区挑战赛", "city": "圣保罗", "tier": "T2", "qualification": "REGIONAL", "qualificationSource": "REGIONAL", "format": "BO3", "prizePool": 80000, "note": "地区积分赛" },
+    { "id": "cct-summer-series", "season": "FIRST_HALF", "name": "CCT 夏季线上赛", "city": "线上赛", "tier": "T2", "qualification": "OPEN", "qualificationSource": "OPEN_ENTRY", "format": "BO3", "prizePool": 50000, "note": "连续参赛提升排名" },
+    { "id": "fall-open", "season": "SECOND_HALF", "name": "CCT 秋季线上赛", "city": "线上赛", "tier": "T2", "qualification": "OPEN", "qualificationSource": "OPEN_ENTRY", "format": "BO3", "prizePool": 60000, "note": "秋季积分窗口" },
+    { "id": "regional-fall", "season": "SECOND_HALF", "name": "南美秋季挑战赛", "city": "布宜诺斯艾利斯", "tier": "T2", "qualification": "REGIONAL", "qualificationSource": "REGIONAL", "format": "BO3", "prizePool": 90000, "note": "争取晋级线下赛" },
+    { "id": "world-finals", "season": "SECOND_HALF", "name": "年度总决赛", "city": "线上赛", "tier": "T1", "qualification": "TOP_24", "qualificationSource": "DIRECT_VRS", "format": "BO3", "prizePool": 500000, "note": "排名达到要求后解锁" }
+  ]
+}

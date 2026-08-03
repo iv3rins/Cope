@@ -1,0 +1,57 @@
+{
+  "id": "rookie-first-trial",
+  "title": "首次试训",
+  "description": "一家青训战队给你发了试训邀请。这是你第一次走进职业队伍的试训间——五个人盯着你的准星，教练在角落记录你的一切。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "prove-mechanics",
+      "label": "全神贯注展示枪法",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          { "attribute": "AIM", "perPoint": 0.006 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 12 },
+          { "type": "FLAG_ADD", "flagId": "TRIAL_PASSED", "flag": { "id": "TRIAL_PASSED", "name": "试训通过", "category": "CAREER" } }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ],
+        "successNextEventId": "rookie-academy-offer",
+        "failureNextEventId": "rookie-scrim-rotation"
+      }
+    },
+    {
+      "id": "talk-to-coach",
+      "label": "先和教练聊聊战术理解",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": [
+          { "attribute": "GAME_SENSE", "perPoint": 0.007 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 8 },
+          { "type": "FLAG_ADD", "flagId": "COACH_NOTICED", "flag": { "id": "COACH_NOTICED", "name": "教练注意到了你", "category": "CAREER" } }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 8 }
+        ],
+        "successNextEventId": "rookie-academy-offer",
+        "failureNextEventId": "rookie-scrim-rotation"
+      }
+    }
+  ],
+  "autoEffects": []
+}

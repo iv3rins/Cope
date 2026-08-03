@@ -1,0 +1,12 @@
+{
+  "id": "prodigy",
+  "name": "天才之路",
+  "description": "你被视作十年一遇的天才。高光与压力并存，选择决定你成为传奇还是流星。",
+  "startEventId": "prodigy-first-lan",
+  "eventIds": [
+    "prodigy-first-lan",
+    "prodigy-hype-pressure",
+    "prodigy-title-shot",
+    "prodigy-major-run"
+  ]
+}

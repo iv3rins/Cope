@@ -28,6 +28,10 @@ export interface TournamentSeries {
 export interface TournamentEdition {
   readonly id: TournamentId;
   readonly seriesId: string;
+  /** Optional presentation metadata retained in the immutable edition snapshot. */
+  readonly city?: string;
+  readonly prizePool?: number;
+  readonly format?: MatchFormat;
   readonly name: string;
   readonly season: number;
   readonly half: 1 | 2;
@@ -108,6 +112,14 @@ export interface UpsetDecision {
   readonly contributingInterventionIds: readonly string[];
 }
 
+export interface TournamentSeriesDetail {
+  readonly stage: string;
+  readonly format: MatchFormat;
+  readonly opponentTeamId: HltvTeamId;
+  readonly opponentRank: number | null;
+  readonly mapScores: readonly string[];
+}
+
 export interface TournamentPlayerPerformance {
   readonly playerId: HltvPlayerId;
   readonly maps: number;
@@ -134,6 +146,9 @@ export interface TournamentPlayerPerformance {
 /** 赛事模拟或外部数据录入后的最终结果。 */
 export interface TournamentResult {
   readonly editionId: TournamentId;
+  readonly city?: string;
+  readonly prizeMoney?: number;
+  readonly seriesDetails?: readonly TournamentSeriesDetail[];
   readonly seriesId: string;
   readonly season: number;
   readonly eventName: string;

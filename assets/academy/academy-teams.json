@@ -1,0 +1,8 @@
+﻿{
+  "schemaVersion": 1,
+  "teams": [
+    { "teamId": "academy-arg-juniors", "name": "Argentinos Juniors Academy", "region": "AMERICAS", "tier": "T3", "description": "本地青训体系，先从线上公开赛积累地图经验。", "startingRole": "PROSPECT", "monthlySalary": 350 },
+    { "teamId": "academy-san-lorenzo", "name": "San Lorenzo Academy", "region": "AMERICAS", "tier": "T2", "description": "稳定参加 CCT 线上赛，目标是打进地区淘汰赛。", "startingRole": "ROTATION", "monthlySalary": 500 },
+    { "teamId": "academy-northstar", "name": "Northstar Youth", "region": "EUROPE", "tier": "T3", "description": "高强度训练营，赛程密集，适合快速证明自己。", "startingRole": "PROSPECT", "monthlySalary": 420 }
+  ]
+}

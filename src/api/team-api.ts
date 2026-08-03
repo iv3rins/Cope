@@ -55,6 +55,7 @@ export interface TeamRankingResult {
 export interface TeamEntry extends TeamRankingResult {
   readonly letter: string;
   readonly logoPath: string;
+  readonly ext: string;
   readonly hasLogo: boolean;
 }
 
@@ -92,6 +93,7 @@ function assetToEntry(team: TeamAsset): TeamEntry {
     letter: team.letter,
     logoPath: resolveLogoPath(team),
     hasLogo: team.hasLogo,
+    ext: team.ext,
   };
 }
 

@@ -1,0 +1,57 @@
+{
+  "id": "prodigy-first-lan",
+  "title": "首登线下",
+  "description": "你被直接提拔进一线队，第一场比赛就是线下大赛。对手是成名已久的明星选手，镜头对着你，全场都在议论这个十六岁的新人。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "play-aggressive",
+      "label": "用侵略性枪法让所有人闭嘴",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": [
+          { "attribute": "AIM", "perPoint": 0.008 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 18 },
+          { "type": "FLAG_ADD", "flagId": "LAN_DEBUT_STAR", "flag": { "id": "LAN_DEBUT_STAR", "name": "线下首秀明星", "category": "ACHIEVEMENT" } }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 15 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+        ],
+        "successNextEventId": "prodigy-hype-pressure",
+        "failureNextEventId": "prodigy-hype-pressure"
+      }
+    },
+    {
+      "id": "steady-start",
+      "label": "稳住节奏，先赢下该赢的",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": [
+          { "attribute": "CONSISTENCY", "perPoint": 0.007 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 10 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -8 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 }
+        ],
+        "successNextEventId": "prodigy-hype-pressure",
+        "failureNextEventId": "prodigy-hype-pressure"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,57 @@
+{
+  "id": "comeback-rust",
+  "title": "手感生疏",
+  "description": "复出后的第一场训练赛，你的准星完全跟不上节奏。队友嘴上说着‘慢慢来’，但眼神里的失望藏不住。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "comeback-injury" }
+  ],
+  "options": [
+    {
+      "id": "rebuild-basics",
+      "label": "从最基础的枪法练起，重建肌肉记忆",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          { "attribute": "CONSISTENCY", "perPoint": 0.006 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "AIM", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 5 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+        ],
+        "successNextEventId": "comeback-midseason"
+      }
+    },
+    {
+      "id": "study-own-demos",
+      "label": "复盘自己巅峰期的录像找差距",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": [
+          { "attribute": "GAME_SENSE", "perPoint": 0.007 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -12 }
+        ],
+        "successNextEventId": "comeback-midseason"
+      }
+    }
+  ],
+  "autoEffects": []
+}

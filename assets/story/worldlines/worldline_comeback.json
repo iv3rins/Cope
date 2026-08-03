@@ -1,0 +1,12 @@
+{
+  "id": "comeback",
+  "name": "涅槃之路",
+  "description": "你曾被伤病或低谷击倒，如今试图重返巅峰。每一次抉择都关乎能否真正归来。",
+  "startEventId": "comeback-injury",
+  "eventIds": [
+    "comeback-injury",
+    "comeback-rust",
+    "comeback-midseason",
+    "comeback-final"
+  ]
+}

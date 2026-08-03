@@ -1,0 +1,12 @@
+{
+  "id": "rookie",
+  "name": "新秀之路",
+  "description": "从自由选手到职业赛场的起点。专注基本功、把握试训机会，决定你是否能迈入职业门槛。",
+  "startEventId": "rookie-first-trial",
+  "eventIds": [
+    "rookie-first-trial",
+    "rookie-academy-offer",
+    "rookie-scrim-rotation",
+    "rookie-regional-debut"
+  ]
+}

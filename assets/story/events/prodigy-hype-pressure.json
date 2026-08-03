@@ -1,0 +1,57 @@
+{
+  "id": "prodigy-hype-pressure",
+  "title": "吹捧与重压",
+  "description": "媒体开始写你的专题，社区称你为‘下一个传奇’。训练室里的每个人都盯着你的数据——赞誉和压力同时砸过来。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "period": "OFFSEASON",
+  "conditions": [],
+  "options": [
+    {
+      "id": "embrace-hype",
+      "label": "享受聚光灯，把它变成动力",
+      "requirements": [
+        { "type": "PLAYER_STAT", "stat": "MORALE", "minimum": 60 }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          { "attribute": "CLUTCH", "perPoint": 0.006 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 12 },
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 15 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ],
+        "successNextEventId": "prodigy-title-shot"
+      }
+    },
+    {
+      "id": "shut-out-noise",
+      "label": "关掉社交软件，专注训练",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": [
+          { "attribute": "CONSISTENCY", "perPoint": 0.006 }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "AIM", "delta": 4 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -5 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+        ],
+        "successNextEventId": "prodigy-title-shot"
+      }
+    }
+  ],
+  "autoEffects": []
+}
