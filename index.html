@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COPE // CS 职业生涯模拟器</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#"><span class="brand-mark">C</span><span>COPE<span class="brand-dim"> // CS</span></span></a>
+      <nav class="main-nav" aria-label="主导航"><a class="active" href="#identity">开始生涯</a></nav>
+    </header>
+
+    <div class="statusbar"><span><i class="red-dot"></i> COPE 职业生涯模式</span><button class="icon-button" id="helpBtn" title="打开说明">?</button></div>
+
+    <main>
+      <section class="intro" id="identity"><div><p class="eyebrow">选手档案 / 初始化完成</p><h1>建立你的选手档案</h1></div><button class="outline-button" id="continueBtn">查看生涯预览 <span>→</span></button></section>
+
+      <section class="setup-grid">
+        <article class="panel identity-panel">
+          <div class="panel-heading"><span class="step">01</span><h2>选手身份</h2><span class="panel-code">PLAYER PROFILE</span></div>
+          <div class="player-card">
+            <div class="avatar-frame"><img src="assets/top/blankplayer.svg" alt="默认选手头像" /><span>未签约</span></div>
+            <div class="player-copy"><p class="muted-label">游戏 ID</p><input id="callsign" value="ROOKIE" maxlength="14" aria-label="游戏 ID" /><p class="player-role">自由选手 <span>◆</span> RIFLER</p><div class="profile-id"><span>档案编号</span><strong>CS-26-001</strong></div></div>
+          </div>
+          <div class="form-row single-field"><label>真实姓名<input id="lastName" value="ROOKIE" maxlength="18" /></label></div>
+          <div class="form-row single-field"><label>主力位置<select id="role"><option value="ENTRY">突破手</option><option value="AWP">狙击手</option><option value="IGL">指挥</option><option value="SUPPORT">辅助</option><option value="LURK">自由人</option></select></label></div>
+        </article>
+
+        <article class="panel nationality-panel">
+          <div class="panel-heading"><span class="step">02</span><h2>起始赛区</h2><span class="panel-code">SERVER REGION</span></div>
+          <p class="muted-label">选择你的初始服务器</p>
+          <button class="select-box" id="regionButton"><span class="flag">CN</span><strong>中国</strong><span>⌄</span></button>
+          <div class="region-grid"><button class="region selected" data-region="中国"><span>CN</span>中国赛区</button><button class="region" data-region="欧洲"><span>EU</span>欧洲赛区</button><button class="region" data-region="北美"><span>NA</span>北美赛区</button><button class="region" data-region="独联体"><span>CIS</span>独联体赛区</button><button class="region" data-region="南美"><span>SA</span>南美赛区</button><button class="region" data-region="亚太"><span>AP</span>亚太赛区</button></div>
+          <div class="server-readout"><div><span>匹配服务器</span><strong id="serverName">上海 / 35ms</strong></div><div class="signal"><i></i><i></i><i></i><i></i></div></div>
+          <div class="info-callout"><strong>赛区决定起点。</strong><p>它会影响你的青训邀请、初始赛事池和转会市场。</p></div>
+        </article>
+
+        <article class="panel role-panel">
+          <div class="panel-heading"><span class="step">03</span><h2>战术定位</h2><span class="panel-code">TEAM ROLE MATRIX</span></div>
+          <div class="role-matrix" aria-label="选择战术定位"><div class="matrix-head"><span>回合职责</span><span>核心能力</span><span>队伍需求</span></div><div class="role-list"><button class="map-role selected" data-role="ENTRY"><span class="role-index">01</span><strong>突破手</strong><small>ENTRY · 首杀 / 进攻发起</small><b>高</b></button><button class="map-role" data-role="AWP"><span class="role-index">02</span><strong>狙击手</strong><small>AWP · 架点 / 远程控图</small><b>高</b></button><button class="map-role" data-role="IGL"><span class="role-index">03</span><strong>指挥</strong><small>IGL · 信息 / 战术决策</small><b>极高</b></button><button class="map-role" data-role="SUPPORT"><span class="role-index">04</span><strong>辅助</strong><small>SUPPORT · 道具 / 补枪</small><b>中</b></button><button class="map-role" data-role="LURK"><span class="role-index">05</span><strong>自由人</strong><small>LURK · 牵制 / 侧翼</small><b>中</b></button></div></div>
+          <div class="role-detail"><strong id="roleTitle">突破手 / ENTRY</strong><span id="roleDesc">用首杀撕开防线，为队伍建立进攻空间。</span></div>
+        </article>
+      </section>
+
+      <section class="career-strip" id="career"><div class="strip-label">生涯推进速度 <span>开始后才会生成第一季事件</span></div><div class="pace-options"><button class="pace"><strong>高强度</strong><small>每场比赛触发决策</small></button><button class="pace selected"><strong>标准</strong><small>每两项事件触发决策</small></button><button class="pace"><strong>快速</strong><small>每三项事件触发决策</small></button></div><button class="play-button" id="playBtn">开始生涯 <span>→</span></button></section>
+    </main>
+
+    <footer><span>模拟引擎 0.1</span><span>本地浏览器运行</span><span>© 2026 COPE // CS CAREER</span></footer>
+  </div>
+  <dialog id="helpDialog"><button class="dialog-close" id="closeHelp">×</button><p class="eyebrow">系统说明 / 001</p><h2>从自由选手开始</h2><p>设定你的赛区、战术定位和生涯节奏。系统会据此生成第一批青训邀约、赛事和职业事件。</p><button class="play-button" id="dialogPlay">开始模拟 <span>→</span></button></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
