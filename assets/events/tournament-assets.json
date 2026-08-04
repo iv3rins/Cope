@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "fallback": "",
+  "series": {
+    "blast-bounty-s1": "assets/events/BLAST.webp",
+    "blast-bounty-s2": "assets/events/BLAST.webp",
+    "blast-open-lisbon": "assets/events/BLAST.webp",
+    "blast-open-porto": "assets/events/BLAST.webp",
+    "blast-rivals": "assets/events/BLAST.webp",
+    "iem-katowice": "assets/events/IEM_katowice.webp",
+    "iem-cologne": "assets/events/IEM_cologne.webp",
+    "pgl-bucharest": "assets/events/PGL_T1.webp",
+    "pgl-cluj": "assets/events/PGL_T1.webp",
+    "pgl-lodz": "assets/events/PGL_T1.webp",
+    "major-h1": "assets/events/PGL_T1.webp",
+    "major-h2": "assets/events/PGL_T1.webp",
+    "epl-s25": "assets/events/ESL_T1.webp",
+    "epl-s26": "assets/events/ESL_T1.webp",
+    "perfect-world-cac": "assets/events/PW_T1.webp",
+    "iem-chengdu": "assets/events/IEM_katowice.webp",
+    "iem-dallas": "assets/events/ESL_T1.webp",
+    "ewc": "assets/events/ESL_T1.webp",
+    "starladder-fall": "assets/events/ESL_T1.webp",
+    "cct-intercontinental-h1": "assets/events/PW_T1_2.webp",
+    "cct-global-h1": "assets/events/PW_T1_2.webp",
+    "cct-fall-finals": "assets/events/PW_T1_2.webp",
+    "cct-finals": "assets/events/PW_T1_2.webp",
+    "galaxy-war": "assets/events/PW_T1_2.webp"
+  }
+}

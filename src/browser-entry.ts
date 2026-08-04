@@ -26,6 +26,17 @@ import { RetirementSummaryServiceImpl } from './engine/impl/retirement-summary-s
 import { StoryEngineImpl } from './engine/impl/story-engine';
 import { StoryEventPackReader, StoryRepositoryImpl } from './engine/impl/story-repository';
 
+interface Top20SimulationRules {
+  readonly honorPool: { readonly mvp: number; readonly evp: number; readonly vp: number };
+  readonly virtualGeneration: { readonly baseProbability: number; readonly prodigyProbability: number; readonly prodigyPotential: number; readonly risingPotential: number; readonly baselinePotential: number; readonly annualDebutWindow: number };
+  readonly realPlayerDecay: { readonly peakThroughAge: number; readonly gradualDeclineEndAge: number; readonly gradualDeclinePerYear: number; readonly veteranBaseMultiplier: number; readonly veteranDeclinePerYear: number; readonly careerGraceYears: number; readonly careerDeclinePerYear: number; readonly careerDeclineCap: number; readonly minimumMultiplier: number };
+}
+
+const DEFAULT_TOP20_SIMULATION_RULES: Top20SimulationRules = {
+  honorPool: { mvp: 4, evp: 12, vp: 28 },
+  virtualGeneration: { baseProbability: 0.55, prodigyProbability: 0.9, prodigyPotential: 0.99, risingPotential: 0.9, baselinePotential: 0.78, annualDebutWindow: 4 },
+  realPlayerDecay: { peakThroughAge: 27, gradualDeclineEndAge: 30, gradualDeclinePerYear: 0.035, veteranBaseMultiplier: 0.895, veteranDeclinePerYear: 0.045, careerGraceYears: 4, careerDeclinePerYear: 0.012, careerDeclineCap: 0.12, minimumMultiplier: 0.55 },
+};
 
 export interface BrowserCareerConfig {
   readonly gameId: string;
@@ -113,28 +124,37 @@ class BrowserGateway implements EngineHltvGateway {
   }
 
   private async loadNpcEvidence(season: number, identities: readonly Top20IdentityRecord[]): Promise<readonly Top20SeasonEvidence[]> {
-    const response = await fetch('assets/top20/npc-season-evidence.json').catch(() => null);
+    const baselineSeason = season === 2026;
+    const response = baselineSeason ? await fetch('assets/top20/npc-season-evidence.json').catch(() => null) : null;
     const payload = response && response.ok ? await response.json() as { readonly season: number; readonly players: readonly { readonly playerId: string; readonly maps: number; readonly rating: number; readonly playoffRating: number; readonly top5Rating: number; readonly finalRating: number | null; readonly titles?: readonly string[]; readonly honors: readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[] }[] } : null;
-    const historicalResponse = await fetch('assets/top20/historical-baseline.json').catch(() => null);
+    const historicalResponse = baselineSeason ? await fetch('assets/top20/historical-baseline.json').catch(() => null) : null;
     const historical = historicalResponse && historicalResponse.ok ? await historicalResponse.json() as { readonly seasons: Readonly<Record<string, readonly string[]>> } : null;
     const historicalNames = new Set(Object.values(historical?.seasons ?? {}).flat());
-    const standingsResponse = await fetch('assets/teams/teams.json').catch(() => null);
+    const standingsResponse = baselineSeason ? await fetch('assets/teams/teams.json').catch(() => null) : null;
     const standings = standingsResponse && standingsResponse.ok ? await standingsResponse.json() as { readonly teams: readonly { readonly id: string; readonly standings: { readonly bestRank: number } | null }[] } : null;
+    const rulesResponse = await fetch('assets/top20/simulation-rules.json').catch(() => null);
+    const simulationRules = rulesResponse && rulesResponse.ok ? await rulesResponse.json() as Top20SimulationRules : DEFAULT_TOP20_SIMULATION_RULES;
     const ranks = new Map((standings?.teams ?? []).filter((team) => team.standings).map((team) => [team.id, team.standings!.bestRank]));
     const evidenceByPlayer = new Map((payload?.season === season ? payload.players : []).map((entry) => [entry.playerId, entry]));
+    const annualHonors = this.allocateHonorPool(identities, season, evidenceByPlayer, simulationRules);
     return identities.map((entry, index) => {
       const source = evidenceByPlayer.get(entry.playerId);
       const tier = entry.teamTier ?? (entry.source === 'REAL' ? 'T1' : 'T2');
       const placement = entry.placement ?? index + 1;
-      // A new season still needs a complete panel sample. When no imported season
-      // evidence exists, carry the player's baseline and honors forward with a
-      // small placement-based drift instead of dropping them to a blank record.
+      const age = this.simulatedAge(entry, season);
+      const careerYears = Math.max(0, season - (entry.careerStartYear ?? (entry.source === 'REAL' ? 2018 : season - 1)));
+      const isVeteran = entry.source === 'REAL' && careerYears >= 5;
+      const isProdigy = entry.source === 'VIRTUAL' && careerYears <= 1;
+      const ageDecay = entry.source === 'REAL' ? this.realPlayerDecay(age, careerYears, simulationRules.realPlayerDecay) : 1;
       const seasonDrift = ((season + placement) % 7 - 3) * 0.004;
-      const maps = source?.maps ?? (tier === 'T1' ? Math.max(72, 112 - Math.min(40, placement * 2)) : tier === 'T2' ? 32 : 16);
+      const baseMaps = source?.maps ?? (tier === 'T1' ? Math.max(72, 112 - Math.min(40, placement * 2)) : tier === 'T2' ? 32 : 16);
+      const maps = Math.max(12, Math.round(baseMaps * ageDecay * (isProdigy ? 0.78 : 1)));
       const historicalContinuity = historicalNames.has(entry.nickname) ? 0.01 : 0;
       const vrsRank = entry.teamId ? ranks.get(entry.teamId) ?? 100 : 100;
       const newcomerVrsBonus = entry.source === 'VIRTUAL' ? Math.max(0, (36 - Math.min(36, vrsRank)) / 36) * 0.03 : 0;
-      const rating = Math.min(1.35, (source?.rating ?? (tier === 'T1' ? 1.08 - Math.min(0.08, placement * 0.002) : tier === 'T2' ? 1.01 : 0.98)) + historicalContinuity + newcomerVrsBonus + seasonDrift);
+      const potential = entry.potential ?? (entry.source === 'VIRTUAL' ? simulationRules.virtualGeneration.baselinePotential : 0.7);
+      const prodigyBoost = isProdigy ? Math.max(0, potential - 0.75) * 0.22 : 0;
+      const rating = Math.min(1.35, ((source?.rating ?? (tier === 'T1' ? 1.08 - Math.min(0.08, placement * 0.002) : tier === 'T2' ? 1.01 : 0.98)) * ageDecay) + historicalContinuity + newcomerVrsBonus + seasonDrift + prodigyBoost);
       const eventId = `${entry.playerId}-${season}-annual-reference`;
       const advancedTier = tier === 'T1' ? 'T1' : 'T2';
       return {
@@ -146,19 +166,50 @@ class BrowserGateway implements EngineHltvGateway {
           top5Maps: source ? Math.round(maps * 0.3) : Math.round(maps * 0.15), top5Rating: source?.top5Rating ?? rating,
           finalMaps: source ? Math.max(1, Math.round(maps * 0.08)) : 0, finalRating: source?.finalRating ?? null,
           title: false,
-          honors: (source?.honors ?? this.baselineHonors(placement, advancedTier)).map((honor) => ({ ...honor, eventId, eventName: `${entry.teamName ?? '年度赛事'} 年度赛事`, tier: advancedTier })),
+          honors: (source?.honors ?? annualHonors.get(entry.playerId) ?? []).map((honor) => ({ ...honor, eventId, eventName: `${entry.teamName ?? '年度赛事'} 年度赛事`, tier: advancedTier })),
           majorPlayoffChoke: false,
           ...(source?.titles?.length && source.titles[0] ? { title: true, eventName: source.titles[0] } : {}),
         }],
       };
     });
   }
-  private baselineHonors(placement: number, tier: 'T1' | 'T2'): readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[] {
-    if (tier !== 'T1') return placement <= 30 ? [{ type: 'VP', honorClass: 'MEDIUM' }] : [];
-    if (placement <= 3) return [{ type: 'MVP', honorClass: 'SUPER_ELITE' }, { type: 'EVP', honorClass: 'ELITE' }];
-    if (placement <= 10) return [{ type: 'EVP', honorClass: 'ELITE' }, { type: 'VP', honorClass: 'LARGE' }];
-    if (placement <= 20) return [{ type: 'EVP', honorClass: 'LARGE' }, { type: 'VP', honorClass: 'ELITE' }];
-    return [{ type: 'VP', honorClass: 'MEDIUM' }];
+  private allocateHonorPool(
+    identities: readonly Top20IdentityRecord[],
+    season: number,
+    evidenceByPlayer: ReadonlyMap<string, { readonly honors: readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[] }>,
+    simulationRules: Top20SimulationRules,
+  ): ReadonlyMap<string, readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[]> {
+    const ranked = identities.map((entry, index) => ({ entry, index, score: this.honorCompetitionScore(entry, season, index, simulationRules) })).sort((left, right) => right.score - left.score || left.entry.playerId.localeCompare(right.entry.playerId));
+    const pool = simulationRules.honorPool;
+    const result = new Map<string, { type: 'MVP' | 'EVP' | 'VP'; honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[]>();
+    const assign = (type: 'MVP' | 'EVP' | 'VP', count: number, classFor: (index: number) => 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE') => {
+      ranked.slice(0, count).forEach((candidate, index) => { const honors = result.get(candidate.entry.playerId) ?? []; honors.push({ type, honorClass: classFor(index) }); result.set(candidate.entry.playerId, honors); });
+    };
+    assign('MVP', pool.mvp, (index) => index === 0 ? 'SUPER_ELITE' : index < 2 ? 'ELITE' : 'LARGE');
+    assign('EVP', pool.evp, (index) => index < 3 ? 'SUPER_ELITE' : index < 7 ? 'ELITE' : 'LARGE');
+    assign('VP', pool.vp, (index) => index < 10 ? 'ELITE' : 'MEDIUM');
+    // Imported season files provide the first-year statistical baseline only.
+    // Honor ownership always comes from this fixed annual pool so the ecosystem
+    // remains comparable across seasons.
+    return result;
+  }
+
+  private honorCompetitionScore(entry: Top20IdentityRecord, season: number, index: number, simulationRules: Top20SimulationRules): number {
+    const age = this.simulatedAge(entry, season);
+    const ageFactor = entry.source === 'REAL' ? this.realPlayerDecay(age, Math.max(0, season - (entry.careerStartYear ?? 2018)), simulationRules.realPlayerDecay) : 1;
+    const potential = entry.potential ?? (entry.source === 'VIRTUAL' ? simulationRules.virtualGeneration.baselinePotential : 0.7);
+    const prodigyFactor = entry.source === 'VIRTUAL' && season - (entry.careerStartYear ?? season) <= 1 ? potential * 0.35 : 0;
+    return ageFactor * (1.4 - index * 0.025) + prodigyFactor + ((season + index) % 5) * 0.01;
+  }
+
+  private simulatedAge(entry: Top20IdentityRecord, season: number): number {
+    return Math.max(16, season - (entry.birthYear ?? (entry.source === 'REAL' ? 1999 : season - 18)));
+  }
+
+  private realPlayerDecay(age: number, careerYears: number, rules: Top20SimulationRules['realPlayerDecay']): number {
+    const ageDecay = age <= rules.peakThroughAge ? 1 : age <= rules.gradualDeclineEndAge ? 1 - (age - rules.peakThroughAge) * rules.gradualDeclinePerYear : rules.veteranBaseMultiplier - Math.min(0.25, (age - rules.gradualDeclineEndAge) * rules.veteranDeclinePerYear);
+    const careerDecay = careerYears <= rules.careerGraceYears ? 1 : 1 - Math.min(rules.careerDeclineCap, (careerYears - rules.careerGraceYears) * rules.careerDeclinePerYear);
+    return Math.max(rules.minimumMultiplier, ageDecay * careerDecay);
   }
 
   private async loadNpcRanking(season: number): Promise<readonly Top20IdentityRecord[]> {
@@ -168,13 +219,30 @@ class BrowserGateway implements EngineHltvGateway {
     const real = realResponse && realResponse.ok ? (await realResponse.json() as { readonly players: readonly Top20IdentityRecord[] }).players : [];
     const virtualResponse = await fetch('assets/top20/virtual-players.json').catch(() => null);
     const virtual = virtualResponse && virtualResponse.ok ? (await virtualResponse.json() as { readonly players: readonly Top20IdentityRecord[] }).players : [];
-    const realEntries = real.map((entry) => ({ ...entry, source: 'REAL' as const }));
+    const realEntries = real.map((entry) => ({ ...entry, source: 'REAL' as const, careerStartYear: entry.careerStartYear ?? 2018 }));
     const rotation = virtual.length ? ((season % virtual.length) + virtual.length) % virtual.length : 0;
-    const virtualEntries = virtual.map((entry, index) => ({ ...entry, source: 'VIRTUAL' as const, placement: index + 1 })).sort((left, right) => ((left.placement! + rotation) % Math.max(1, virtual.length)) - ((right.placement! + rotation) % Math.max(1, virtual.length)));
+    const rulesResponse = await fetch('assets/top20/simulation-rules.json').catch(() => null);
+    const simulationRules = rulesResponse && rulesResponse.ok ? await rulesResponse.json() as Top20SimulationRules : DEFAULT_TOP20_SIMULATION_RULES;
+    const virtualEntries = virtual
+      .map((entry, index) => ({
+        ...entry,
+        source: 'VIRTUAL' as const,
+        placement: index + 1,
+        careerStartYear: 2026 + Math.floor(index / 4),
+        potential: index === 4 ? simulationRules.virtualGeneration.prodigyPotential : index < 8 ? simulationRules.virtualGeneration.risingPotential : simulationRules.virtualGeneration.baselinePotential,
+      }))
+      .filter((entry) => entry.careerStartYear <= season && (entry.careerStartYear === 2026 || this.annualGenerationRoll(season, entry.placement!) < (entry.potential! >= 0.95 ? simulationRules.virtualGeneration.prodigyProbability : simulationRules.virtualGeneration.baseProbability)))
+      .sort((left, right) => ((left.placement! + rotation) % Math.max(1, virtual.length)) - ((right.placement! + rotation) % Math.max(1, virtual.length)));
     const value = [...realEntries, ...virtualEntries].map((entry, index) => ({ ...entry, placement: entry.placement ?? index + 1 }));
     this.npcRankings.set(season, value);
     return value;
   }
+  private annualGenerationRoll(season: number, placement: number): number {
+    let value = (season * 1103515245 + placement * 12345) >>> 0;
+    value = (value ^ (value >>> 16)) >>> 0;
+    return value / 0x100000000;
+  }
+
   public async synchronizeCareerHonors(profile: PlayerProfile, ranking: Top20Ranking): Promise<PlayerProfile> {
     const rank = ranking.careerPlayerRank;
     if (!rank) return JSON.parse(JSON.stringify(profile)) as PlayerProfile;

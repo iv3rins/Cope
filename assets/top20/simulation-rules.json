@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "honorPool": {
+    "mvp": 4,
+    "evp": 12,
+    "vp": 28
+  },
+  "virtualGeneration": {
+    "baseProbability": 0.55,
+    "prodigyProbability": 0.9,
+    "prodigyPotential": 0.99,
+    "risingPotential": 0.9,
+    "baselinePotential": 0.78,
+    "annualDebutWindow": 4
+  },
+  "realPlayerDecay": {
+    "peakThroughAge": 27,
+    "gradualDeclineEndAge": 30,
+    "gradualDeclinePerYear": 0.035,
+    "veteranBaseMultiplier": 0.895,
+    "veteranDeclinePerYear": 0.045,
+    "careerGraceYears": 4,
+    "careerDeclinePerYear": 0.012,
+    "careerDeclineCap": 0.12,
+    "minimumMultiplier": 0.55
+  }
+}

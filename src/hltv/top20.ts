@@ -103,6 +103,10 @@ export interface Top20IdentityRecord {
   readonly teamName?: string;
   readonly teamId?: string;
   readonly teamTier?: 'T1' | 'T2' | 'T3';
+  /** Stable career inputs for annual simulation; absent values use source-aware defaults. */
+  readonly birthYear?: number;
+  readonly careerStartYear?: number;
+  readonly potential?: number;
   readonly source: 'REAL' | 'VIRTUAL';
 }
 
