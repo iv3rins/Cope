@@ -155,24 +155,37 @@ class BrowserGateway implements EngineHltvGateway {
       const potential = entry.potential ?? (entry.source === 'VIRTUAL' ? simulationRules.virtualGeneration.baselinePotential : 0.7);
       const prodigyBoost = isProdigy ? Math.max(0, potential - 0.75) * 0.22 : 0;
       const rating = Math.min(1.35, ((source?.rating ?? (tier === 'T1' ? 1.08 - Math.min(0.08, placement * 0.002) : tier === 'T2' ? 1.01 : 0.98)) * ageDecay) + historicalContinuity + newcomerVrsBonus + seasonDrift + prodigyBoost);
-      const eventId = `${entry.playerId}-${season}-annual-reference`;
       const advancedTier = tier === 'T1' ? 'T1' : 'T2';
+      const eventName = source?.titles?.[0] ?? this.referenceEventName(entry, season, advancedTier);
+      const eventId = `${entry.playerId}-${season}-${this.slugEventName(eventName)}`;
       return {
         season,
         player: { playerId: entry.playerId, nickname: entry.nickname, countryCode: entry.countryCode, teamName: entry.teamName ?? '未注明队伍', ...(entry.teamId ? { teamId: entry.teamId } : {}), ...(entry.teamTier ? { teamTier: entry.teamTier } : {}), careerPlayer: false, source: entry.source },
         tournaments: [{
-          eventId, eventName: `${entry.teamName ?? '年度赛事'} 年度赛事`, tier: advancedTier, maps, rating, adr: 70 + (rating - 1) * 52,
+          eventId, eventName, tier: advancedTier, maps, rating, adr: 70 + (rating - 1) * 52,
           playoffMaps: source ? Math.round(maps * 0.35) : Math.round(maps * 0.2), playoffRating: source?.playoffRating ?? rating,
           top5Maps: source ? Math.round(maps * 0.3) : Math.round(maps * 0.15), top5Rating: source?.top5Rating ?? rating,
           finalMaps: source ? Math.max(1, Math.round(maps * 0.08)) : 0, finalRating: source?.finalRating ?? null,
           title: false,
-          honors: (source?.honors ?? annualHonors.get(entry.playerId) ?? []).map((honor) => ({ ...honor, eventId, eventName: `${entry.teamName ?? '年度赛事'} 年度赛事`, tier: advancedTier })),
+          honors: (source?.honors ?? annualHonors.get(entry.playerId) ?? []).map((honor) => ({ ...honor, eventId, eventName, tier: advancedTier })),
           majorPlayoffChoke: false,
           ...(source?.titles?.length && source.titles[0] ? { title: true, eventName: source.titles[0] } : {}),
         }],
       };
     });
   }
+  private referenceEventName(entry: Top20IdentityRecord, season: number, tier: 'T1' | 'T2'): string {
+    if (tier !== 'T1') return `T2 国际挑战赛 ${season}`;
+    if (entry.placement === 1) return `IEM 科隆 ${season}`;
+    if (entry.placement && entry.placement <= 5) return `IEM 卡托维兹 ${season}`;
+    if (entry.placement && entry.placement <= 10) return `EPL S26 ${season}`;
+    return `BLAST 赏金赛 S2 ${season}`;
+  }
+
+  private slugEventName(value: string): string {
+    return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'event';
+  }
+
   private allocateHonorPool(
     identities: readonly Top20IdentityRecord[],
     season: number,

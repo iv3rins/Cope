@@ -232,7 +232,7 @@ export class TournamentServiceImpl implements TournamentService {
   private createPlayerPerformance(maps: number, playerStrength: number, opponentStrength: number, won: boolean, snapshotRank: number | null): TournamentPlayerPerformance {
     const normal = this.normalSample();
     const advantage = this.clamp((playerStrength - opponentStrength) / 100, -0.4, 0.4);
-    const rating = this.clamp(1.02 + advantage * 0.3 + normal * 0.13 + (won ? 0.05 : -0.04), 0.3, 2.5);
+    const rating = this.clamp(1.02 + advantage * 0.42 + normal * 0.13 + (won ? 0.05 : -0.04), 0.3, 2.5);
     const kills = Math.max(0, Math.round(maps * 20 * (0.7 + rating * 0.3) + this.normalSample() * 4));
     const deaths = Math.max(0, Math.round(maps * 18 * (1.35 - rating * 0.3) + this.normalSample() * 3));
     const assists = Math.max(0, Math.round(maps * 5 + this.normalSample() * 2));

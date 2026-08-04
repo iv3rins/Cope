@@ -393,7 +393,8 @@ export class CareerGameImpl implements CareerGame {
     const major = champion && level === 'MAJOR' ? 1 : 0;
     const stier = champion && level === 'T1' ? 1 : 0;
     const mvp = performance.honor === 'MVP' ? level === 'MAJOR' ? 'MAJOR' : 'NORMAL' : null;
-    const record: CareerTournamentRecord = { editionId: result.editionId, year: result.season, fullName: result.eventName, organizerId: 'OTHER', level, placement: result.placement === 'CHAMPION' ? 'CHAMPION' : 'RUNNER_UP', rating: performance.rating, mapsPlayed: performance.maps, champion, mvp, trophyAssetId: champion && level !== 'T2' ? 'OTHER' : null };
+    const organizerId = this.tournamentOrganizer(result.seriesId);
+    const record: CareerTournamentRecord = { editionId: result.editionId, year: result.season, fullName: result.eventName, organizerId, level, placement: result.placement === 'CHAMPION' ? 'CHAMPION' : 'RUNNER_UP', rating: performance.rating, mapsPlayed: performance.maps, champion, mvp, trophyAssetId: champion && level !== 'T2' && organizerId !== 'OTHER' ? organizerId : null };
     const moraleDelta = champion ? 5 : -8;
     const energyDelta = champion ? -4 : -10;
     const stressDelta = champion ? -5 : 8;
@@ -430,7 +431,8 @@ export class CareerGameImpl implements CareerGame {
     return endsAt.toISOString();
   }
   private clamp(value: number, minimum: number, maximum: number): number { return Math.max(minimum, Math.min(maximum, value)); }
-  private teamStrength(profile: PlayerProfile): number { const a = profile.attributes; return (a.aim + a.gameSense + a.leadership + a.clutch + a.consistency - a.teamConflict + profile.morale + profile.energy) / 7; }
+  private teamStrength(profile: PlayerProfile): number { const a = profile.attributes; return (a.aim * 0.24 + a.gameSense * 0.2 + a.leadership * 0.12 + a.clutch * 0.16 + a.consistency * 0.2 - a.teamConflict * 0.08 + profile.morale * 0.06 + profile.energy * 0.06); }
+  private tournamentOrganizer(seriesId: string): import('../retirement').TournamentOrganizerId { const id = seriesId.toLowerCase(); if (id.includes('blast')) return 'BLAST'; if (id.includes('iem-katowice')) return 'IEM_KATOWICE'; if (id.includes('iem-cologne')) return 'IEM_COLOGNE'; if (id.includes('pgl') || id.includes('major')) return 'PGL_T1'; if (id.includes('perfect-world') || id.includes('cac')) return 'PW_T1'; if (id.includes('epl') || id.includes('iem-')) return 'ESL_T1'; return 'OTHER'; }
   private copy<T>(value: T): T { return JSON.parse(JSON.stringify(value)) as T; }
   private async requireOriginRule(region: PlayerProfile['originRegion']): Promise<RegionOriginRule> { const rule = await this.runtime.progressionRules?.findOriginRule(region); if (!rule) throw new CareerGameConfigurationError(`RegionOriginRule for ${region}`); return rule; }
   private async requireSave(): Promise<CareerSaveEnvelope> { const value = await this.dependencies.stateRepository.load(this.dependencies.playerId); if (!value) throw new Error(`No career save exists for player ${this.dependencies.playerId}.`); return value; }

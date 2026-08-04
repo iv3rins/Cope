@@ -62,7 +62,7 @@ async function loadTournamentAssets() {
 }
 function tournamentAssetPath(seriesId) {
   const exact = tournamentAssets?.series?.[seriesId];
-  if (exact) return exact;
+  if (exact !== undefined) return exact;
   const match = Object.entries(tournamentAssets?.series || {}).find(([key]) => seriesId?.startsWith(`${key}-`));
   return match?.[1] || tournamentAssets?.fallback || '';
 }
@@ -155,7 +155,7 @@ async function simulateTournament(event, profile) {
   const next = await window.COPEEngine.getNextTournament();
   const completed = next ? Math.max(0, calendar.findIndex((item) => item.id === next.id)) : calendar.length;
   $('#eventPeriod').textContent = 'TOURNAMENT';
-  $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage"><p class="eyebrow">当前赛事 · 正式赛事 · ${event.tier}</p><div class="tournament-hero"><div><h2>${event.name}</h2><p class="event-copy">${event.city || '线上赛'} · ${event.format || 'BO3'} · 自动结算赛事表现、奖金与荣誉。</p></div><img class="tournament-mark tournament-trophy" src="${tournamentAssetPath(event.seriesId)}" alt="${event.name}赛事奖杯" onerror="this.hidden=true" /></div><div class="tournament-run" id="singleTournamentRun"><strong>赛事模拟进行中</strong><span>预计自动结算 · 赛事档案将写入职业生涯</span><i><em></em></i></div></article>`;
+  $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage"><p class="eyebrow">当前赛事 · 正式赛事 · ${event.tier}</p><div class="tournament-hero"><div><h2>${event.name}</h2><p class="event-copy">${event.city || '线上赛'} · ${event.format || 'BO3'} · 自动结算赛事表现、奖金与荣誉。</p></div>${tournamentAssetPath(event.seriesId) ? `<img class="tournament-mark tournament-trophy" src="${tournamentAssetPath(event.seriesId)}" alt="${event.name}赛事奖杯" />` : ''}</div><div class="tournament-run" id="singleTournamentRun"><strong>赛事模拟进行中</strong><span>预计自动结算 · 赛事档案将写入职业生涯</span><i><em></em></i></div></article>`;
   let simulationStarted = false;
   const runSimulation = async () => {
     if (simulationStarted) return;
@@ -178,7 +178,7 @@ async function simulateTournament(event, profile) {
         return;
       }
       const rating = result.playerPerformances[0]?.rating ?? 0;
-      $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage outcome-stage"><p class="eyebrow">TOURNAMENT OUTCOME / 赛事结果</p><img class="outcome-trophy" src="${tournamentAssetPath(result.seriesId)}" alt="${result.eventName}赛事奖杯" onerror="this.hidden=true" /><h2>${result.eventName}</h2><p class="event-copy">${result.placement} · Rating ${rating.toFixed(2)} · 赛事档案已写入职业生涯。</p><div class="result-grid"><div><span>地图</span><b>${result.playerPerformances[0]?.maps ?? 0}</b></div><div><span>Rating</span><b>${rating.toFixed(2)}</b></div><div><span>赛事级别</span><b>${result.tier}</b></div><div><span>状态</span><b>${result.title ? '冠军' : '完赛'}</b></div></div><p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
+      $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage outcome-stage"><p class="eyebrow">TOURNAMENT OUTCOME / 赛事结果</p>${tournamentAssetPath(result.seriesId) ? `<img class="outcome-trophy" src="${tournamentAssetPath(result.seriesId)}" alt="${result.eventName}赛事奖杯" />` : ''}<h2>${result.eventName}</h2><p class="event-copy">${result.placement} · Rating ${rating.toFixed(2)} · 赛事档案已写入职业生涯。</p><div class="result-grid"><div><span>地图</span><b>${result.playerPerformances[0]?.maps ?? 0}</b></div><div><span>Rating</span><b>${rating.toFixed(2)}</b></div><div><span>赛事级别</span><b>${result.tier}</b></div><div><span>状态</span><b>${result.title ? '冠军' : '完赛'}</b></div></div><p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
       renderProfile(updated);
       const continueSchedule = async () => {
         const postEvent = await window.COPEEngine.findCareerEvent('POST_TOURNAMENT');
@@ -313,7 +313,7 @@ async function retireCareer() {
   document.querySelector('#gameSession').classList.add('career-archive-page');
   document.querySelector('.season-header').hidden = true;
   document.querySelector('.season-panel').hidden = true;
-  const trophyMarkup = summary.trophyRoom.map((item) => `<div class="archive-item"><img src="${tournamentAssetPath(item.editionId)}" alt="${item.fullName}" onerror="this.hidden=true"><span>${item.fullName}</span></div>`).join('');
+  const trophyMarkup = summary.trophyRoom.map((item) => `<div class="archive-item">${tournamentAssetPath(item.editionId) ? `<img src="${tournamentAssetPath(item.editionId)}" alt="${item.fullName}">` : ''}<span>${item.fullName}</span></div>`).join('');
   const mvpMarkup = summary.mvpRoom.map((item) => `<div class="archive-item"><img src="assets/mvp/${item.badgeAssetId}.webp" alt="MVP"><span>${item.fullName}</span></div>`).join('');
   const topMarkup = summary.top20History.map((item) => `<div class="archive-item"><img src="assets/top/${item.rank <= 1 ? 'TOP1' : item.rank === 2 ? 'TOP2' : item.rank === 3 ? 'TOP3' : 'TOP4-20'}.svg" alt="TOP20"><span>${item.year} · #${item.rank}</span></div>`).join('');
   $('#eventContent').innerHTML = `<div class="career-archive"><p class="eyebrow">CAREER ARCHIVE</p><h2>${player.gameId} · 生涯总结</h2><p class="event-copy">退役时间：${summary.player.retiredAt}</p><div class="result-grid"><div><span>总地图</span><b>${summary.careerOverview.totalMaps}</b></div><div><span>总击杀</span><b>${summary.careerOverview.totalKills}</b></div><div><span>平均Rating</span><b>${summary.careerOverview.averageRating.toFixed(2)}</b></div><div><span>TOP20</span><b>${summary.top20History.length}</b></div></div><section class="archive-section"><h3>TOP20 勋章</h3><div class="archive-grid">${topMarkup || '<p class="event-empty">暂无 TOP20 记录</p>'}</div></section><section class="archive-section"><h3>MVP 勋章</h3><div class="archive-grid">${mvpMarkup || '<p class="event-empty">暂无 MVP 记录</p>'}</div></section><section class="archive-section"><h3>奖杯陈列</h3><div class="archive-grid">${trophyMarkup || '<p class="event-empty">暂无冠军奖杯</p>'}</div></section></div>`;

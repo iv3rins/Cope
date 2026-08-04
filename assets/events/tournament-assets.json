@@ -14,17 +14,17 @@
     "pgl-lodz": "assets/events/PGL_T1.webp",
     "major-h1": "assets/events/PGL_T1.webp",
     "major-h2": "assets/events/PGL_T1.webp",
-    "epl-s25": "assets/events/ESL_T1.webp",
-    "epl-s26": "assets/events/ESL_T1.webp",
+    "epl-s25": "assets/events/EPL.webp",
+    "epl-s26": "assets/events/EPL.webp",
     "perfect-world-cac": "assets/events/PW_T1.webp",
     "iem-chengdu": "assets/events/IEM_katowice.webp",
     "iem-dallas": "assets/events/ESL_T1.webp",
     "ewc": "assets/events/ESL_T1.webp",
     "starladder-fall": "assets/events/ESL_T1.webp",
-    "cct-intercontinental-h1": "assets/events/PW_T1_2.webp",
-    "cct-global-h1": "assets/events/PW_T1_2.webp",
-    "cct-fall-finals": "assets/events/PW_T1_2.webp",
-    "cct-finals": "assets/events/PW_T1_2.webp",
-    "galaxy-war": "assets/events/PW_T1_2.webp"
+    "cct-intercontinental-h1": "",
+    "cct-global-h1": "",
+    "cct-fall-finals": "",
+    "cct-finals": "",
+    "galaxy-war": ""
   }
 }
