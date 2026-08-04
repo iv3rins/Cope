@@ -23,6 +23,11 @@ let teamDirectory = null;
 
 function selectedRegion() { return document.querySelector('.region.selected')?.dataset.region || '中国'; }
 function nextRoll() { deterministicState = (1664525 * deterministicState + 1013904223) >>> 0; return deterministicState / 0x100000000; }
+function isAdverseAttributeDelta(attribute, delta) {
+  if (!Number.isFinite(delta) || delta === 0) return false;
+  // TEAM_CONFLICT is an adverse attribute: increasing it worsens the profile.
+  return attribute === 'TEAM_CONFLICT' ? delta > 0 : delta < 0;
+}
 async function loadEventFeedback() {
   if (eventFeedback) return eventFeedback;
   const response = await fetch('assets/story/event-feedback.json');
@@ -225,7 +230,7 @@ async function renderEvent(event, resultText = '') {
     const effects = result.appliedEffects || [];
     const effectLabels = { AIM: '枪法', GAME_SENSE: '意识', LEADERSHIP: '指挥', CLUTCH: '残局', CONSISTENCY: '稳定性', TEAM_CONFLICT: '团队冲突', MORALE: '士气', ENERGY: '精力', STRESS: '压力', BALANCE: '余额' };
     const changes = effects.map((effect) => {
-      if (effect.type === 'ATTRIBUTE_CHANGE') return { label: `${effectLabels[effect.attribute] || effect.attribute} ${effect.delta >= 0 ? '+' : ''}${effect.delta}`, negative: effect.attribute === 'TEAM_CONFLICT' ? effect.delta > 0 : effect.delta < 0 };
+      if (effect.type === 'ATTRIBUTE_CHANGE') return { label: `${effectLabels[effect.attribute] || effect.attribute} ${effect.delta >= 0 ? '+' : ''}${effect.delta}`, negative: isAdverseAttributeDelta(effect.attribute, effect.delta) };
       if (effect.type === 'PLAYER_STAT_CHANGE') {
         const negative = effect.stat === 'STRESS' ? effect.delta > 0 : ['ENERGY', 'MORALE', 'BALANCE'].includes(effect.stat) ? effect.delta < 0 : false;
         return { label: `${effectLabels[effect.stat] || effect.stat} ${effect.delta >= 0 ? '+' : ''}${effect.delta}`, negative };

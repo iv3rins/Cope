@@ -5,6 +5,7 @@
 
 // —— 效果辅助 ——
 export const stat = (s, delta) => ({ type: 'PLAYER_STAT_CHANGE', stat: s, delta });
+// TEAM_CONFLICT is adverse: positive deltas increase conflict and are negative effects.
 export const attr = (attribute, delta) => ({ type: 'ATTRIBUTE_CHANGE', attribute, delta });
 export const flag = (id, name, category = 'CAREER') => ({ type: 'FLAG_ADD', flagId: id, flag: { id, name, category } });
 export const rmFlag = (id) => ({ type: 'FLAG_REMOVE', flagId: id });

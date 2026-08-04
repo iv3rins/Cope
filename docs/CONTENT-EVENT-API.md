@@ -169,7 +169,7 @@ Attributes:
 - `CONSISTENCY`
 - `TEAM_CONFLICT`
 
-`TEAM_CONFLICT` is adverse: higher is worse.
+`TEAM_CONFLICT` is adverse: higher is worse. A positive `ATTRIBUTE_CHANGE` delta is therefore negative and must use adverse styling; a negative delta is beneficial.
 
 ### Player stat conditions
 
