@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "success": {
+    "messages": ["决策成功，结果已写入引擎存档。", "你的选择正在改变这段生涯。"],
+    "continueLabel": "继续赛季"
+  },
+  "failure": {
+    "messages": ["决策受挫，结果已写入引擎存档。", "这次选择留下了代价。"],
+    "continueLabel": "继续赛季"
+  },
+  "default": {
+    "messages": ["结果已写入引擎存档。"],
+    "continueLabel": "继续"
+  }
+}

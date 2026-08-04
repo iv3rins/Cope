@@ -1,0 +1,114 @@
+{
+  "id": "prodigy-igc-offer",
+  "title": "指挥邀约",
+  "description": "有队伍想挖你当指挥。他们说你的「比赛阅读」比你的枪法更值钱。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-support-ask"
+    }
+  ],
+  "options": [
+    {
+      "id": "try-igc",
+      "label": "转型指挥",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "ROLE_CHANGE",
+            "role": "IGL"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你开始学指挥，读比赛的速度比你想象得快。",
+          "「天才枪手转型大脑」的报道很轰动。"
+        ],
+        "failureMessages": [
+          "指挥让你两头顾不上。",
+          "枪法下滑，指挥也混乱。"
+        ],
+        "successNextEventId": "prodigy-focus-choice",
+        "failureNextEventId": "prodigy-focus-choice"
+      }
+    },
+    {
+      "id": "stay-awper",
+      "label": "专心打枪",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你拒绝了转型，专心打磨枪法。",
+          "你的定位越来越清晰。"
+        ],
+        "failureMessages": [
+          "拒绝后你偶尔会想「如果」。",
+          "「指挥天才」的故事停留在别人的嘴里。"
+        ],
+        "successNextEventId": "prodigy-focus-choice",
+        "failureNextEventId": "prodigy-focus-choice"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,105 @@
+{
+  "id": "prodigy-coach-grounding",
+  "title": "教练泼冷水",
+  "description": "教练把你叫到办公室：「天才我见多了，绝大多数连一年都撑不过去。」",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-skill-ego"
+    }
+  ],
+  "options": [
+    {
+      "id": "prove-him",
+      "label": "用表现证明",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你把这句话当成燃料。",
+          "接下来一个月，你是队里最稳的。"
+        ],
+        "failureMessages": [
+          "教练的话让你焦虑到失眠。",
+          "你越想证明，发挥越差。"
+        ],
+        "successNextEventId": "prodigy-rival-duel",
+        "failureNextEventId": "prodigy-rival-duel"
+      }
+    },
+    {
+      "id": "ask-detail",
+      "label": "追问原因",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你问他为什么这么说。",
+          "他讲了三个陨落天才的故事。"
+        ],
+        "failureMessages": [
+          "教练没细说，只说了句「你自己想」。",
+          "这句话你琢磨了一整晚。"
+        ],
+        "successNextEventId": "prodigy-rival-duel",
+        "failureNextEventId": "prodigy-rival-duel"
+      }
+    }
+  ],
+  "autoEffects": []
+}

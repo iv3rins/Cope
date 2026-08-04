@@ -1,0 +1,114 @@
+{
+  "id": "rookie-role-experiment",
+  "title": "位置实验",
+  "description": "教练想试试把你从突破手换到自由人。这个位置你只在路人局里玩过。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-captain-notice"
+    }
+  ],
+  "options": [
+    {
+      "id": "try-new-role",
+      "label": "接下新位置",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.008
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "ROLE_CHANGE",
+            "role": "LURK"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你第一次感受到地图另一边的世界。",
+          "教练说这个位置有戏。"
+        ],
+        "failureMessages": [
+          "你在新位置上迷路了好几次。",
+          "教练没放弃，但你有点动摇。"
+        ],
+        "successNextEventId": "rookie-coach-critique",
+        "failureNextEventId": "rookie-coach-critique"
+      }
+    },
+    {
+      "id": "stay-role",
+      "label": "坚持老位置",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你留在突破手的位置上。",
+          "熟悉的地方让你安心。"
+        ],
+        "failureMessages": [
+          "你留在老位置，但心里开始犯嘀咕。",
+          "教练会不会觉得你不肯学？"
+        ],
+        "successNextEventId": "rookie-coach-critique",
+        "failureNextEventId": "rookie-coach-critique"
+      }
+    }
+  ],
+  "autoEffects": []
+}

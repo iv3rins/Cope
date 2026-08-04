@@ -1,5 +1,6 @@
 import type { HltvTeamId } from '../hltv/team';
 import type { PlayerAttribute, PlayerProfile } from './profile';
+import type { PlayerContract } from './contract';
 import type { GameDifficultyMode } from './mode';
 
 /** 事件条件始终由 Engine 求值；随机值由调用方传入，避免内部使用 Math.random。 */
@@ -25,6 +26,12 @@ export interface PlayerStatCondition extends ConditionBase {
   readonly maximum?: number;
 }
 
+export interface AgeCondition extends ConditionBase {
+  readonly type: 'AGE';
+  readonly minimum?: number;
+  readonly maximum?: number;
+}
+
 export interface FlagCondition extends ConditionBase {
   readonly type: 'FLAG';
   readonly flagId: string;
@@ -46,6 +53,41 @@ export interface CompletedEventCondition extends ConditionBase {
   readonly eventId: string;
 }
 
+export interface ContractCondition extends ConditionBase {
+  readonly type: 'ACTIVE_CONTRACT';
+  readonly expected: boolean;
+}
+
+export interface FreeAgencyCondition extends ConditionBase {
+  readonly type: 'FREE_AGENCY';
+  readonly expected: boolean;
+}
+
+export interface TeamVrsRankCondition extends ConditionBase {
+  readonly type: 'TEAM_VRS_RANK';
+  readonly minimum?: number;
+  readonly maximum?: number;
+}
+
+export interface RatingStreakCondition extends ConditionBase {
+  readonly type: 'RATING_STREAK';
+  readonly minimum?: number;
+  readonly maximum?: number;
+}
+
+export interface AdvancedMapsCondition extends ConditionBase {
+  readonly type: 'ADVANCED_MAPS';
+  readonly minimum?: number;
+  readonly maximum?: number;
+}
+
+/** Match the latest annual TOP20 rank; missing rank is treated as unavailable. */
+export interface Top20RankCondition extends ConditionBase {
+  readonly type: 'TOP20_RANK';
+  readonly minimum?: number;
+  readonly maximum?: number;
+}
+
 /** 根据当前生涯模式决定事件、选项或复合条件是否可用。 */
 export interface GameModeCondition extends ConditionBase {
   readonly type: 'GAME_MODE';
@@ -63,7 +105,7 @@ export interface CompositeCondition extends ConditionBase {
   readonly conditions: readonly EventCondition[];
 }
 
-export type EventCondition = AttributeCondition | PlayerStatCondition | FlagCondition | TeamCondition | WorldlineCondition | CompletedEventCondition | GameModeCondition | RandomCondition | CompositeCondition;
+export type EventCondition = AttributeCondition | PlayerStatCondition | AgeCondition | FlagCondition | TeamCondition | WorldlineCondition | CompletedEventCondition | ContractCondition | FreeAgencyCondition | TeamVrsRankCondition | RatingStreakCondition | AdvancedMapsCondition | Top20RankCondition | GameModeCondition | RandomCondition | CompositeCondition;
 
 /** 条件求值所需的完整上下文，未提供的目标必须返回不可满足而非静默读取玩家。 */
 export interface ConditionContext {
@@ -73,6 +115,12 @@ export interface ConditionContext {
   readonly randomRoll: number;
   /** 冗余保存模式便于条件求值器处理配置和测试上下文。 */
   readonly difficultyMode: GameDifficultyMode;
+  /** Optional domain facts are supplied by the composition root; absent means unknown. */
+  readonly activeContract?: PlayerContract | null;
+  readonly currentTeamRank?: number | null;
+  readonly transferWindowOpen?: boolean;
+  readonly lowRatingStreak?: number;
+  readonly advancedMapsPlayed?: number;
 }
 
 export interface ConditionEvaluator {

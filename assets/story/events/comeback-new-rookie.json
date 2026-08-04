@@ -1,0 +1,119 @@
+{
+  "id": "comeback-new-rookie",
+  "title": "新秀冲击",
+  "description": "俱乐部签了一个 17 岁的新人，和你同位置。训练赛里，他的枪法让你想起了年轻的自己。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-captain-offer3"
+    }
+  ],
+  "options": [
+    {
+      "id": "mentor-rival",
+      "label": "认真带他",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "MENTOR_NEWGEN",
+            "flag": {
+              "id": "MENTOR_NEWGEN",
+              "name": "提携新人",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你把经验倾囊相授。",
+          "他进步很快，喊你一声「师父」。"
+        ],
+        "failureMessages": [
+          "你教得有所保留。",
+          "「教会徒弟饿死师父」的念头闪过。"
+        ],
+        "successNextEventId": "comeback-mentor-new",
+        "failureNextEventId": "comeback-mentor-new"
+      }
+    },
+    {
+      "id": "compete-hard",
+      "label": "全力竞争",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.008
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把竞争变成动力，状态回升。",
+          "教练说：良性竞争是好事。"
+        ],
+        "failureMessages": [
+          "竞争让你焦虑，状态下滑。",
+          "新人的光芒更刺眼了。"
+        ],
+        "successNextEventId": "comeback-mentor-new",
+        "failureNextEventId": "comeback-mentor-new"
+      }
+    }
+  ],
+  "autoEffects": []
+}

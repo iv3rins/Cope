@@ -1,0 +1,104 @@
+{
+  "id": "prodigy-hype-check",
+  "title": "光环初显",
+  "description": "你的首秀录像被各大媒体转载。「下一个天才」的标题开始出现在你名字旁边。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-first-lan"
+    }
+  ],
+  "options": [
+    {
+      "id": "soak-hype",
+      "label": "享受光环",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "HYPE_RISING",
+            "flag": {
+              "id": "HYPE_RISING",
+              "name": "热度上升",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你开始习惯被镜头对着的感觉。",
+          "但光环下的每一步都被放大。"
+        ],
+        "failureMessages": [
+          "享受之后是更大的期待。",
+          "你有点被「天才」两个字压得喘不过气。"
+        ],
+        "successNextEventId": "prodigy-media-darling",
+        "failureNextEventId": "prodigy-media-darling"
+      }
+    },
+    {
+      "id": "stay-cool",
+      "label": "保持冷静",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你说自己只是运气好。",
+          "这份谦逊让不少老玩家对你改观。"
+        ],
+        "failureMessages": [
+          "你的冷静被解读成「装」。",
+          "舆论开始等着看你翻车。"
+        ],
+        "successNextEventId": "prodigy-media-darling",
+        "failureNextEventId": "prodigy-media-darling"
+      }
+    }
+  ],
+  "autoEffects": []
+}

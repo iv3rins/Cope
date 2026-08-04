@@ -1,0 +1,105 @@
+{
+  "id": "rookie-big-stage-choke",
+  "title": "大赛手软",
+  "description": "关键局 15:14，你们守 A 点。你架枪的位置空了，对方静步摸过来完成了拆除。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-major-debut"
+    }
+  ],
+  "options": [
+    {
+      "id": "own-the-mistake",
+      "label": "承认失误",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你在赛后采访里认了那个失误。",
+          "出人意料，评论区反而开始鼓励你。"
+        ],
+        "failureMessages": [
+          "你认了错，但那个空位反复出现在梦里。",
+          "你开始怀疑自己的架枪习惯。"
+        ],
+        "successNextEventId": "rookie-redemption",
+        "failureNextEventId": "rookie-redemption"
+      }
+    },
+    {
+      "id": "blame-luck",
+      "label": "归咎于运气",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你说那局是运气问题。",
+          "但教练的复盘笔记里写着：不是运气。"
+        ],
+        "failureMessages": [
+          "甩锅给运气让队友不太舒服。",
+          "更衣室里没人接话。"
+        ],
+        "successNextEventId": "rookie-redemption",
+        "failureNextEventId": "rookie-redemption"
+      }
+    }
+  ],
+  "autoEffects": []
+}

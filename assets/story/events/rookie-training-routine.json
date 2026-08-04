@@ -1,0 +1,105 @@
+{
+  "id": "rookie-training-routine",
+  "title": "训练作息",
+  "description": "连续的加练让你的作息乱成一团。白天困、晚上精神，训练赛状态像过山车。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-clutch-moment"
+    }
+  ],
+  "options": [
+    {
+      "id": "fix-schedule",
+      "label": "调整作息早睡",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把睡觉时间提前了三小时。",
+          "一周后，你的状态稳定多了。"
+        ],
+        "failureMessages": [
+          "你定了计划，但半夜还是爬起来打了两把。",
+          "第二天你盯着屏幕发呆。"
+        ],
+        "successNextEventId": "rookie-media-interview",
+        "failureNextEventId": "rookie-media-interview"
+      }
+    },
+    {
+      "id": "caffeine-crutch",
+      "label": "靠咖啡顶着",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "咖啡因确实管用，训练赛没那么困了。",
+          "但你知道这不是长久之计。"
+        ],
+        "failureMessages": [
+          "咖啡喝到心跳加速。",
+          "训练赛你手抖得厉害。"
+        ],
+        "successNextEventId": "rookie-media-interview",
+        "failureNextEventId": "rookie-media-interview"
+      }
+    }
+  ],
+  "autoEffects": []
+}

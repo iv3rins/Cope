@@ -1,0 +1,105 @@
+{
+  "id": "matchfixing-manager-meeting",
+  "title": "经理谈话",
+  "description": "经理把你叫进办公室，关上门。「我就问一次：你和盘口有没有关系？」",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-insider-tip"
+    }
+  ],
+  "options": [
+    {
+      "id": "tell-truth",
+      "label": "如实回答",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你说了全部实情，包括那张纸条。",
+          "经理沉默了很久，说：我知道了。"
+        ],
+        "failureMessages": [
+          "你紧张到语无伦次。",
+          "经理的眼神里写满了失望。"
+        ],
+        "successNextEventId": "matchfixing-evidence-gathering",
+        "failureNextEventId": "matchfixing-evidence-gathering"
+      }
+    },
+    {
+      "id": "hedge-answer",
+      "label": "含糊其辞",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你说「没有」，但语气不够坚定。",
+          "经理没有追问，但你的档案上多了一个问号。"
+        ],
+        "failureMessages": [
+          "你谎称不知道那晚的事。",
+          "但经理显然已经知道了。"
+        ],
+        "successNextEventId": "matchfixing-evidence-gathering",
+        "failureNextEventId": "matchfixing-evidence-gathering"
+      }
+    }
+  ],
+  "autoEffects": []
+}

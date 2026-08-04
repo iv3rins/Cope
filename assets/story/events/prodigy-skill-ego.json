@@ -1,0 +1,110 @@
+{
+  "id": "prodigy-skill-ego",
+  "title": "天才自负",
+  "description": "训练赛里你开始不按战术打。「这种局，靠枪法就够了」——你越来越常这么想。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-stream-explosion"
+    }
+  ],
+  "options": [
+    {
+      "id": "check-ego",
+      "label": "收敛个人英雄主义",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你重新按战术打了几场。",
+          "队伍配合回来了，你的数据也没掉。"
+        ],
+        "failureMessages": [
+          "你嘴上说收敛，枪一热又上头。",
+          "队友开始抱怨你的「自由发挥」。"
+        ],
+        "successNextEventId": "prodigy-coach-grounding",
+        "failureNextEventId": "prodigy-coach-grounding"
+      }
+    },
+    {
+      "id": "trust-guns",
+      "label": "相信枪法为王",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.008
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你的个人数据确实好看。",
+          "但教练看你的眼神越来越沉。"
+        ],
+        "failureMessages": [
+          "你有一场白给输了比赛。",
+          "「天才」这个标签第一次压住了你。"
+        ],
+        "successNextEventId": "prodigy-coach-grounding",
+        "failureNextEventId": "prodigy-coach-grounding"
+      }
+    }
+  ],
+  "autoEffects": []
+}

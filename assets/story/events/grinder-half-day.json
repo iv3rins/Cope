@@ -1,0 +1,105 @@
+{
+  "id": "grinder-half-day",
+  "title": "半天班",
+  "description": "你的训练计划排满了白天，但房租不会等人。你找了份下午到晚上的便利店班。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-bootcamp"
+    }
+  ],
+  "options": [
+    {
+      "id": "night-shift",
+      "label": "上夜班保训练",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 400
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "白天训练，晚上收银。",
+          "虽然累，但训练时间保住了。"
+        ],
+        "failureMessages": [
+          "夜班让你的生物钟彻底乱了。",
+          "训练赛里你困得看不清准星。"
+        ],
+        "successNextEventId": "grinder-lower-league",
+        "failureNextEventId": "grinder-lower-league"
+      }
+    },
+    {
+      "id": "share-rent",
+      "label": "找人合租省钱",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -200
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你搬进了四人合租的公寓。",
+          "省下的钱换来了训练时间。"
+        ],
+        "failureMessages": [
+          "合租室友打呼噜，你睡眠质量堪忧。",
+          "省了钱，赔了状态。"
+        ],
+        "successNextEventId": "grinder-lower-league",
+        "failureNextEventId": "grinder-lower-league"
+      }
+    }
+  ],
+  "autoEffects": []
+}

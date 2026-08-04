@@ -15,11 +15,33 @@ import type {
 } from './tournament';
 import type { HltvPlayerId, TeamRosterSlot, VrsInviteSnapshot } from './team';
 
+export interface TournamentCalendarAssetEdition {
+  readonly id: string;
+  readonly half: 1 | 2;
+  readonly organizerId: string;
+  readonly city: string;
+  readonly nameTemplate: string;
+  readonly tier: TournamentEdition['tier'];
+  readonly honorClass: TournamentEdition['honorClass'];
+  readonly format: TournamentEdition['format'];
+  readonly prizePool: number;
+  readonly major?: boolean;
+}
+
+export interface TournamentCalendarAsset {
+  readonly schemaVersion: number;
+  readonly organizers: Readonly<Record<string, string>>;
+  readonly editions: readonly TournamentCalendarAssetEdition[];
+}
+
+export type TournamentCalendarReader = () => Promise<TournamentCalendarAsset | null>;
+
 export interface TournamentSimulationDependencies {
   readonly playerId: HltvPlayerId;
   readonly random: RandomSource;
   readonly clock: GameClock;
   readonly facts?: TournamentFactRepository;
+  readonly calendarReader?: TournamentCalendarReader;
 }
 
 /**
@@ -51,8 +73,8 @@ export class TournamentServiceImpl implements TournamentService {
     const upset = this.decideUpset(playerStrength, strongestOpponent.strength, context);
     const won = upset.occurred || playerStrength >= strongestOpponent.strength;
     const placement = won ? 'CHAMPION' : 'RUNNER_UP';
-    const maps = won ? 3 : 2;
-    const performance = this.createPlayerPerformance(maps, playerStrength, strongestOpponent.strength, won);
+    const maps = edition.tier === 'T2' ? (won ? 3 : 2) : (won ? 24 : 20);
+    const performance = this.createPlayerPerformance(maps, playerStrength, strongestOpponent.strength, won, edition.snapshotRank);
 
     return {
       editionId: edition.id,
@@ -104,24 +126,68 @@ export class TournamentServiceImpl implements TournamentService {
   public async createCalendar(input: { readonly season: number; readonly half: 1 | 2; readonly teamId: string; readonly snapshot: VrsInviteSnapshot }): Promise<readonly TournamentEdition[]> {
     const entry = input.snapshot.entries.find((candidate) => candidate.teamId === input.teamId);
     const snapshotRank = entry?.snapshotRank ?? null;
-    const tier = snapshotRank !== null && snapshotRank <= 8 ? 'MAJOR' : snapshotRank !== null && snapshotRank <= 24 ? 'T1' : 'T2';
-    const qualificationSource = snapshotRank !== null && snapshotRank <= 24 ? 'DIRECT_VRS' : 'PUBLIC_QUALIFIER';
-    const seriesId = tier === 'MAJOR' ? 'major' : tier === 'T1' ? 'tier-one' : 'tier-two';
-    const edition: TournamentEdition = {
-      id: `${seriesId}-${input.season}-h${input.half}-${input.teamId}`, city: tier === 'MAJOR' ? (input.half === 1 ? '卡托维兹' : '科隆') : '线上赛区', prizePool: tier === 'MAJOR' ? 1000000 : tier === 'T1' ? 300000 : 100000, format: tier === 'MAJOR' ? 'BO3' : 'BO3',
-      seriesId,
-      name: tier === 'MAJOR' ? `COPE Major ${input.season}` : tier === 'T1' ? `COPE T1 ${input.season} H${input.half}` : `COPE Challenger ${input.season} H${input.half}`,
-      season: input.season, half: input.half, calendarOrder: input.half, tier,
-      honorClass: tier === 'MAJOR' ? 'MAJOR' : tier === 'T1' ? 'ELITE' : 'MEDIUM',
-      node: 'MAIN_EVENT', teamId: input.teamId, qualificationSource,
-      vrsSnapshotId: input.snapshot.id, snapshotRank, rosterLockCareerHalf: input.half, targetEditionId: null,
+    const teamTier = snapshotRank !== null && snapshotRank <= 32 ? 'T1' : snapshotRank !== null && snapshotRank <= 120 ? 'T2' : 'T3';
+    const asset = await this.dependencies.calendarReader?.() ?? null;
+    if (!asset || (asset.schemaVersion !== 1 && asset.schemaVersion !== 2) || asset.editions.length === 0) return this.createFallbackCalendar(input, snapshotRank);
+
+    return asset.editions
+      .filter((candidate) => candidate.half === input.half)
+      .filter((candidate) => teamTier === 'T1' ? candidate.tier === 'T1' || candidate.tier === 'MAJOR' : candidate.tier === 'T2' || candidate.tier === 'T1')
+      .filter((candidate) => !candidate.major || (snapshotRank !== null && snapshotRank >= 1 && snapshotRank <= 32))
+      .map((candidate, index) => {
+        const organizer = asset.organizers[candidate.organizerId] ?? candidate.organizerId;
+        const isMajor = candidate.tier === 'MAJOR';
+        const direct = teamTier === 'T1' && snapshotRank !== null && snapshotRank >= 1 && (isMajor ? snapshotRank <= 32 : snapshotRank <= 20);
+        const qualificationSource = direct ? 'DIRECT_VRS' : isMajor ? 'OPEN_ENTRY' : candidate.tier === 'T1' ? 'PUBLIC_QUALIFIER' : 'OPEN_ENTRY';
+        const qualificationStatus = direct ? 'DIRECT' : qualificationSource === 'PUBLIC_QUALIFIER' ? 'QUALIFIER_PENDING' : 'QUALIFIED';
+        return {
+          id: `${candidate.id}-${input.season}-h${input.half}-${input.teamId}`,
+          seriesId: candidate.id,
+          name: candidate.nameTemplate.replace('{organizer}', organizer).replace('{city}', candidate.city).replace('{year}', String(input.season)),
+          season: input.season,
+          half: input.half,
+          calendarOrder: index + 1,
+          tier: candidate.tier,
+          honorClass: candidate.honorClass,
+          node: teamTier === 'T1' || candidate.tier === 'T2' ? 'MAIN_EVENT' : candidate.tier === 'T1' ? 'QUALIFIER' : 'MAIN_EVENT',
+          teamId: input.teamId,
+          qualificationSource,
+          qualificationStatus,
+          vrsSnapshotId: input.snapshot.id,
+          snapshotRank,
+          rosterLockCareerHalf: input.half,
+          targetEditionId: null,
+          city: candidate.city,
+          prizePool: candidate.prizePool,
+          format: candidate.format ?? 'BO3',
+        } satisfies TournamentEdition;
+      });
+  }
+
+  private createFallbackCalendar(input: { readonly season: number; readonly half: 1 | 2; readonly teamId: string; readonly snapshot: VrsInviteSnapshot }, snapshotRank: number | null): readonly TournamentEdition[] {
+    const direct = snapshotRank !== null && snapshotRank >= 1 && snapshotRank <= 32;
+    const id = `fallback-${input.season}-h${input.half}-${input.teamId}`;
+    const rows: TournamentEdition[] = [];
+    const add = (suffix: string, name: string, tier: TournamentEdition['tier'], honorClass: TournamentEdition['honorClass'], source: TournamentEdition['qualificationSource'], status: NonNullable<TournamentEdition['qualificationStatus']>) => {
+      rows.push({ id: `${id}-${suffix}`, seriesId: `fallback-${suffix}`, name, season: input.season, half: input.half, calendarOrder: rows.length + 1, tier, honorClass, node: 'MAIN_EVENT', teamId: input.teamId, qualificationSource: source, qualificationStatus: status, vrsSnapshotId: input.snapshot.id, snapshotRank, rosterLockCareerHalf: input.half, targetEditionId: null, format: 'BO3' });
     };
-    return [edition];
+    add('t2-1', `区域挑战赛 ${input.season}`, 'T2', 'MEDIUM', 'OPEN_ENTRY', 'QUALIFIED');
+    add('t2-2', `CCT 挑战赛 ${input.season}`, 'T2', 'MEDIUM', 'OPEN_ENTRY', 'QUALIFIED');
+    add('t1-qualifier', `PGL 公开预选 ${input.season}`, 'T1', 'LARGE', direct ? 'DIRECT_VRS' : 'PUBLIC_QUALIFIER', direct ? 'DIRECT' : 'QUALIFIER_PENDING');
+    add('t2-3', `地区杯赛 ${input.season}`, 'T2', 'MEDIUM', 'OPEN_ENTRY', 'QUALIFIED');
+    add('t2-4', `线上挑战赛 ${input.season}`, 'T2', 'MEDIUM', 'OPEN_ENTRY', 'QUALIFIED');
+    if (direct) add('major', `ESL ${input.half === 1 ? '卡托维兹' : '布达佩斯'} Major ${input.season}`, 'MAJOR', 'MAJOR', 'DIRECT_VRS', 'DIRECT');
+    return rows;
   }
 
   public async decideQualification(input: { readonly edition: TournamentEdition; readonly snapshot: VrsInviteSnapshot; readonly roll: number }): Promise<QualificationDecision> {
     this.assertRoll(input.roll, 'roll');
     const rank = input.snapshot.entries.find((entry) => entry.teamId === input.edition.teamId)?.snapshotRank;
+    const isMajor = input.edition.tier === 'MAJOR';
+    const withinMajorVrs = rank !== undefined && rank >= 1 && rank <= 32;
+    if (isMajor && !withinMajorVrs) {
+      return { editionId: input.edition.id, teamId: input.edition.teamId, qualified: false, source: input.edition.qualificationSource, chance: 0, roll: input.roll, reasons: { snapshotRank: rank ?? 'UNRANKED', majorVrsLimit: 32, qualificationStatus: input.edition.qualificationStatus ?? 'QUALIFIER_PENDING' } };
+    }
     const chance = rank !== undefined ? this.clamp(0.9 - Math.max(0, rank - 8) * 0.025, 0.15, 0.9) : 0.35;
     const qualified = input.edition.qualificationSource === 'DIRECT_VRS' || input.roll < chance;
     return { editionId: input.edition.id, teamId: input.edition.teamId, qualified, source: input.edition.qualificationSource, chance, roll: input.roll, reasons: { snapshotRank: rank ?? 'UNRANKED', qualificationChance: chance } };
@@ -163,14 +229,19 @@ export class TournamentServiceImpl implements TournamentService {
       .reduce((value, item) => value + (Number.isFinite(item.delta) ? item.delta ?? 0 : 0), base);
   }
 
-  private createPlayerPerformance(maps: number, playerStrength: number, opponentStrength: number, won: boolean): TournamentPlayerPerformance {
+  private createPlayerPerformance(maps: number, playerStrength: number, opponentStrength: number, won: boolean, snapshotRank: number | null): TournamentPlayerPerformance {
     const normal = this.normalSample();
     const advantage = this.clamp((playerStrength - opponentStrength) / 100, -0.4, 0.4);
     const rating = this.clamp(1.02 + advantage * 0.3 + normal * 0.13 + (won ? 0.05 : -0.04), 0.3, 2.5);
     const kills = Math.max(0, Math.round(maps * 20 * (0.7 + rating * 0.3) + this.normalSample() * 4));
     const deaths = Math.max(0, Math.round(maps * 18 * (1.35 - rating * 0.3) + this.normalSample() * 3));
     const assists = Math.max(0, Math.round(maps * 5 + this.normalSample() * 2));
-    const playoffMaps = maps;
+    const playoffMaps = Math.max(0, Math.round(maps * 0.45));
+    const playoffRating = rating + (this.nextRoll() * 0.12 - 0.06);
+    const finalMaps = won ? Math.max(1, Math.round(maps * 0.2)) : 0;
+    const finalRating = finalMaps > 0 ? rating + (this.nextRoll() * 0.1 - 0.05) : null;
+    const top5Maps = snapshotRank !== null && snapshotRank <= 20 ? Math.max(0, Math.round(maps * 0.45)) : Math.max(0, Math.round(maps * 0.25));
+    const top5Rating = top5Maps > 0 ? rating + (this.nextRoll() * 0.1 - 0.05) : rating;
     return {
       playerId: this.dependencies.playerId,
       maps,
@@ -185,11 +256,11 @@ export class TournamentServiceImpl implements TournamentService {
       firstDeaths: Math.max(0, Math.round(maps * 4 + this.normalSample() * 2)),
       clutchesWon: Math.max(0, Math.round(maps + this.normalSample() * 1.5)),
       playoffMaps,
-      playoffRating: rating,
-      top5Maps: maps,
-      top5Rating: rating,
-      finalMaps: maps,
-      finalRating: rating,
+      playoffRating,
+      top5Maps,
+      top5Rating,
+      finalMaps,
+      finalRating,
       honor: won && rating >= 1.15 ? 'MVP' : null,
     };
   }

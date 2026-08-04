@@ -1,0 +1,110 @@
+{
+  "id": "rookie-humbling-loss",
+  "title": "被暴打一课",
+  "description": "正式比赛里遇到那支 Top10 队伍，你们 0:2 干净利落地输了。赛后数据惨不忍睹。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-scrim-strong"
+    }
+  ],
+  "options": [
+    {
+      "id": "review-everything",
+      "label": "通宵复盘",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你把自己的每个失误都标了出来。",
+          "第二天你把复盘笔记交给了教练。"
+        ],
+        "failureMessages": [
+          "复盘到凌晨三点，你睡着在键盘上。",
+          "笔记半途而废。"
+        ],
+        "successNextEventId": "rookie-breakthrough",
+        "failureNextEventId": "rookie-breakthrough"
+      }
+    },
+    {
+      "id": "move-on",
+      "label": "翻篇，下一场再来",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你选择把这场忘掉。",
+          "心态稳了，但有些问题也没来得及总结。"
+        ],
+        "failureMessages": [
+          "嘴上说翻篇，脑子里全是那场比赛。",
+          "训练时你频繁走神。"
+        ],
+        "successNextEventId": "rookie-breakthrough",
+        "failureNextEventId": "rookie-breakthrough"
+      }
+    }
+  ],
+  "autoEffects": []
+}

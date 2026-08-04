@@ -1,0 +1,95 @@
+{
+  "id": "comeback-mental-shadow",
+  "title": "心理阴影",
+  "description": "身体恢复了大半，但心理还没跟上。每次发力，你都本能地护住伤处。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-physio-battle"
+    }
+  ],
+  "options": [
+    {
+      "id": "shadow-boxing",
+      "label": "直面恐惧",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你开始做受伤动作的模拟练习。",
+          "第一次做的时候手在抖，第十次就稳了。"
+        ],
+        "failureMessages": [
+          "你越想克服越害怕。",
+          "心理医生建议你慢慢来。"
+        ],
+        "successNextEventId": "comeback-first-scrim",
+        "failureNextEventId": "comeback-first-scrim"
+      }
+    },
+    {
+      "id": "avoid-trigger",
+      "label": "暂时避开",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你暂时避开高强度对抗。",
+          "心理负担小了些，但你心里清楚躲不过。"
+        ],
+        "failureMessages": [
+          "避开变成习惯，你越来越不敢发力。",
+          "这比伤病本身更可怕。"
+        ],
+        "successNextEventId": "comeback-first-scrim",
+        "failureNextEventId": "comeback-first-scrim"
+      }
+    }
+  ],
+  "autoEffects": []
+}

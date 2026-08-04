@@ -1,0 +1,123 @@
+{
+  "id": "grinder-captain-role",
+  "title": "队长之位",
+  "description": "队长转会了。俱乐部问了一圈，最后把目光停在你身上。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-team-drama"
+    }
+  ],
+  "options": [
+    {
+      "id": "take-armband2",
+      "label": "接过队长袖标",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "ROLE_CHANGE",
+            "role": "IGL"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "TEAM_CAPTAIN",
+            "flag": {
+              "id": "TEAM_CAPTAIN",
+              "name": "队长",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你成了这支队伍的队长。",
+          "从一个低级联赛的替补，到顶级联赛的队长。"
+        ],
+        "failureMessages": [
+          "队长责任让你分心，状态下滑。",
+          "你撑了半个赛季就交了出去。"
+        ],
+        "successNextEventId": "grinder-leadership-chance",
+        "failureNextEventId": "grinder-leadership-chance"
+      }
+    },
+    {
+      "id": "decline-armband",
+      "label": "让贤",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你推荐了更年轻的指挥苗子。",
+          "他干得不错，你专注自己的比赛。"
+        ],
+        "failureMessages": [
+          "让贤之后，队内觉得你没担当。",
+          "你的话语权悄悄变弱了。"
+        ],
+        "successNextEventId": "grinder-leadership-chance",
+        "failureNextEventId": "grinder-leadership-chance"
+      }
+    }
+  ],
+  "autoEffects": []
+}

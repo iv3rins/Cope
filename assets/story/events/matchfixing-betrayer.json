@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-betrayer",
+  "title": "被出卖",
+  "description": "你自认保密周全，但消息还是走漏了。出卖你的人，是你觉得最不可能的那个。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-destroy-evidence"
+    }
+  ],
+  "options": [
+    {
+      "id": "confront-traitor",
+      "label": "当面质问",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你找到他，他不敢看你。",
+          "他说：他们也有我的把柄。"
+        ],
+        "failureMessages": [
+          "他对质时反咬一口。",
+          "你被倒打一耙。"
+        ],
+        "successNextEventId": "matchfixing-hearing",
+        "failureNextEventId": "matchfixing-hearing"
+      }
+    },
+    {
+      "id": "cut-loose",
+      "label": "切断联系",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你不质问，直接切断一切往来。",
+          "但你知道，他出卖你的信息已经传出去了。"
+        ],
+        "failureMessages": [
+          "切断联系也堵不住消息。",
+          "你只能等事情自己发酵。"
+        ],
+        "successNextEventId": "matchfixing-hearing",
+        "failureNextEventId": "matchfixing-hearing"
+      }
+    }
+  ],
+  "autoEffects": []
+}

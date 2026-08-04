@@ -1,0 +1,114 @@
+{
+  "id": "grinder-health-call",
+  "title": "健康抉择",
+  "description": "体检报告显示你的颈椎和腰椎都有劳损。医生建议减少训练时长。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-injury-poverty"
+    }
+  ],
+  "options": [
+    {
+      "id": "listen-doctor",
+      "label": "听医生的",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你开始规律拉伸，减了加练时长。",
+          "身体稳住了，训练效率反而高了。"
+        ],
+        "failureMessages": [
+          "你听医生的话，但总怕训练量不够。",
+          "你在「听劝」和「不甘心」之间拉扯。"
+        ],
+        "successNextEventId": "grinder-big-match",
+        "failureNextEventId": "grinder-big-match"
+      }
+    },
+    {
+      "id": "play-through",
+      "label": "坚持高强度",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "BODY_ALARM",
+            "flag": {
+              "id": "BODY_ALARM",
+              "name": "身体警报",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你咬牙维持高强度训练。",
+          "短期内状态不错，但你知道这是透支。"
+        ],
+        "failureMessages": [
+          "你的腰在训练中突然疼得直不起来。",
+          "队医强制你休息两周。"
+        ],
+        "successNextEventId": "grinder-big-match",
+        "failureNextEventId": "grinder-big-match"
+      }
+    }
+  ],
+  "autoEffects": []
+}

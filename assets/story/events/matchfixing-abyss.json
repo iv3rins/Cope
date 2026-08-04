@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-abyss",
+  "title": "深渊边缘",
+  "description": "有个人深夜找到你，说他知道你「碰过钱」那次的事。他要的不是钱，是「合作」。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-transfer-rehab"
+    }
+  ],
+  "options": [
+    {
+      "id": "lawyer-up2",
+      "label": "直接找律师",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -1500
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "律师给他发了警告函。",
+          "他从此再没出现过。"
+        ],
+        "failureMessages": [
+          "你犹豫要不要找律师，怕事情闹大。",
+          "他趁你犹豫，加码了。"
+        ],
+        "successNextEventId": "matchfixing-double-life",
+        "failureNextEventId": "matchfixing-double-life"
+      }
+    },
+    {
+      "id": "face-him",
+      "label": "当面拒绝",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          }
+        ],
+        "successMessages": [
+          "你当面说：我死过一次了，不介意再死一次。",
+          "他愣了。"
+        ],
+        "failureMessages": [
+          "你的强硬激怒了他。",
+          "他开始散布新的谣言。"
+        ],
+        "successNextEventId": "matchfixing-double-life",
+        "failureNextEventId": "matchfixing-double-life"
+      }
+    }
+  ],
+  "autoEffects": []
+}

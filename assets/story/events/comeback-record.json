@@ -1,0 +1,100 @@
+{
+  "id": "comeback-record",
+  "title": "纪录之夜",
+  "description": "你在接下来的比赛里打破了「复出选手最长连胜纪录」。官方发来祝贺。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-champion-return"
+    }
+  ],
+  "options": [
+    {
+      "id": "record-honor",
+      "label": "接受这份荣誉",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "EVP",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你的名字被写进纪录页。",
+          "「复出传奇」开始成为你的标签。"
+        ],
+        "failureMessages": [
+          "纪录成了包袱，你开始害怕输。",
+          "连胜的压力比你想象得大。"
+        ],
+        "successNextEventId": "comeback-injury-crisis",
+        "failureNextEventId": "comeback-injury-crisis"
+      }
+    },
+    {
+      "id": "shrug-record",
+      "label": "不当回事",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你说纪录只是数字。",
+          "这份松弛让你的状态更加稳定。"
+        ],
+        "failureMessages": [
+          "不当回事被媒体写成「傲慢」。",
+          "你懒得解释。"
+        ],
+        "successNextEventId": "comeback-injury-crisis",
+        "failureNextEventId": "comeback-injury-crisis"
+      }
+    }
+  ],
+  "autoEffects": []
+}

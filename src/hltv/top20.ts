@@ -8,6 +8,7 @@ export interface Top20PlayerIdentity {
   readonly countryCode: string;
   readonly teamName: string;
   readonly careerPlayer: boolean;
+  readonly source?: 'REAL' | 'VIRTUAL' | 'CAREER';
 }
 
 export interface Top20HonorEvidence {
@@ -61,6 +62,16 @@ export interface Top20Metrics {
   readonly honorsScore: number;
   readonly panelScore: number;
   readonly aps: number;
+  readonly eliteMvpBonus: number;
+  readonly pressureBonus: number;
+  readonly disasterPenalty: number;
+  readonly mvp: number;
+  readonly evp: number;
+  readonly vp: number;
+  readonly highMvpEvp: number;
+  readonly highEvp: number;
+  readonly majorSuperEliteEvp: number;
+  readonly hasTopMvp: boolean;
 }
 
 export interface Top20Candidate {
@@ -71,6 +82,8 @@ export interface Top20Candidate {
 
 export interface Top20RankedEntry extends Top20Candidate {
   readonly rank: number;
+  /** true when the candidate filled a slot without meeting that slot's threshold. */
+  readonly thresholdFallback: boolean;
 }
 
 export interface Top20Ranking {
@@ -78,6 +91,19 @@ export interface Top20Ranking {
   readonly rulesVersion: string;
   readonly entries: readonly Top20RankedEntry[];
   readonly careerPlayerRank: number | null;
+}
+
+/** Static identity used to construct annual NPC evidence. */
+export interface Top20IdentityRecord {
+  readonly playerId: HltvPlayerId;
+  readonly nickname: string;
+  readonly realName?: string;
+  readonly countryCode: string;
+  readonly placement?: number;
+  readonly teamName?: string;
+  readonly teamId?: string;
+  readonly teamTier?: 'T1' | 'T2' | 'T3';
+  readonly source: 'REAL' | 'VIRTUAL';
 }
 
 /** 将赛事事实转换为 TOP20 证据的只读投影。 */

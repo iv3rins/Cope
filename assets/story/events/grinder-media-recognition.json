@@ -1,0 +1,95 @@
+{
+  "id": "grinder-media-recognition",
+  "title": "媒体关注",
+  "description": "一篇题为「从网吧到顶级联赛」的报道让你出了圈。评论区吵翻了：有夸的，有说炒作的。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-national-tour"
+    }
+  ],
+  "options": [
+    {
+      "id": "ride-media",
+      "label": "接受更多采访",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 1000
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "采访邀请越来越多，你讲的故事越来越完整。",
+          "品牌方也开始找你。"
+        ],
+        "failureMessages": [
+          "采访中你的一句话被断章取义。",
+          "舆论开始翻你的旧账。"
+        ],
+        "successNextEventId": "grinder-family-pride",
+        "failureNextEventId": "grinder-family-pride"
+      }
+    },
+    {
+      "id": "keep-head-down",
+      "label": "低调回应",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你只回了句「谢谢，继续努力」。",
+          "热度过去得很快，生活恢复平静。"
+        ],
+        "failureMessages": [
+          "低调被解读成傲慢。",
+          "「红了就飘」的帽子扣了上来。"
+        ],
+        "successNextEventId": "grinder-family-pride",
+        "failureNextEventId": "grinder-family-pride"
+      }
+    }
+  ],
+  "autoEffects": []
+}

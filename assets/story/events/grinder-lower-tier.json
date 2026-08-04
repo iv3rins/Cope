@@ -6,7 +6,10 @@
   "type": "CHOICE",
   "period": "TRANSFER_WINDOW",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "grinder-parttime-dilemma" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-parttime-dilemma"
+    }
   ],
   "options": [
     {
@@ -19,12 +22,31 @@
       },
       "outcome": {
         "successEffects": [
-          { "type": "TEAM_TRANSFER", "teamId": "lower-tier-1" },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 8 },
-          { "type": "FLAG_ADD", "flagId": "JOINED_LOWER_TIER", "flag": { "id": "JOINED_LOWER_TIER", "name": "加入底层战队", "category": "CAREER" } }
+          {
+            "type": "TEAM_TRANSFER",
+            "teamId": "mibracademy"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "JOINED_LOWER_TIER",
+            "flag": {
+              "id": "JOINED_LOWER_TIER",
+              "name": "加入底层战队",
+              "category": "CAREER"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
         ],
         "successNextEventId": "grinder-make-or-break"
       }
@@ -36,20 +58,38 @@
       "successChance": {
         "baseChance": 0.3,
         "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.005 }
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.005
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "ATTRIBUTE_CHANGE", "attribute": "CONSISTENCY", "delta": 3 }
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 15 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -10 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          }
         ],
         "successNextEventId": "grinder-make-or-break"
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
 }

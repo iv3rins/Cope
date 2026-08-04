@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-destroy-evidence",
+  "title": "销毁证据",
+  "description": "对方发现你在收集证据，托人传话：「把东西删了，对大家都好。」",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-leak-proof"
+    }
+  ],
+  "options": [
+    {
+      "id": "keep-proof",
+      "label": "拒不删除",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你没有删。",
+          "那句「对大家都好」，恰恰说明他们怕了。"
+        ],
+        "failureMessages": [
+          "你嘴上说不删，夜里还是把备份挪了位置。",
+          "你怕了，但没打算低头。"
+        ],
+        "successNextEventId": "matchfixing-betrayer",
+        "failureNextEventId": "matchfixing-betrayer"
+      }
+    },
+    {
+      "id": "delete-part",
+      "label": "删掉一部分",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          }
+        ],
+        "successMessages": [
+          "你删掉了一些「没那么关键」的记录。",
+          "后来你才知道，删掉的正是关键证据。"
+        ],
+        "failureMessages": [
+          "你删了，但对方根本不知道你删了。",
+          "你白害怕了一场，还损失了证据。"
+        ],
+        "successNextEventId": "matchfixing-betrayer",
+        "failureNextEventId": "matchfixing-betrayer"
+      }
+    }
+  ],
+  "autoEffects": []
+}

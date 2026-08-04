@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "source": "2026 realistic CS2 competition calendar reference",
+  "organizers": {"esl":"ESL","blast":"BLAST","pgl":"PGL","perfect-world":"完美世界电竞","cct":"CCT","starladder":"StarLadder","ewc":"EWC","galaxy":"Galaxy"},
+  "editions": [
+    {"id":"blast-bounty-s1","half":1,"organizerId":"blast","city":"线上赛区","nameTemplate":"BLAST 赏金赛 S1 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":500000,"major":false},
+    {"id":"pgl-bucharest","half":1,"organizerId":"pgl","city":"布加勒斯特","nameTemplate":"PGL 布加勒斯特 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":500000,"major":false},
+    {"id":"iem-katowice","half":1,"organizerId":"esl","city":"卡托维兹","nameTemplate":"IEM 卡托维兹 {year}","tier":"T1","honorClass":"SUPER_ELITE","format":"BO3","prizePool":1000000,"major":false},
+    {"id":"pgl-cluj","half":1,"organizerId":"pgl","city":"克鲁日那波卡","nameTemplate":"PGL 克鲁日那波卡 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":400000,"major":false},
+    {"id":"epl-s25","half":1,"organizerId":"esl","city":"马耳他","nameTemplate":"EPL S25 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":400000,"major":false},
+    {"id":"blast-open-lisbon","half":1,"organizerId":"blast","city":"里斯本","nameTemplate":"BLAST 里斯本公开赛 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":400000,"major":false},
+    {"id":"pgl-lodz","half":1,"organizerId":"pgl","city":"罗兹","nameTemplate":"PGL 罗兹 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":400000,"major":false},
+    {"id":"iem-chengdu","half":1,"organizerId":"esl","city":"成都","nameTemplate":"IEM 成都 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":250000,"major":false},
+    {"id":"iem-dallas","half":1,"organizerId":"esl","city":"达拉斯","nameTemplate":"IEM 达拉斯 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":250000,"major":false},
+    {"id":"major-h1","half":1,"organizerId":"pgl","city":"Major 主办城市","nameTemplate":"Major {year}","tier":"MAJOR","honorClass":"MAJOR","format":"BO3","prizePool":1250000,"major":true},
+    {"id":"cct-intercontinental-h1","half":1,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 洲际决赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false},
+    {"id":"cct-global-h1","half":1,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 全球总决赛 {year}","tier":"T2","honorClass":"ELITE","format":"BO3","prizePool":200000,"major":false},
+    {"id":"blast-bounty-s2","half":2,"organizerId":"blast","city":"线上赛区","nameTemplate":"BLAST 赏金赛 S2 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":500000,"major":false},
+    {"id":"ewc","half":2,"organizerId":"ewc","city":"利雅得","nameTemplate":"EWC 电竞世界杯 {year}","tier":"T1","honorClass":"SUPER_ELITE","format":"BO3","prizePool":1000000,"major":false},
+    {"id":"epl-s26","half":2,"organizerId":"esl","city":"马耳他","nameTemplate":"EPL S26 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":400000,"major":false},
+    {"id":"blast-rivals","half":2,"organizerId":"blast","city":"哥本哈根","nameTemplate":"BLAST 竞争者赛 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":350000,"major":false},
+    {"id":"starladder-fall","half":2,"organizerId":"starladder","city":"秋季总决赛","nameTemplate":"StarLadder 秋季总决赛 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":500000,"major":false},
+    {"id":"perfect-world-cac","half":2,"organizerId":"perfect-world","city":"上海","nameTemplate":"完美世界 CAC {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":300000,"major":false},
+    {"id":"blast-open-porto","half":2,"organizerId":"blast","city":"波多","nameTemplate":"BLAST 波多公开赛 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":400000,"major":false},
+    {"id":"iem-cologne","half":2,"organizerId":"esl","city":"科隆","nameTemplate":"IEM 科隆 {year}","tier":"T1","honorClass":"SUPER_ELITE","format":"BO3","prizePool":1000000,"major":false},
+    {"id":"major-h2","half":2,"organizerId":"pgl","city":"Major 主办城市","nameTemplate":"Major {year}","tier":"MAJOR","honorClass":"MAJOR","format":"BO3","prizePool":1250000,"major":true},
+    {"id":"galaxy-war","half":2,"organizerId":"galaxy","city":"线上赛区","nameTemplate":"Galaxy 战争赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false},
+    {"id":"cct-fall-finals","half":2,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 秋季决赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false},
+    {"id":"cct-finals","half":2,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 总决赛 {year}","tier":"T2","honorClass":"ELITE","format":"BO3","prizePool":200000,"major":false}
+  ]
+}

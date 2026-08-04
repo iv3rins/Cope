@@ -4,7 +4,7 @@ import type { PlayerProfile } from './profile';
 
 /** 选手合同是 Engine 聚合，避免将生涯人事规则泄漏到 HLTV 赛事模块。 */
 export type PlayerContractStatus = 'ACTIVE' | 'TERMINATED' | 'EXPIRED';
-export type ContractTerminationReason = 'EVENT_DECISION' | 'ATTRIBUTE_THRESHOLD' | 'TEAM_DECISION' | 'MUTUAL_AGREEMENT' | 'EXPIRED';
+export type ContractTerminationReason = 'EVENT_DECISION' | 'ATTRIBUTE_THRESHOLD' | 'TEAM_DECISION' | 'MUTUAL_AGREEMENT' | 'EXPIRED' | 'NON_RENEWAL' | 'TEAM_REBUILD' | 'NO_ROSTER_SPACE' | 'BUYOUT_FAILED' | 'FORCED_RELEASE';
 export type ContractLifecycleOperation = 'SIGN' | 'RENEW' | 'TRANSFER' | 'BUYOUT' | 'TERMINATE';
 
 export interface PlayerContract {
@@ -38,7 +38,7 @@ export interface ContractTermination {
 export interface ForceContractTerminationEffect {
   readonly type: 'FORCE_CONTRACT_TERMINATION';
   readonly requirements: readonly EventCondition[];
-  readonly reason: Extract<ContractTerminationReason, 'EVENT_DECISION' | 'ATTRIBUTE_THRESHOLD' | 'TEAM_DECISION'>;
+  readonly reason: Extract<ContractTerminationReason, 'EVENT_DECISION' | 'ATTRIBUTE_THRESHOLD' | 'TEAM_DECISION' | 'MUTUAL_AGREEMENT'>;
   readonly note: string;
 }
 

@@ -1,0 +1,95 @@
+{
+  "id": "comeback-champion-return",
+  "title": "冠军回归",
+  "description": "复出后的第一个冠军到手。媒体把你写成了「体育精神」的代名词。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-final-return"
+    }
+  ],
+  "options": [
+    {
+      "id": "enjoy-light",
+      "label": "享受聚光灯",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你接受了所有采访，讲了 400 天的故事。",
+          "故事讲多了，你开始分不清真实和叙事。"
+        ],
+        "failureMessages": [
+          "聚光灯让你有点晕。",
+          "「英雄叙事」的重压让你疲惫。"
+        ],
+        "successNextEventId": "comeback-record",
+        "failureNextEventId": "comeback-record"
+      }
+    },
+    {
+      "id": "grounded-celebrate",
+      "label": "庆祝但保持清醒",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你和队友吃了个饭，没有大肆庆祝。",
+          "你知道，赛季还没结束。"
+        ],
+        "failureMessages": [
+          "太清醒让队友觉得你「扫兴」。",
+          "但你清楚自己在做什么。"
+        ],
+        "successNextEventId": "comeback-record",
+        "failureNextEventId": "comeback-record"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,105 @@
+{
+  "id": "grinder-retire-thought",
+  "title": "退役念头",
+  "description": "深夜训练结束后，你盯着天花板想：要不，打完今年就退了吧。这个念头一冒出来就甩不掉。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-midlife-crisis"
+    }
+  ],
+  "options": [
+    {
+      "id": "finish-season",
+      "label": "打完这赛季再说",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你决定把念头按下，先打完这个赛季。",
+          "有了期限，比赛反而打得更纯粹。"
+        ],
+        "failureMessages": [
+          "「最后一季」的心态让你患得患失。",
+          "每场比赛都像在倒计时。"
+        ],
+        "successNextEventId": "grinder-last-shot",
+        "failureNextEventId": "grinder-last-shot"
+      }
+    },
+    {
+      "id": "push-harder",
+      "label": "再拼一年",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "你决定不退了，再拼一年。",
+          "这个决定让你训练得更认真。"
+        ],
+        "failureMessages": [
+          "想拼的心很热，身体却跟不上。",
+          "你第一次感觉自己在和年龄赛跑。"
+        ],
+        "successNextEventId": "grinder-last-shot",
+        "failureNextEventId": "grinder-last-shot"
+      }
+    }
+  ],
+  "autoEffects": []
+}

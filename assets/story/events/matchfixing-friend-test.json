@@ -1,0 +1,99 @@
+{
+  "id": "matchfixing-friend-test",
+  "title": "朋友考验",
+  "description": "平时称兄道弟的人大多消失了。只剩一个老友，照常约你吃饭。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-fan-exit"
+    }
+  ],
+  "options": [
+    {
+      "id": "go-dinner",
+      "label": "赴约",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "TRUE_FRIEND",
+            "flag": {
+              "id": "TRUE_FRIEND",
+              "name": "真朋友",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "饭桌上他没提那件事。",
+          "只说：最近瘦了，多吃点。"
+        ],
+        "failureMessages": [
+          "你不敢赴约，怕连累朋友。",
+          "但他没放弃，又约了两次。"
+        ],
+        "successNextEventId": "matchfixing-real-friends",
+        "failureNextEventId": "matchfixing-real-friends"
+      }
+    },
+    {
+      "id": "ask-him",
+      "label": "问他为什么还信我",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "他说：我认识你八年了。",
+          "这一句话比所有证据都管用。"
+        ],
+        "failureMessages": [
+          "你问了，他答了，但你还在怀疑。",
+          "那顿饭吃得有点累。"
+        ],
+        "successNextEventId": "matchfixing-real-friends",
+        "failureNextEventId": "matchfixing-real-friends"
+      }
+    }
+  ],
+  "autoEffects": []
+}

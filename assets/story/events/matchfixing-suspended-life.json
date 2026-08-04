@@ -1,0 +1,115 @@
+{
+  "id": "matchfixing-suspended-life",
+  "title": "禁赛岁月",
+  "description": "禁赛期开始了。你不能打比赛，不能直播游戏，只能看着别人打。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-real-friends"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "FLAG",
+          "flagId": "SILENT",
+          "expected": true
+        },
+        {
+          "type": "FLAG",
+          "flagId": "UNDER_SUSPICION",
+          "expected": true
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "find-work",
+      "label": "找份工作",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 800
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你找了份电竞培训的兼职。",
+          "教小孩子打游戏，让你找回了一点价值。"
+        ],
+        "failureMessages": [
+          "你不想去上班，把自己关在屋里。",
+          "日子一天天过去，你越来越像行尸走肉。"
+        ],
+        "successNextEventId": "matchfixing-side-job",
+        "failureNextEventId": "matchfixing-side-job"
+      }
+    },
+    {
+      "id": "train-hidden",
+      "label": "偷偷保持手感",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你用朋友账号保持训练。",
+          "手感没丢，但心里总觉得亏欠。"
+        ],
+        "failureMessages": [
+          "偷偷训练被发现了。",
+          "处罚加重，你的禁赛期更长。"
+        ],
+        "successNextEventId": "matchfixing-side-job",
+        "failureNextEventId": "matchfixing-side-job"
+      }
+    }
+  ],
+  "autoEffects": []
+}

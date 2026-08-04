@@ -1,0 +1,100 @@
+{
+  "id": "grinder-first-salary",
+  "title": "第一笔工资",
+  "description": "月底，2000 块到账。你盯着短信看了很久，这是你打职业以来的第一笔固定收入。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-contract-risky"
+    }
+  ],
+  "options": [
+    {
+      "id": "send-home",
+      "label": "给家里寄一部分",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -500
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "你给妈妈转了 500。",
+          "她没说什么，但你听得出她高兴。"
+        ],
+        "failureMessages": [
+          "转账后你的余额只剩三位数。",
+          "但心里的石头放下了一块。"
+        ],
+        "successNextEventId": "grinder-gift-parents",
+        "failureNextEventId": "grinder-gift-parents"
+      }
+    },
+    {
+      "id": "save-all",
+      "label": "全部存起来",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 2000
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你把钱存进了定期。",
+          "看着数字上涨，你有了安全感。"
+        ],
+        "failureMessages": [
+          "存钱存出了抠门的名声。",
+          "队友聚餐你总找理由推掉。"
+        ],
+        "successNextEventId": "grinder-gift-parents",
+        "failureNextEventId": "grinder-gift-parents"
+      }
+    }
+  ],
+  "autoEffects": []
+}

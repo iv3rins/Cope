@@ -1,0 +1,109 @@
+{
+  "id": "rookie-pro-contract",
+  "title": "职业合同",
+  "description": "正式合同摆在你面前。签字意味着你从青训选手变成职业选手，也意味着更多的责任。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-transfer-rumor"
+    }
+  ],
+  "options": [
+    {
+      "id": "sign-it",
+      "label": "签字",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 2000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "PRO_PLAYER",
+            "flag": {
+              "id": "PRO_PLAYER",
+              "name": "职业选手",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "笔落下的时候，你的手是稳的。",
+          "经纪人发来一句：欢迎入行。"
+        ],
+        "failureMessages": [
+          "你签了，但条款里有些字你看得不够细。",
+          "晚上你翻合同翻到凌晨。"
+        ],
+        "successNextEventId": "rookie-first-pro-win",
+        "failureNextEventId": "rookie-first-pro-win"
+      }
+    },
+    {
+      "id": "negotiate",
+      "label": "再谈一轮",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 2800
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你提了一个数字，对面居然松口了。",
+          "你第一次意识到谈判也是技术活。"
+        ],
+        "failureMessages": [
+          "谈判僵住了一周，差点黄了。",
+          "最后还是签了，但彼此都留了点疙瘩。"
+        ],
+        "successNextEventId": "rookie-first-pro-win",
+        "failureNextEventId": "rookie-first-pro-win"
+      }
+    }
+  ],
+  "autoEffects": []
+}

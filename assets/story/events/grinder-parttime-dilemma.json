@@ -6,7 +6,10 @@
   "type": "CHOICE",
   "period": "NORMAL",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "grinder-faceit-grind" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-faceit-grind"
+    }
   ],
   "options": [
     {
@@ -19,40 +22,84 @@
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 1500 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": -10 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": 1500
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 800 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": -15 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": 800
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          }
         ],
-        "successNextEventId": "grinder-lower-tier"
+        "successNextEventId": "grinder-bootcamp",
+        "failureNextEventId": "grinder-bootcamp"
       }
     },
     {
       "id": "bet-on-yourself",
       "label": "拒绝兼职，把时间全押在训练上",
       "requirements": [
-        { "type": "PLAYER_STAT", "stat": "BALANCE", "minimum": 500 }
+        {
+          "type": "PLAYER_STAT",
+          "stat": "BALANCE",
+          "minimum": 500
+        }
       ],
       "successChance": {
         "baseChance": 0.4,
         "modifiers": [
-          { "attribute": "CONSISTENCY", "perPoint": 0.007 }
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.007
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "ATTRIBUTE_CHANGE", "attribute": "AIM", "delta": 6 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -8 }
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": -400 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 12 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -400
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
         ],
-        "successNextEventId": "grinder-lower-tier"
+        "successNextEventId": "grinder-bootcamp",
+        "failureNextEventId": "grinder-bootcamp"
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
 }

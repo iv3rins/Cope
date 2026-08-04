@@ -1,0 +1,109 @@
+{
+  "id": "prodigy-ally",
+  "title": "拉拢队友",
+  "description": "你意识到单靠自己是走不远的。你决定主动和队友建立关系。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-team-envy"
+    }
+  ],
+  "options": [
+    {
+      "id": "small-gestures",
+      "label": "从小事做起",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "TEAM_BOND",
+            "flag": {
+              "id": "TEAM_BOND",
+              "name": "队内团结",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "successMessages": [
+          "你给队友带早餐、帮忙复盘。",
+          "关系一点点热了起来。"
+        ],
+        "failureMessages": [
+          "你的示好被当成别有用心。",
+          "「天才突然对我好，肯定有求于我。」"
+        ],
+        "successNextEventId": "prodigy-first-mvp",
+        "failureNextEventId": "prodigy-first-mvp"
+      }
+    },
+    {
+      "id": "share-credit",
+      "label": "赛后主动分功",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "赢球后你总是先夸队友。",
+          "有队友开始真心实意地帮你补位。"
+        ],
+        "failureMessages": [
+          "分功显得刻意，队友不太买账。",
+          "但至少关系没再恶化。"
+        ],
+        "successNextEventId": "prodigy-first-mvp",
+        "failureNextEventId": "prodigy-first-mvp"
+      }
+    }
+  ],
+  "autoEffects": []
+}

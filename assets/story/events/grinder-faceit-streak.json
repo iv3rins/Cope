@@ -1,0 +1,110 @@
+{
+  "id": "grinder-faceit-streak",
+  "title": "平台连胜",
+  "description": "你在高分段打出了一波连胜。数据网站把你的评级标成了「值得关注」。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-internet-cafe"
+    }
+  ],
+  "options": [
+    {
+      "id": "ride-streak",
+      "label": "趁热冲分",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.007
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "连胜让你冲进了更高的分段。",
+          "匹配到职业选手的频率变高了。"
+        ],
+        "failureMessages": [
+          "你连打太久，连胜被终结在一场熬夜局。",
+          "你为自己的上头付出了代价。"
+        ],
+        "successNextEventId": "grinder-rank-ladder",
+        "failureNextEventId": "grinder-rank-ladder"
+      }
+    },
+    {
+      "id": "record-games",
+      "label": "录像保存研究",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你把连胜的录像存了下来。",
+          "这些录像后来成了你的分析素材。"
+        ],
+        "failureMessages": [
+          "录像存了但没整理。",
+          "文件夹里躺着几十个没看的文件。"
+        ],
+        "successNextEventId": "grinder-rank-ladder",
+        "failureNextEventId": "grinder-rank-ladder"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,120 @@
+{
+  "id": "matchfixing-offer",
+  "title": "可疑盘口",
+  "description": "分析师私下找到你，暗示下一场比赛有人开了盘口，「配合就有分成」。他没有明说，但圈里人都知道这句话的份量。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "report-to-management",
+      "label": "上报管理层",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CLEAN_HANDS",
+            "flag": {
+              "id": "CLEAN_HANDS",
+              "name": "自证清白",
+              "category": "CAREER"
+            }
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你当晚把整件事写成了邮件，发给俱乐部经理。",
+          "经理没有追问细节，只让你这几天别碰任何来路不明的转账。",
+          "调查介入后，你的名字被从盘口名单里划掉了。"
+        ],
+        "failureMessages": [
+          "经理听完只是笑了笑，让你管好自己的嘴。",
+          "消息还是走漏了，队里开始有人用异样的眼光看你。"
+        ],
+        "successNextEventId": "matchfixing-aftermath",
+        "failureNextEventId": "matchfixing-aftermath"
+      }
+    },
+    {
+      "id": "play-dumb",
+      "label": "沉默观望",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "FLAG_ADD",
+            "flagId": "UNDER_SUSPICION",
+            "flag": {
+              "id": "UNDER_SUSPICION",
+              "name": "被调查约谈",
+              "category": "CAREER"
+            }
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 20
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "那场比赛没有出现异常盘口，一切如常。",
+          "你把这事按在心底，作息照旧，只是深夜偶尔失眠。"
+        ],
+        "failureMessages": [
+          "赛前两小时，有人往你的更衣室门缝里塞了一个信封。",
+          "你没有打开它，但调查人员已经拿到了你的比赛记录。",
+          "你百口莫辩，只能一遍遍说自己什么都不知道。"
+        ],
+        "successNextEventId": "matchfixing-aftermath",
+        "failureNextEventId": "matchfixing-aftermath"
+      }
+    }
+  ],
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
+}

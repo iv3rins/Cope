@@ -1,0 +1,95 @@
+{
+  "id": "prodigy-hometown",
+  "title": "荣归故里",
+  "description": "你回到家乡办见面会。母校的小学弟们排着队要你签名。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-bet"
+    }
+  ],
+  "options": [
+    {
+      "id": "warm-return",
+      "label": "用心分享经历",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你讲了低谷的故事，而不是只有高光。",
+          "有个小学弟眼眶红了。"
+        ],
+        "failureMessages": [
+          "你讲得太官方，孩子们有点走神。",
+          "但签名环节他们还是很开心。"
+        ],
+        "successNextEventId": "prodigy-museum",
+        "failureNextEventId": "prodigy-museum"
+      }
+    },
+    {
+      "id": "donate-gear",
+      "label": "捐设备给母校",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -1000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你给母校的机房捐了十台电脑。",
+          "校长说要在机房门口挂你的照片。"
+        ],
+        "failureMessages": [
+          "设备采购出了岔子，拖了两个月。",
+          "但最后还是落地了。"
+        ],
+        "successNextEventId": "prodigy-museum",
+        "failureNextEventId": "prodigy-museum"
+      }
+    }
+  ],
+  "autoEffects": []
+}

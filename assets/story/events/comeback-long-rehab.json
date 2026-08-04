@@ -1,0 +1,105 @@
+{
+  "id": "comeback-long-rehab",
+  "title": "漫长复健",
+  "description": "这一次的复健比第一次更长、更枯燥。每天都是理疗、拉伸、等待。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-surgery-choice"
+    }
+  ],
+  "options": [
+    {
+      "id": "patient-grind",
+      "label": "耐心坚持",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 10
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你不再数日子，而是过好每一天。",
+          "复健师说你的心态比上次好多了。"
+        ],
+        "failureMessages": [
+          "枯燥的复健让你情绪低落。",
+          "你开始怀疑这一切的意义。"
+        ],
+        "successNextEventId": "comeback-recovery-miracle",
+        "failureNextEventId": "comeback-recovery-miracle"
+      }
+    },
+    {
+      "id": "mental-training",
+      "label": "同步练心态",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "复健期间你看了很多书，练了冥想。",
+          "身体在恢复，心态也在恢复。"
+        ],
+        "failureMessages": [
+          "心态训练做得断断续续。",
+          "但至少让你没那么焦虑了。"
+        ],
+        "successNextEventId": "comeback-recovery-miracle",
+        "failureNextEventId": "comeback-recovery-miracle"
+      }
+    }
+  ],
+  "autoEffects": []
+}

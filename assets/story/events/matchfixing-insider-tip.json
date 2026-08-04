@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-insider-tip",
+  "title": "圈内风声",
+  "description": "一位关系不错的圈内前辈悄悄告诉你：有人在调查你们队，而且名单上有你。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-teammate-test"
+    }
+  ],
+  "options": [
+    {
+      "id": "gather-info",
+      "label": "打听细节",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你从前辈那拼凑出了一些信息。",
+          "调查的重点，好像不是你。"
+        ],
+        "failureMessages": [
+          "你问得太急，前辈不愿多说。",
+          "「你自己小心」成了最后的忠告。"
+        ],
+        "successNextEventId": "matchfixing-manager-meeting",
+        "failureNextEventId": "matchfixing-manager-meeting"
+      }
+    },
+    {
+      "id": "stay-calm",
+      "label": "稳住别慌",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你告诉自己：身正不怕影子斜。",
+          "你继续正常训练。"
+        ],
+        "failureMessages": [
+          "「名单上有你」这句话让你失眠。",
+          "你开始反复回忆那天晚上的每个细节。"
+        ],
+        "successNextEventId": "matchfixing-manager-meeting",
+        "failureNextEventId": "matchfixing-manager-meeting"
+      }
+    }
+  ],
+  "autoEffects": []
+}

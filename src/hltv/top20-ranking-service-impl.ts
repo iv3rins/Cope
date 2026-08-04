@@ -14,10 +14,16 @@ export class Top20RankingServiceImpl implements Top20RankingService {
     const candidates = input.evidence
       .filter((entry) => entry.season === input.season)
       .map((evidence) => ({ identity: this.copy(evidence.player), evidence: this.copy(evidence), metrics: this.calculateMetrics(evidence, input.rules) }))
-      .filter((candidate) => candidate.metrics.eligible)
       .sort((left, right) => this.compareCandidates(left, right));
 
-    const entries = candidates.map((candidate, index) => ({ ...candidate, rank: index + 1 }));
+    const remaining = [...candidates];
+    const entries = [];
+    for (let rank = 1; rank <= 20 && remaining.length > 0; rank += 1) {
+      const thresholdIndex = remaining.findIndex((candidate) => this.qualifiesForRank(candidate, rank));
+      const index = thresholdIndex >= 0 ? thresholdIndex : 0;
+      const candidate = remaining.splice(index, 1)[0];
+      if (candidate) entries.push({ ...candidate, rank, thresholdFallback: thresholdIndex < 0 });
+    }
     return {
       season: input.season,
       rulesVersion: input.rules.version,
@@ -47,13 +53,30 @@ export class Top20RankingServiceImpl implements Top20RankingService {
       const multiplier = rules.honorClassMultiplier[honor.honorClass] ?? 0;
       return honors + this.finiteOr(base, 0) * this.finiteOr(multiplier, 0);
     }, 0), 0);
-    const panelScore = tournaments.reduce((total, event) => total + (event.majorPlayoffChoke ? -0.05 : 0), 0);
+    const panelScore = Math.max(0, (annualRating - 1) * 300 + (adr - 70) * 2);
+    const majorMvpBonus = tournaments.reduce((total, event) => total + event.honors.reduce((bonus, honor) => {
+      if (honor.type !== 'MVP') return bonus;
+      return bonus + (honor.honorClass === 'MAJOR' ? 3500 : honor.honorClass === 'SUPER_ELITE' ? 2200 : 0);
+    }, 0), 0);
+    const majorPlayoffChoke = tournaments.some((event) => event.tier === 'MAJOR' && event.majorPlayoffChoke);
     const eligible = t1MajorMaps >= rules.minimumT1MajorMaps;
+    const highHonors = tournaments.flatMap((event) => event.honors).filter((honor) => ['ELITE', 'SUPER_ELITE', 'MAJOR'].includes(honor.honorClass));
+    const mvp = tournaments.flatMap((event) => event.honors).filter((honor) => honor.type === 'MVP').length;
+    const evp = tournaments.flatMap((event) => event.honors).filter((honor) => honor.type === 'EVP').length;
+    const vp = tournaments.flatMap((event) => event.honors).filter((honor) => honor.type === 'VP').length;
+    const highMvpEvp = highHonors.filter((honor) => honor.type === 'MVP' || honor.type === 'EVP').length;
+    const highEvp = highHonors.filter((honor) => honor.type === 'EVP').length;
+    const majorSuperEliteEvp = highHonors.filter((honor) => honor.type === 'EVP' && ['SUPER_ELITE', 'MAJOR'].includes(honor.honorClass)).length;
+    const hasTopMvp = tournaments.some((event) => event.honors.some((honor) => honor.type === 'MVP' && ['SUPER_ELITE', 'MAJOR'].includes(honor.honorClass)));
+    const pressureBonus = (playoffRating >= 1.2 ? 0.08 : 0) + (top5Rating >= 1.15 ? 0.05 : 0);
+    const disasterPenalty = (majorPlayoffChoke ? 0.15 : 0) + (top5Maps > 0 && top5Rating < 0.95 ? 0.1 : 0) + (finalRating !== null && finalRating < 0.9 ? 0.1 : 0);
 
-    // APS rewards volume-weighted rating, high-pressure performance, honors, and penalizes major playoff chokes.
-    const aps = eligible
-      ? annualRating * 100 + playoffRating * 15 + top5Rating * 10 + (finalRating ?? 0) * 8 + adr * 0.1 + honorsScore + panelScore * 100
-      : 0;
+    // APS follows the reference model: honors + panel score + elite MVP bonuses, adjusted by pressure evidence.
+    // HLTV-style selection uses the sample-size rule as an eligibility gate, then ranks
+    // eligible players by the full-season evidence. Keep the score visible for ineligible
+    // players so the report can explain why they missed the list without flattening their data.
+    const apsBase = honorsScore + panelScore + majorMvpBonus;
+    const aps = Math.max(0, apsBase * (1 + pressureBonus - disasterPenalty));
     return {
       eligible,
       t1MajorMaps,
@@ -65,12 +88,35 @@ export class Top20RankingServiceImpl implements Top20RankingService {
       finalRating,
       honorsScore,
       panelScore,
+      eliteMvpBonus: majorMvpBonus,
+      pressureBonus,
+      disasterPenalty,
       aps,
+      mvp,
+      evp,
+      vp,
+      highMvpEvp,
+      highEvp,
+      majorSuperEliteEvp,
+      hasTopMvp,
     };
   }
 
+  private qualifiesForRank(candidate: Top20Candidate, rank: number): boolean {
+    const metrics = candidate.metrics;
+    if (!metrics.eligible) return false;
+    if (rank === 1) return metrics.aps >= 4500 && metrics.annualRating >= 1.3 && metrics.hasTopMvp === true && metrics.playoffRating >= metrics.annualRating && metrics.top5Rating >= 1.15;
+    if (rank <= 3) return metrics.aps >= 3500 && metrics.annualRating >= 1.25 && (metrics.highMvpEvp ?? 0) >= 2;
+    if (rank <= 5) return metrics.aps >= 2800 && metrics.annualRating >= 1.2 && (metrics.highEvp ?? 0) >= 4 && (metrics.majorSuperEliteEvp ?? 0) >= 1;
+    if (rank <= 10) return metrics.aps >= 2000 && metrics.annualRating >= 1.15 && (metrics.highMvpEvp ?? 0) >= 3;
+    const edgeAudit = Number((metrics.evp ?? 0) >= 2) + Number((metrics.vp ?? 0) >= 5) + Number(metrics.playoffRating >= 1.05) >= 2;
+    if (rank <= 15) return metrics.aps >= 1500 && metrics.annualRating >= 1.12 && (metrics.highMvpEvp ?? 0) >= 1 && edgeAudit;
+    return metrics.aps >= 1200 && metrics.annualRating >= 1.1 && ((metrics.highMvpEvp ?? 0) >= 1 || metrics.t1MajorMaps >= 80) && edgeAudit;
+  }
+
   private compareCandidates(left: Top20Candidate, right: Top20Candidate): number {
-    return right.metrics.aps - left.metrics.aps
+    return Number(right.metrics.eligible) - Number(left.metrics.eligible)
+      || right.metrics.aps - left.metrics.aps
       || right.metrics.annualRating - left.metrics.annualRating
       || right.metrics.honorsScore - left.metrics.honorsScore
       || left.identity.playerId.localeCompare(right.identity.playerId);

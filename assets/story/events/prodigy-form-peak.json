@@ -1,0 +1,105 @@
+{
+  "id": "prodigy-form-peak",
+  "title": "状态巅峰",
+  "description": "你进入了职业生涯状态最好的时期：对枪自信、决策果断、运气也站在你这边。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-focus-choice"
+    }
+  ],
+  "options": [
+    {
+      "id": "ride-peak",
+      "label": "趁巅峰多打比赛",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "TOTAL_KILLS",
+            "delta": 55
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "巅峰期的你打出了统治级数据。",
+          "媒体开始拿你和传奇选手比较。"
+        ],
+        "failureMessages": [
+          "赛程太密，巅峰没能完全兑现。",
+          "你开始担心巅峰会过去。"
+        ],
+        "successNextEventId": "prodigy-form-crash",
+        "failureNextEventId": "prodigy-form-crash"
+      }
+    },
+    {
+      "id": "protect-peak",
+      "label": "保护状态",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你主动调整赛程，保护状态。",
+          "「知道什么时候收手」也是一种天才。"
+        ],
+        "failureMessages": [
+          "保护过头变成了保守。",
+          "你的锐气少了一点。"
+        ],
+        "successNextEventId": "prodigy-form-crash",
+        "failureNextEventId": "prodigy-form-crash"
+      }
+    }
+  ],
+  "autoEffects": []
+}

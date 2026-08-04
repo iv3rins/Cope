@@ -1,0 +1,125 @@
+{
+  "id": "rookie-clutch-moment",
+  "title": "残局时刻",
+  "description": "比赛进入 1v3 残局，全场只剩你一个人。耳机里队友在报点，声音都在抖。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-mentor-advice"
+    }
+  ],
+  "options": [
+    {
+      "id": "go-fast",
+      "label": "抢时间打快枪",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.008
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你连拉三个枪位，全部命中。",
+          "赛后大家叫你「小残局」。"
+        ],
+        "failureMessages": [
+          "你冲得太快，第一个就被架死了。",
+          "耳机里只剩下叹气声。"
+        ],
+        "successNextEventId": "rookie-injury-scare",
+        "failureNextEventId": "rookie-training-routine"
+      }
+    },
+    {
+      "id": "play-smart",
+      "label": "拖时间打角度",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.008
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你把对面拆成一个个 1v1。",
+          "赢下时你的手还在抖。"
+        ],
+        "failureMessages": [
+          "角度算得没错，但枪没跟上。",
+          "你差一点就能赢。"
+        ],
+        "successNextEventId": "rookie-training-routine",
+        "failureNextEventId": "rookie-training-routine"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,110 @@
+{
+  "id": "comeback-management-push",
+  "title": "管理层劝退",
+  "description": "管理层约你谈话，暗示「你的合同可以协商提前终止」。翻译过来就是：我们想让你走。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-retire-push"
+    }
+  ],
+  "options": [
+    {
+      "id": "prove-value",
+      "label": "证明自己还有价值",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你在接下来的比赛里打出了关键表现。",
+          "管理层改口：合同照旧。"
+        ],
+        "failureMessages": [
+          "越想证明越发挥失常。",
+          "管理层看你的眼神更加坚定。"
+        ],
+        "successNextEventId": "comeback-media-cruelty",
+        "failureNextEventId": "comeback-media-cruelty"
+      }
+    },
+    {
+      "id": "negotiate-exit",
+      "label": "谈个好聚好散",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 3000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你谈妥了体面的解约。",
+          "离开那天，老板送你到门口。"
+        ],
+        "failureMessages": [
+          "解约谈判不顺利，双方都很难看。",
+          "你带着怨气离开了。"
+        ],
+        "successNextEventId": "comeback-media-cruelty",
+        "failureNextEventId": "comeback-media-cruelty"
+      }
+    }
+  ],
+  "autoEffects": []
+}

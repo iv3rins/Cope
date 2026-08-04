@@ -1,0 +1,104 @@
+{
+  "id": "matchfixing-return-to-pro",
+  "title": "重返职业",
+  "description": "禁赛期满（或确认清白后），你恢复了职业资格。重返赛场的路，比离开时更陡。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-witness"
+    }
+  ],
+  "options": [
+    {
+      "id": "comeback-hard",
+      "label": "从训练营开始",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你先回训练营找状态。",
+          "两个月后，有队伍向你伸出了手。"
+        ],
+        "failureMessages": [
+          "重返训练营，你的状态大不如前。",
+          "「他们还愿意要你吗」的怀疑缠着你。"
+        ],
+        "successNextEventId": "matchfixing-transfer-rehab",
+        "failureNextEventId": "matchfixing-transfer-rehab"
+      }
+    },
+    {
+      "id": "find-team",
+      "label": "主动找队伍",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TEAM_TRANSFER",
+            "teamId": "pain"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你主动联系了几家队伍。",
+          "一支队伍愿意给你试训机会。"
+        ],
+        "failureMessages": [
+          "大部分队伍一听你的名字就挂了电话。",
+          "「假赛」的标签比冠军更响亮。"
+        ],
+        "successNextEventId": "matchfixing-transfer-rehab",
+        "failureNextEventId": "matchfixing-transfer-rehab"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,4 +1,4 @@
-import type { HltvPlayerId, HltvTeamId, CompetitionRegion } from '../hltv/team';
+import type { HltvPlayerId, HltvTeamId, CompetitionRegion, TeamTier } from '../hltv/team';
 import type { GameDifficultyMode } from './mode';
 import type { CareerTournamentRecord } from './retirement';
 
@@ -8,6 +8,10 @@ export type PlayerOriginRegion = CompetitionRegion;
 /** Engine 管理玩家自身的生涯状态；HLTV 中的真实赛事数据不放入该聚合。 */
 export type PartTimeJob = 'NONE' | 'STUDENT' | 'NET_CAFE_CASHIER' | 'ELO_BOOSTER' | 'SMALL_STREAMER';
 export type PlayerRole = 'IGL' | 'AWPER' | 'ENTRY_FRAGGER' | 'SUPPORT' | 'LURKER';
+/** 生涯合同之外的归属状态；缺失时由旧存档迁移逻辑按 currentTeamId 推导。 */
+export type FreeAgencyStatus = 'UNSIGNED' | 'SIGNED' | 'FREE_AGENT';
+export type TransferWindowState = 'CLOSED' | 'OPEN' | 'PENDING_DECISION';
+export type PlayerReleaseReason = 'CONTRACT_EXPIRED' | 'NON_RENEWAL' | 'MUTUAL_TERMINATION' | 'TEAM_REBUILD' | 'NO_ROSTER_SPACE' | 'BUYOUT_FAILED' | 'FORCED_RELEASE';
 export type PlayerAttribute = 'AIM' | 'GAME_SENSE' | 'LEADERSHIP' | 'CLUTCH' | 'CONSISTENCY' | 'TEAM_CONFLICT';
 
 export interface PlayerAttributes {
@@ -71,6 +75,13 @@ export interface PlayerProfile {
   readonly originRegion: PlayerOriginRegion;
   readonly age: number;
   readonly currentTeamId: HltvTeamId | null;
+  /** Current team tier is optional for legacy saves and derived from real team assets when absent. */
+  readonly currentTeamTier?: TeamTier;
+  /** 当前自由球员字段为可选，保证旧版本 JSON 存档可直接反序列化。 */
+  readonly freeAgencyStatus?: FreeAgencyStatus;
+  readonly freeAgencySince?: string;
+  readonly releaseReason?: PlayerReleaseReason;
+  readonly transferWindowState?: TransferWindowState;
   /** 当前有效合同由合同仓储维护，档案只保存当前合同 ID。 */
   readonly currentContractId: string | null;
   readonly role: PlayerRole;

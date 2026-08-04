@@ -1,55 +1,104 @@
 {
   "id": "rookie-academy-offer",
-  "title": "青训合约",
-  "description": "试训表现不错，俱乐部开出青训合同。月薪不高，但这是踏入职业体系的第一步——你会搬进基地，开始每天十小时的训练。",
+  "title": "选择真实底层队伍",
+  "description": "试训结束后，两支真实底层队伍向你发出邀请。这里没有通往一线队的捷径，只有通过低级别赛事和稳定表现争取 T2 机会。",
   "worldlineId": "rookie",
   "type": "CHOICE",
-  "period": "TRANSFER_WINDOW",
+  "period": "NORMAL",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "rookie-first-trial" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-first-trial"
+    },
+    {
+      "type": "AGE",
+      "minimum": 18,
+      "maximum": 20
+    },
+    {
+      "type": "FLAG",
+      "flagId": "ACADEMY_JOINED",
+      "expected": false
+    }
   ],
   "options": [
     {
-      "id": "sign-academy",
-      "label": "签下青训合同",
+      "id": "join-arg-juniors",
+      "label": "加入 MOUZ NXT",
       "requirements": [],
       "successChance": {
-        "baseChance": 0.85,
+        "baseChance": 1,
         "modifiers": []
       },
       "outcome": {
         "successEffects": [
-          { "type": "TEAM_TRANSFER", "teamId": "academy-1" },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 10 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 2000 }
+          {
+            "type": "TEAM_TRANSFER",
+            "teamId": "mouznxt",
+            "salaryPerMonth": 350
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "ACADEMY_JOINED",
+            "flag": {
+              "id": "ACADEMY_JOINED",
+              "name": "已加入青训体系",
+              "category": "CAREER"
+            }
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "ACADEMY_ARG_JUNIORS",
+            "flag": {
+              "id": "ACADEMY_ARG_JUNIORS",
+              "name": "MOUZ NXT",
+              "category": "CAREER"
+            }
+          }
         ],
-        "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
-        ],
-        "successNextEventId": "rookie-scrim-rotation"
+        "failureEffects": []
       }
     },
     {
-      "id": "wait-better-offer",
-      "label": "再等等，也许有更好的报价",
+      "id": "join-san-lorenzo",
+      "label": "加入 BIG Academy",
       "requirements": [],
       "successChance": {
-        "baseChance": 0.4,
-        "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.005 }
-        ]
+        "baseChance": 1,
+        "modifiers": []
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 6 }
+          {
+            "type": "TEAM_TRANSFER",
+            "teamId": "bigacademy",
+            "salaryPerMonth": 500
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "ACADEMY_JOINED",
+            "flag": {
+              "id": "ACADEMY_JOINED",
+              "name": "已加入青训体系",
+              "category": "CAREER"
+            }
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "ACADEMY_SAN_LORENZO",
+            "flag": {
+              "id": "ACADEMY_SAN_LORENZO",
+              "name": "BIG Academy",
+              "category": "CAREER"
+            }
+          }
         ],
-        "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 12 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
-        ],
-        "successNextEventId": "rookie-scrim-rotation"
+        "failureEffects": []
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
 }

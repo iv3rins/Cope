@@ -7,8 +7,10 @@ import type {
   StoryEngine,
   StoryEngineDependencies,
   StoryEvent,
+  StoryEventPhase,
   StorySuccessChancePolicy,
   StoryEventOption,
+  StoryContextFacts,
 } from '../graph';
 import type { PlayerAttribute, PlayerAttributes, PlayerFlag, PlayerProfile } from '../profile';
 import type { StoryEventDirectory } from './story-repository';
@@ -40,32 +42,35 @@ export class StoryEngineImpl implements StoryEngine {
   public async findAvailableEvents(input: {
     readonly profile: PlayerProfile;
     readonly period: EventPeriod;
+    readonly phase?: StoryEventPhase;
     readonly randomRoll: number;
+    readonly facts?: StoryContextFacts;
   }): Promise<readonly StoryEvent[]> {
     if (!this.isRollInRange(input.randomRoll)) return [];
-    const context = this.createContext(input.profile, input.randomRoll);
+    const context = this.createContext(input.profile, input.randomRoll, input.facts);
     const events = await this.repository.listEvents();
     return events
       .filter((event) => event.worldlineId === input.profile.worldlineId)
       .filter((event) => event.period === input.period)
+      .filter((event) => !input.phase || this.eventPhase(event) === input.phase)
       .filter((event) => !event.allowedModes || event.allowedModes.includes(input.profile.difficultyMode))
       .filter((event) => this.conditions.matchesAll(event.conditions, context))
-      .filter((event) => !input.profile.completedEventIds.includes(event.id))
+      .filter((event) => event.repeatable || !input.profile.completedEventIds.includes(event.id))
       .map((event) => this.copy(event));
   }
 
-  public async decide(input: { readonly profile: PlayerProfile; readonly decision: StoryDecision }): Promise<StoryDecisionResult> {
+  public async decide(input: { readonly profile: PlayerProfile; readonly decision: StoryDecision; readonly facts?: StoryContextFacts }): Promise<StoryDecisionResult> {
     const { profile, decision } = input;
     if (!this.isRollInRange(decision.randomRoll)) throw new RangeError('randomRoll must be a finite number in [0, 1).');
 
     const event = await this.repository.findEvent(decision.eventId);
     if (!event) throw new Error(`Story event not found: ${decision.eventId}.`);
-    if (profile.completedEventIds.includes(event.id)) throw new Error(`Story event already completed: ${event.id}.`);
+    if (!event.repeatable && profile.completedEventIds.includes(event.id)) throw new Error(`Story event already completed: ${event.id}.`);
     if (event.allowedModes && !event.allowedModes.includes(profile.difficultyMode)) {
       throw new Error(`Story event is not available in ${profile.difficultyMode} mode.`);
     }
 
-    const context = this.createContext(profile, decision.randomRoll);
+    const context = this.createContext(profile, decision.randomRoll, input.facts);
     if (!this.conditions.matchesAll(event.conditions, context)) throw new Error(`Story event requirements are not met: ${event.id}.`);
 
     const option = event.options.find((candidate) => candidate.id === decision.optionId);
@@ -87,7 +92,20 @@ export class StoryEngineImpl implements StoryEngine {
       appliedTournamentInterventionIds: [],
       terminatedContractId: null,
       nextEventId: succeeded ? option.outcome.successNextEventId ?? null : option.outcome.failureNextEventId ?? null,
+      resultMessages: this.getResultMessages(option.outcome, succeeded),
     };
+  }
+
+  private eventPhase(event: StoryEvent): StoryEventPhase {
+    if (event.phase) return event.phase;
+    if (event.period === 'FINAL_DECISIVE_MOMENT') return 'IN_TOURNAMENT';
+    if (event.period === 'AFTER_TOP20' || event.period === 'OFFSEASON') return 'POST_TOURNAMENT';
+    return 'PRE_TOURNAMENT';
+  }
+
+  private getResultMessages(outcome: StoryEventOption['outcome'], succeeded: boolean): readonly string[] {
+    const messages = succeeded ? outcome.successMessages : outcome.failureMessages;
+    return messages?.filter((message) => typeof message === 'string' && message.trim().length > 0).map((message) => message.trim()) ?? [];
   }
 
   private calculateSuccessChance(profile: PlayerProfile, option: StoryEventOption): number {
@@ -113,6 +131,14 @@ export class StoryEngineImpl implements StoryEngine {
     let balance = base.life.balance;
     let stress = base.life.stress;
     let rating2 = base.career.rating2;
+    let totalKills = base.career.totalKills;
+    let mapsPlayed = base.career.mapsPlayed;
+    let clutchWon = base.career.clutchWon;
+    let careerEarnings = base.career.careerEarnings;
+    let majorChampionships = base.trophies.majorChampionships;
+    let otherSTierTitles = base.trophies.otherSTierTitles;
+    let mvpAwards = base.trophies.mvpAwards;
+    let evpAwards = base.trophies.evpAwards;
     let currentTeamId = base.currentTeamId;
     let role = base.role;
     let worldlineId = base.worldlineId;
@@ -142,6 +168,27 @@ export class StoryEngineImpl implements StoryEngine {
           if (effect.flag && !flags.some((flag) => flag.id === effect.flagId)) flags = [...flags, this.copy(effect.flag)];
           break;
         case 'FLAG_REMOVE': flags = flags.filter((flag) => flag.id !== effect.flagId); break;
+        case 'TROPHY_CHANGE':
+          if (!Number.isFinite(effect.delta)) break;
+          if (effect.trophy === 'MAJOR') majorChampionships += effect.delta;
+          if (effect.trophy === 'S_TIER') otherSTierTitles += effect.delta;
+          if (effect.trophy === 'MVP') mvpAwards += effect.delta;
+          if (effect.trophy === 'EVP') evpAwards += effect.delta;
+          break;
+        case 'CAREER_STAT_CHANGE':
+          if (!Number.isFinite(effect.delta)) break;
+          if (effect.stat === 'TOTAL_KILLS') totalKills += effect.delta;
+          if (effect.stat === 'MAPS_PLAYED') mapsPlayed += effect.delta;
+          if (effect.stat === 'CLUTCH_WON') clutchWon += effect.delta;
+          if (effect.stat === 'CAREER_EARNINGS') careerEarnings += effect.delta;
+          break;
+        case 'ADVANCE_STORY':
+          break;
+        case 'TOURNAMENT_INTERVENTION':
+          throw new Error('Tournament interventions require a tournament event gateway.');
+        case 'FORCE_CONTRACT_TERMINATION':
+          // Contract lifecycle is finalized by CareerGame after this decision.
+          break;
         default: break;
       }
     }
@@ -153,7 +200,8 @@ export class StoryEngineImpl implements StoryEngine {
       worldlineId,
       attributes,
       life: { ...base.life, balance, stress },
-      career: { ...base.career, rating2 },
+      career: { ...base.career, rating2, totalKills, mapsPlayed, clutchWon, careerEarnings },
+      trophies: { ...base.trophies, majorChampionships, otherSTierTitles, mvpAwards, evpAwards },
       morale,
       energy,
       flags,
@@ -163,13 +211,14 @@ export class StoryEngineImpl implements StoryEngine {
     };
   }
 
-  private createContext(profile: PlayerProfile, randomRoll: number): ConditionContext {
+  private createContext(profile: PlayerProfile, randomRoll: number, facts: StoryContextFacts = {}): ConditionContext {
     return {
       player: profile,
       currentTeamId: profile.currentTeamId,
       opponentTeamId: null,
       randomRoll,
       difficultyMode: profile.difficultyMode,
+      ...facts,
     };
   }
 

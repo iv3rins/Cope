@@ -1,0 +1,109 @@
+{
+  "id": "matchfixing-resist-final",
+  "title": "最终拒绝",
+  "description": "你对着镜子说：我不会再碰那个东西。这句话，你说给自己听。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-tempt-again"
+    }
+  ],
+  "options": [
+    {
+      "id": "vow-clean",
+      "label": "立誓清白",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CLEAN_HEART",
+            "flag": {
+              "id": "CLEAN_HEART",
+              "name": "问心无愧",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把这个誓言写进了备忘录。",
+          "有些线，跨过就不能回头。"
+        ],
+        "failureMessages": [
+          "你立了誓，但心里还有一丝动摇。",
+          "你决定用行动把它摁死。"
+        ],
+        "successNextEventId": "matchfixing-redemption",
+        "failureNextEventId": "matchfixing-redemption"
+      }
+    },
+    {
+      "id": "act-clean",
+      "label": "用行动证明",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你不说漂亮话，只做干净事。",
+          "每一天，都在把那个自己留在过去。"
+        ],
+        "failureMessages": [
+          "想证明清白，反而患得患失。",
+          "你提醒自己：做对的事，不问结果。"
+        ],
+        "successNextEventId": "matchfixing-redemption",
+        "failureNextEventId": "matchfixing-redemption"
+      }
+    }
+  ],
+  "autoEffects": []
+}

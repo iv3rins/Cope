@@ -1,0 +1,103 @@
+{
+  "id": "matchfixing-grinder-return",
+  "title": "禁赛归来",
+  "description": "你决定从最低级别重新开始。没有人认识你，没有人记得那件事。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-clean-life"
+    }
+  ],
+  "options": [
+    {
+      "id": "start-low",
+      "label": "从底层再来",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "grinder"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CROSSED_TO_GRINDER",
+            "flag": {
+              "id": "CROSSED_TO_GRINDER",
+              "name": "转入磨砺线",
+              "category": "CUSTOM"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你回到了低级别联赛。",
+          "这一次，没人给你特殊待遇，你也不想要。"
+        ],
+        "failureMessages": [
+          "从底层再来让你心里没底。",
+          "你怕自己走不到头。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": "matchfixing-prodigy-clean"
+      }
+    },
+    {
+      "id": "stay-middle",
+      "label": "留在原级别",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你留在原级别，慢慢找回位置。",
+          "慢一点，但稳一点。"
+        ],
+        "failureMessages": [
+          "留在原级别，那件事偶尔还是会被提起。",
+          "你只能一次次面对。"
+        ],
+        "successNextEventId": "matchfixing-prodigy-clean",
+        "failureNextEventId": "matchfixing-prodigy-clean"
+      }
+    }
+  ],
+  "autoEffects": []
+}

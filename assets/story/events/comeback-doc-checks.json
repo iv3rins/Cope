@@ -1,0 +1,110 @@
+{
+  "id": "comeback-doc-checks",
+  "title": "体检报告",
+  "description": "半年后的体检报告出来了。医生说你的身体机能「超出预期」。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-media-hype2"
+    }
+  ],
+  "options": [
+    {
+      "id": "celebrate-cautious",
+      "label": "高兴但保持警惕",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你确实恢复了，但还差最后的临门一脚。",
+          "你把这当动力，而不是终点。"
+        ],
+        "failureMessages": [
+          "报告让你飘了几天。",
+          "恢复≠完全，你提醒自己。"
+        ],
+        "successNextEventId": "comeback-contract-extension",
+        "failureNextEventId": "comeback-contract-extension"
+      }
+    },
+    {
+      "id": "push-limit2",
+      "label": "认为可以全力了",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你解除了自我限制，全力训练。",
+          "状态确实上来了，但风险也在累积。"
+        ],
+        "failureMessages": [
+          "全力训练让旧伤处开始抗议。",
+          "你被迫退回到保护模式。"
+        ],
+        "successNextEventId": "comeback-contract-extension",
+        "failureNextEventId": "comeback-contract-extension"
+      }
+    }
+  ],
+  "autoEffects": []
+}

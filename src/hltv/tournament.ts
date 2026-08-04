@@ -6,6 +6,7 @@ export type TournamentTier = 'QUALIFIER' | 'UNRANKED' | 'T2' | 'T1' | 'MAJOR';
 export type TournamentNode = 'QUALIFIER' | 'MAIN_EVENT';
 export type MatchFormat = 'BO1' | 'BO3' | 'BO5';
 export type QualificationSource = 'DIRECT_VRS' | 'PUBLIC_QUALIFIER' | 'SNAPSHOT_REPLACEMENT' | 'OPEN_ENTRY' | 'REGIONAL_SLOT';
+export type QualificationStatus = 'DIRECT' | 'QUALIFIER_PENDING' | 'QUALIFIED' | 'QUALIFIER_EXIT';
 export type TournamentPlacement = 'CHAMPION' | 'RUNNER_UP' | 'SEMIFINAL' | 'QUARTERFINAL' | 'GROUP_EXIT' | 'QUALIFIED' | 'QUALIFIER_EXIT';
 export type HonorType = 'MVP' | 'EVP' | 'VP';
 export type HonorClass = 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR';
@@ -45,6 +46,8 @@ export interface TournamentEdition {
   readonly snapshotRank: number | null;
   readonly rosterLockCareerHalf: number;
   readonly targetEditionId: TournamentId | null;
+  /** Qualification is a property of this locked calendar row; failed qualifiers remain in the calendar. */
+  readonly qualificationStatus?: QualificationStatus;
 }
 
 /** 资格结算中保留概率与掷骰，支持展示、审计与存档回放。 */

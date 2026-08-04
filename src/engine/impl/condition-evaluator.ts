@@ -33,6 +33,9 @@ export class ConditionEvaluatorImpl implements ConditionEvaluator {
       case 'PLAYER_STAT':
         if (condition.target && condition.target !== 'PLAYER') return false;
         return this.inRange(this.getPlayerStat(context.player, condition.stat), condition.minimum, condition.maximum);
+      case 'AGE':
+        if (condition.target && condition.target !== 'PLAYER') return false;
+        return this.inRange(context.player.age, condition.minimum, condition.maximum);
       case 'FLAG':
         if (condition.target && condition.target !== 'PLAYER') return false;
         return context.player.flags.some((flag) => flag.id === condition.flagId) === condition.expected;
@@ -42,6 +45,21 @@ export class ConditionEvaluatorImpl implements ConditionEvaluator {
         return context.player.worldlineId === condition.worldlineId;
       case 'COMPLETED_EVENT':
         return context.player.completedEventIds.includes(condition.eventId);
+      case 'ACTIVE_CONTRACT':
+        if (context.activeContract === undefined) return false;
+        return (context.activeContract !== null) === condition.expected;
+      case 'FREE_AGENCY':
+        return (context.player.currentTeamId === null || context.player.freeAgencyStatus === 'FREE_AGENT') === condition.expected;
+      case 'TEAM_VRS_RANK':
+        return context.currentTeamRank !== undefined && context.currentTeamRank !== null && this.inRange(context.currentTeamRank, condition.minimum, condition.maximum);
+      case 'RATING_STREAK':
+        return context.lowRatingStreak !== undefined && this.inRange(context.lowRatingStreak, condition.minimum, condition.maximum);
+      case 'ADVANCED_MAPS':
+        return context.advancedMapsPlayed !== undefined && this.inRange(context.advancedMapsPlayed, condition.minimum, condition.maximum);
+      case 'TOP20_RANK': {
+        const rank = context.player.trophies.top20Records.slice().sort((left, right) => right.year - left.year)[0]?.rank;
+        return rank !== undefined && this.inRange(rank, condition.minimum, condition.maximum);
+      }
       case 'GAME_MODE':
         return condition.modes.includes(context.difficultyMode);
       case 'RANDOM':

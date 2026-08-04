@@ -1,0 +1,104 @@
+{
+  "id": "grinder-internet-cafe",
+  "title": "网吧岁月",
+  "description": "电脑坏了的那一周，你回到网吧训练。旁边打英雄联盟的小孩一直在喊。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-borrowed-pc"
+    }
+  ],
+  "options": [
+    {
+      "id": "noise-proof",
+      "label": "练抗干扰",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你在最吵的角落练了一周。",
+          "回到主场后，你发现什么噪音都不怕了。"
+        ],
+        "failureMessages": [
+          "噪音让你频繁失误。",
+          "你花更多钱订了包间。"
+        ],
+        "successNextEventId": "grinder-faceit-streak",
+        "failureNextEventId": "grinder-faceit-streak"
+      }
+    },
+    {
+      "id": "cafe-community",
+      "label": "认识网吧战队",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CAFE_CREW",
+            "flag": {
+              "id": "CAFE_CREW",
+              "name": "网吧兄弟",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "网吧里有支本地队伍，水平不错。",
+          "他们邀请你周末一起打线下赛。"
+        ],
+        "failureMessages": [
+          "网吧战队的打法和你合不来。",
+          "但至少多了几个能约训练的人。"
+        ],
+        "successNextEventId": "grinder-faceit-streak",
+        "failureNextEventId": "grinder-faceit-streak"
+      }
+    }
+  ],
+  "autoEffects": []
+}

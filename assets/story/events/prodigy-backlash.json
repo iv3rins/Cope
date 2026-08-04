@@ -1,0 +1,104 @@
+{
+  "id": "prodigy-backlash",
+  "title": "捧杀反噬",
+  "description": "夺冠后的吹捧铺天盖地：有人开始说你是「历史最佳候选」。风向变得很快。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-finals-triumph"
+    }
+  ],
+  "options": [
+    {
+      "id": "resist-flattery",
+      "label": "抵抗吹捧",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你关掉了吹捧你的帖子。",
+          "「历史最佳」这四个字被你锁进了备忘录。"
+        ],
+        "failureMessages": [
+          "你嘴上说不信，却开始反复看那些帖子。",
+          "「最佳候选」开始影响你的心态。"
+        ],
+        "successNextEventId": "prodigy-haters",
+        "failureNextEventId": "prodigy-haters"
+      }
+    },
+    {
+      "id": "ride-hype",
+      "label": "顺势接受",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "HYPE_BACKLASH",
+            "flag": {
+              "id": "HYPE_BACKLASH",
+              "name": "捧杀风险",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你接受了这个定位，接的活动越来越多。",
+          "但你知道，捧得越高摔得越狠。"
+        ],
+        "failureMessages": [
+          "接受吹捧让你开始表演「天才」。",
+          "状态开始为表演让路。"
+        ],
+        "successNextEventId": "prodigy-haters",
+        "failureNextEventId": "prodigy-haters"
+      }
+    }
+  ],
+  "autoEffects": []
+}

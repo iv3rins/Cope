@@ -1,0 +1,104 @@
+{
+  "id": "matchfixing-tempt-again",
+  "title": "再次诱惑",
+  "description": "禁赛期快结束的时候，有人又找上门：「这次更安全，绝对查不出来。」",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-side-job"
+    }
+  ],
+  "options": [
+    {
+      "id": "resist-again",
+      "label": "再次拒绝",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "REFUSED_FIX",
+            "flag": {
+              "id": "REFUSED_FIX",
+              "name": "拒绝假赛",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你直接关上了门。",
+          "上一次的代价，你已经付过了。"
+        ],
+        "failureMessages": [
+          "你拒绝了，但关门的手有点抖。",
+          "「如果再来一次……」的念头闪过。"
+        ],
+        "successNextEventId": "matchfixing-resist-final",
+        "failureNextEventId": "matchfixing-resist-final"
+      }
+    },
+    {
+      "id": "report-again",
+      "label": "上报这次接触",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你主动上报了这次接触。",
+          "调查组说：你的态度，他们都记得。"
+        ],
+        "failureMessages": [
+          "上报后对方销声匿迹。",
+          "但你知道他们还在暗处。"
+        ],
+        "successNextEventId": "matchfixing-resist-final",
+        "failureNextEventId": "matchfixing-resist-final"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,110 @@
+{
+  "id": "grinder-team-drama",
+  "title": "队伍内讧",
+  "description": "两名主力因为一张地图的战术吵了起来，越吵越凶，训练室的门被摔得哐哐响。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-veteran-advice2"
+    }
+  ],
+  "options": [
+    {
+      "id": "mediate",
+      "label": "出面调解",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你把两人拉到会议室，让他们把话说完。",
+          "吵完之后，战术反而统一了。"
+        ],
+        "failureMessages": [
+          "调解变成三方混战。",
+          "你被两个人都记恨上了。"
+        ],
+        "successNextEventId": "grinder-captain-role",
+        "failureNextEventId": "grinder-captain-role"
+      }
+    },
+    {
+      "id": "stay-out",
+      "label": "不掺和",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "你选择不站队。",
+          "风波过去后，两人都当你是自己人。"
+        ],
+        "failureMessages": [
+          "不掺和的代价是队伍散了心。",
+          "接下来的比赛打得一盘散沙。"
+        ],
+        "successNextEventId": "grinder-captain-role",
+        "failureNextEventId": "grinder-captain-role"
+      }
+    }
+  ],
+  "autoEffects": []
+}

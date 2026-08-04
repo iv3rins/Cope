@@ -1,0 +1,105 @@
+{
+  "id": "grinder-borrowed-pc",
+  "title": "借来的电脑",
+  "description": "你的旧电脑带不动新版本了。队里有人借你一台配置更高的机器，条件是帮他们带分。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-partner-support"
+    }
+  ],
+  "options": [
+    {
+      "id": "accept-loan",
+      "label": "接受借用",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "新电脑的帧数让你的枪法都顺了。",
+          "你也兑现承诺，帮他们打上了分。"
+        ],
+        "failureMessages": [
+          "带分任务挤占了你的训练时间。",
+          "你开始重新算这笔账。"
+        ],
+        "successNextEventId": "grinder-internet-cafe",
+        "failureNextEventId": "grinder-internet-cafe"
+      }
+    },
+    {
+      "id": "save-up",
+      "label": "攒钱自己买",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -800
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你省吃俭用三个月，买下了自己的机器。",
+          "自己的电脑，练起来踏实。"
+        ],
+        "failureMessages": [
+          "攒钱计划被一次意外开销打乱。",
+          "旧电脑又卡又烫，你只能咬牙用。"
+        ],
+        "successNextEventId": "grinder-internet-cafe",
+        "failureNextEventId": "grinder-internet-cafe"
+      }
+    }
+  ],
+  "autoEffects": []
+}

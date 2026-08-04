@@ -1,0 +1,118 @@
+{
+  "id": "rookie-endorsement-deal",
+  "title": "代言取舍",
+  "description": "另一家更大的品牌来了，条件是用他们的外设出席线下活动。你刚和上家签完字。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-sponsor-deal"
+    }
+  ],
+  "options": [
+    {
+      "id": "honor-contract",
+      "label": "守住现有合同",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "TRUSTWORTHY",
+            "flag": {
+              "id": "TRUSTWORTHY",
+              "name": "信守承诺",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你回绝了大品牌。",
+          "上家听说后，主动给你加了点价。"
+        ],
+        "failureMessages": [
+          "你回绝了，但心里开始算那笔差价。",
+          "这念头跟着你进了训练室。"
+        ],
+        "successNextEventId": "rookie-scrim-strong",
+        "failureNextEventId": "rookie-scrim-strong"
+      }
+    },
+    {
+      "id": "break-for-big",
+      "label": "违约跳槽",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.4,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 4000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "MERCENARY",
+            "flag": {
+              "id": "MERCENARY",
+              "name": "雇佣兵",
+              "category": "CUSTOM"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -1500
+          }
+        ],
+        "successMessages": [
+          "违约金虽然高，但新合同更肥。",
+          "上家的公关稿里语气并不客气。"
+        ],
+        "failureMessages": [
+          "谈判破裂，你赔了违约金。",
+          "品牌圈开始流传你的名字，带着贬义。"
+        ],
+        "successNextEventId": "rookie-scrim-strong",
+        "failureNextEventId": "rookie-scrim-strong"
+      }
+    }
+  ],
+  "autoEffects": []
+}

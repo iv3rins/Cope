@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-redemption",
+  "title": "赎罪之路",
+  "description": "你开始做一些「没有回报」的事：义务给青训队当陪练，帮赛事方做反假赛宣传。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-resist-final"
+    }
+  ],
+  "options": [
+    {
+      "id": "serve-community",
+      "label": "坚持做公益",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你坚持了大半年。",
+          "圈内开始有人私下说：他不一样了。"
+        ],
+        "failureMessages": [
+          "公益做得断断续续。",
+          "但每次去，你心里都会踏实一点。"
+        ],
+        "successNextEventId": "matchfixing-report-mastermind",
+        "failureNextEventId": "matchfixing-report-mastermind"
+      }
+    },
+    {
+      "id": "mentor-youth",
+      "label": "用心带青训",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把踩过的坑讲给孩子们听。",
+          "「别碰盘口」这句话，你说得很重。"
+        ],
+        "failureMessages": [
+          "带青训让你想起自己的初心。",
+          "那些孩子眼里的光，让你羞愧又温暖。"
+        ],
+        "successNextEventId": "matchfixing-report-mastermind",
+        "failureNextEventId": "matchfixing-report-mastermind"
+      }
+    }
+  ],
+  "autoEffects": []
+}

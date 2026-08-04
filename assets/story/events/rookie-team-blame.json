@@ -1,0 +1,115 @@
+{
+  "id": "rookie-team-blame",
+  "title": "甩锅风波",
+  "description": "有队友在直播里暗示连败是因为「新人拖节奏」。弹幕立刻刷到了你脸上。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-losing-streak"
+    }
+  ],
+  "options": [
+    {
+      "id": "front-it-out",
+      "label": "当面对质",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.007
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你直接找他对质，话赶话差点动手。",
+          "但说完之后，彼此反而把话说开了。"
+        ],
+        "failureMessages": [
+          "对质变成了单方面挨批。",
+          "你意识到这个队里有人不想让你待下去。"
+        ],
+        "successNextEventId": "rookie-veteran-conflict",
+        "failureNextEventId": "rookie-fight-back"
+      }
+    },
+    {
+      "id": "data-talks",
+      "label": "用数据回击",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你把三场连败的击杀和首杀数据拉出来。",
+          "数据不会说谎，弹幕安静了。"
+        ],
+        "failureMessages": [
+          "数据摆出来了，但没人看。",
+          "你第一次明白舆论不认数据。"
+        ],
+        "successNextEventId": "rookie-fight-back",
+        "failureNextEventId": "rookie-fight-back"
+      }
+    }
+  ],
+  "autoEffects": []
+}

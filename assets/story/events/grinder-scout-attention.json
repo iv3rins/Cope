@@ -1,0 +1,104 @@
+{
+  "id": "grinder-scout-attention",
+  "title": "球探注意",
+  "description": "你的平台数据被一家次级联赛队伍注意到了。他们发来邮件：有兴趣来试训吗？",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-clutch-underdog"
+    }
+  ],
+  "options": [
+    {
+      "id": "accept-tryout",
+      "label": "接受试训邀请",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "SCOUTED",
+            "flag": {
+              "id": "SCOUTED",
+              "name": "被球探发现",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你买了车票去试训。",
+          "试训棚里全是和你一样的追梦人。"
+        ],
+        "failureMessages": [
+          "你答应了，但请不了假。",
+          "你只能把试训排到周末。"
+        ],
+        "successNextEventId": "grinder-offer-tier2",
+        "failureNextEventId": "grinder-offer-tier2"
+      }
+    },
+    {
+      "id": "stay-focus",
+      "label": "先专注平台赛",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你想再攒点资本再试训。",
+          "这个决定让你多打了两个月的低级别比赛。"
+        ],
+        "failureMessages": [
+          "你拒绝了试训，机会溜走。",
+          "你安慰自己：还会有下次。"
+        ],
+        "successNextEventId": "grinder-offer-tier2",
+        "failureNextEventId": "grinder-offer-tier2"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,110 @@
+{
+  "id": "rookie-coach-critique",
+  "title": "教练批评",
+  "description": "教练当着全队的面说你「打得像路人局」。气氛安静了三秒。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-role-experiment"
+    }
+  ],
+  "options": [
+    {
+      "id": "take-it",
+      "label": "低头认错",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你没辩解，把问题记在手机上。",
+          "教练说：至少态度还行。"
+        ],
+        "failureMessages": [
+          "你认了错，但心里堵得慌。",
+          "那一晚训练你打得稀烂。"
+        ],
+        "successNextEventId": "rookie-mentor-advice",
+        "failureNextEventId": "rookie-mentor-advice"
+      }
+    },
+    {
+      "id": "talk-back",
+      "label": "当面解释",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.4,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你解释了当时的判断逻辑。",
+          "教练听完，难得地沉默了一下。"
+        ],
+        "failureMessages": [
+          "顶嘴让场面更难堪。",
+          "有几个队友看你的眼神变了。"
+        ],
+        "successNextEventId": "rookie-mentor-advice",
+        "failureNextEventId": "rookie-mentor-advice"
+      }
+    }
+  ],
+  "autoEffects": []
+}

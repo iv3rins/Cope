@@ -4,6 +4,7 @@
   "description": "你每天在 Faceit 天梯里打十个小时，和形形色色的人组队。有人喷你菜，有人摆烂，但你清楚这是唯一能证明自己的地方。",
   "worldlineId": "grinder",
   "type": "CHOICE",
+  "repeatable": true,
   "period": "NORMAL",
   "conditions": [],
   "options": [
@@ -14,17 +15,36 @@
       "successChance": {
         "baseChance": 0.6,
         "modifiers": [
-          { "attribute": "CONSISTENCY", "perPoint": 0.006 }
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.006
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "ATTRIBUTE_CHANGE", "attribute": "AIM", "delta": 4 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": -8 }
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": -12 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          }
         ],
         "successNextEventId": "grinder-parttime-dilemma"
       }
@@ -36,20 +56,38 @@
       "successChance": {
         "baseChance": 0.55,
         "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.007 }
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.007
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 4 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -5 }
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -5
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
         ],
         "successNextEventId": "grinder-parttime-dilemma"
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 10
 }

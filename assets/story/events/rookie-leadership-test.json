@@ -1,0 +1,120 @@
+{
+  "id": "rookie-leadership-test",
+  "title": "指挥试炼",
+  "description": "指挥临时请假，教练把麦克风交给你：「今天你来带节奏。」你紧张得想上厕所。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-second-team"
+    }
+  ],
+  "options": [
+    {
+      "id": "lead-calm",
+      "label": "按战术板带",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.01
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你第一次完整地指挥完一场比赛。",
+          "虽然磕绊，但赢了下来。"
+        ],
+        "failureMessages": [
+          "你的指挥让队伍陷入混乱。",
+          "赛后教练说：至少你知道了指挥有多难。"
+        ],
+        "successNextEventId": "rookie-sponsor-deal",
+        "failureNextEventId": "rookie-sponsor-deal"
+      }
+    },
+    {
+      "id": "listen-elders",
+      "label": "多听老队员意见",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "你把节奏交给经验最丰富的人。",
+          "比赛赢了，大家都舒了口气。"
+        ],
+        "failureMessages": [
+          "你的「民主」让场上指令混乱。",
+          "有人开始质疑你的决策。"
+        ],
+        "successNextEventId": "rookie-sponsor-deal",
+        "failureNextEventId": "rookie-sponsor-deal"
+      }
+    }
+  ],
+  "autoEffects": []
+}

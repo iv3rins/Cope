@@ -1,0 +1,105 @@
+{
+  "id": "prodigy-coach-rescue",
+  "title": "教练救命",
+  "description": "教练把你从训练室拽出来，带你去吃了顿烧烤。「你再这样练，就废了。」",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-form-crash"
+    }
+  ],
+  "options": [
+    {
+      "id": "listen-coach",
+      "label": "听教练的",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你休息了两天，吃烧烤，散步。",
+          "回来时，状态回来了一半。"
+        ],
+        "failureMessages": [
+          "你嘴上答应，晚上又回去练了。",
+          "教练看你油盐不进，叹了口气。"
+        ],
+        "successNextEventId": "prodigy-injury-fear",
+        "failureNextEventId": "prodigy-injury-fear"
+      }
+    },
+    {
+      "id": "trust-own",
+      "label": "按自己的节奏来",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你按自己的方法调整了一周。",
+          "意外地，状态恢复得不错。"
+        ],
+        "failureMessages": [
+          "你自己的方法没见效。",
+          "教练的烧烤夜宵白请了。"
+        ],
+        "successNextEventId": "prodigy-injury-fear",
+        "failureNextEventId": "prodigy-injury-fear"
+      }
+    }
+  ],
+  "autoEffects": []
+}

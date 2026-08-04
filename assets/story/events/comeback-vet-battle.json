@@ -1,0 +1,95 @@
+{
+  "id": "comeback-vet-battle",
+  "title": "老将对决",
+  "description": "你们遇上另一支队伍的老将，同样是伤后复出。媒体称之为「老兵不死」之战。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-mentor-new"
+    }
+  ],
+  "options": [
+    {
+      "id": "experience-duel",
+      "label": "用经验对决",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你们打了一场充满算计的比赛。",
+          "最后你赢了，他笑着和你拥抱。"
+        ],
+        "failureMessages": [
+          "你输给了他。",
+          "「老兵不死，只是凋零」的标题让他占了。"
+        ],
+        "successNextEventId": "comeback-slump2",
+        "failureNextEventId": "comeback-slump2"
+      }
+    },
+    {
+      "id": "respect-fight",
+      "label": "尊重对决",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你们打得都很干净。",
+          "赛后的握手比任何采访都有力。"
+        ],
+        "failureMessages": [
+          "比赛本身没什么亮点。",
+          "媒体有点失望，但你们彼此认可。"
+        ],
+        "successNextEventId": "comeback-slump2",
+        "failureNextEventId": "comeback-slump2"
+      }
+    }
+  ],
+  "autoEffects": []
+}

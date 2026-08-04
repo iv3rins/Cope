@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-leak-proof",
+  "title": "留下证据",
+  "description": "你翻出手机，里面存着他们的所有聊天记录。你决定把这些整理成一份完整的证据链。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-whistleblower"
+    }
+  ],
+  "options": [
+    {
+      "id": "organize-proof",
+      "label": "整理全部证据",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你把时间线、金额、对话全部整理好。",
+          "这份证据链，足以让调查组立案。"
+        ],
+        "failureMessages": [
+          "证据太多太乱，你整理到一半放弃了。",
+          "但关键的部分还在。"
+        ],
+        "successNextEventId": "matchfixing-destroy-evidence",
+        "failureNextEventId": "matchfixing-destroy-evidence"
+      }
+    },
+    {
+      "id": "backup-everywhere",
+      "label": "多处备份",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你把证据备份到三个地方。",
+          "安全感回来了。"
+        ],
+        "failureMessages": [
+          "备份时被队友撞见。",
+          "你解释说在整理照片。"
+        ],
+        "successNextEventId": "matchfixing-destroy-evidence",
+        "failureNextEventId": "matchfixing-destroy-evidence"
+      }
+    }
+  ],
+  "autoEffects": []
+}

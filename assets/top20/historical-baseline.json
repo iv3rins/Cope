@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "source": ["知识库/hltv_top20_2023.json", "知识库/hltv_top20_2024.json", "知识库/hltv_top20_2025.json"],
+  "seasons": {
+    "2023": ["ZywOo", "NiKo", "ropz", "m0NESY", "Spinx", "SunPayus", "s1mple", "sh1ro", "stavn", "broky", "device", "frozen", "huNter-", "NertZ", "jabbi", "blameF", "Magisk", "cadiaN", "KSCERATO", "Twistzz"],
+    "2024": ["donk", "m0NESY", "ZywOo", "NiKo", "jL", "sh1ro", "flameZ", "broky", "b1t", "frozen", "w0nderful", "malbsMd", "Spinx", "xertioN", "XANTARES", "iM", "Jimpphat", "KSCERATO", "EliGE", "device"],
+    "2025": ["ZywOo", "donk", "ropz", "m0NESY", "sh1ro", "molodoy", "flameZ", "frozen", "KSCERATO", "Spinx", "Twistzz", "mezii", "Senzu", "XANTARES", "YEKINDAR", "xertioN", "torzsi", "NiKo", "iM"]
+  },
+  "rules": {
+    "recentSeasonWeight": 1,
+    "previousSeasonWeight": 0.55,
+    "olderSeasonWeight": 0.25,
+    "absenceDecayPerYear": 0.12,
+    "newcomerVrsBonusAtRank1": 0.35,
+    "newcomerVrsBonusAtRank36": 0.08
+  }
+}

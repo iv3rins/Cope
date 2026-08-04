@@ -1,0 +1,90 @@
+{
+  "id": "comeback-final-goodbye",
+  "title": "最后告别",
+  "description": "无论结局如何，你知道这是最后一段路了。你开始认真地和每一个熟悉的地方告别。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-legacy-match"
+    }
+  ],
+  "options": [
+    {
+      "id": "thank-everyone",
+      "label": "感谢所有人",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你请全队吃了顿饭，说了很多感谢。",
+          "「能遇见你们，是我的运气。」"
+        ],
+        "failureMessages": [
+          "感谢的话说不出口，你只是沉默地敬酒。",
+          "但大家都懂。"
+        ],
+        "successNextEventId": "comeback-hall-call",
+        "failureNextEventId": "comeback-hall-call"
+      }
+    },
+    {
+      "id": "write-letter",
+      "label": "给未来的自己写信",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你写了一封给五年后的自己的信。",
+          "信里只写了一句话：别后悔。"
+        ],
+        "failureMessages": [
+          "信写到一半写不下去了。",
+          "你把它收进了抽屉。"
+        ],
+        "successNextEventId": "comeback-hall-call",
+        "failureNextEventId": "comeback-hall-call"
+      }
+    }
+  ],
+  "autoEffects": []
+}

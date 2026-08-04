@@ -1,0 +1,114 @@
+{
+  "id": "grinder-coach-trust",
+  "title": "教练信任",
+  "description": "新教练上任后重新定首发。他把你叫进办公室，问你想不想当队长。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-gift-parents"
+    }
+  ],
+  "options": [
+    {
+      "id": "take-armband",
+      "label": "接下队长",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "ROLE_CHANGE",
+            "role": "IGL"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你戴上了队长袖标。",
+          "责任比想象中沉，但你接住了。"
+        ],
+        "failureMessages": [
+          "队长责任压垮了你的状态。",
+          "你打了半赛季就主动交回了袖标。"
+        ],
+        "successNextEventId": "grinder-team-schedule",
+        "failureNextEventId": "grinder-team-schedule"
+      }
+    },
+    {
+      "id": "pass-it",
+      "label": "推给老队员",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你把队长让给了经验更足的人。",
+          "他干得不错，你也乐得专注比赛。"
+        ],
+        "failureMessages": [
+          "推让让教练觉得你没担当。",
+          "你的首发位置开始微妙起来。"
+        ],
+        "successNextEventId": "grinder-team-schedule",
+        "failureNextEventId": "grinder-team-schedule"
+      }
+    }
+  ],
+  "autoEffects": []
+}

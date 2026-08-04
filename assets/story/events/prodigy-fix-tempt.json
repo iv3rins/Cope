@@ -1,0 +1,113 @@
+{
+  "id": "prodigy-fix-tempt",
+  "title": "天才诱惑",
+  "description": "有人约你吃饭，暗示「有一场稳赢的比赛，配合一下，保你职业生涯不会断档」。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-museum"
+    }
+  ],
+  "options": [
+    {
+      "id": "refuse-tempt",
+      "label": "拒绝",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "REFUSED_FIX",
+            "flag": {
+              "id": "REFUSED_FIX",
+              "name": "拒绝假赛",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你听了一半就起身走了。",
+          "天才的名声不能折在这里。"
+        ],
+        "failureMessages": [
+          "你拒绝得不够坚决。",
+          "对方记住了你，之后总在试探。"
+        ],
+        "successNextEventId": "prodigy-z-training-day",
+        "failureNextEventId": "prodigy-z-training-day"
+      }
+    },
+    {
+      "id": "consider-it",
+      "label": "犹豫了",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.4,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "matchfixing"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你犹豫了，因为实在太难了。",
+          "你最终没有当场拒绝。"
+        ],
+        "failureMessages": [
+          "你犹豫了几天，最后还是拒绝了。",
+          "但那顿饭的阴影留了很久。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": "prodigy-z-training-day"
+      }
+    }
+  ],
+  "autoEffects": []
+}

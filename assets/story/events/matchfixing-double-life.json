@@ -1,0 +1,95 @@
+{
+  "id": "matchfixing-double-life",
+  "title": "双面生活",
+  "description": "你一边打比赛，一边要应付暗处的人的试探。你学会了在镜头前和镜头后切换。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-abyss"
+    }
+  ],
+  "options": [
+    {
+      "id": "keep-clean2",
+      "label": "坚持干净",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你每次接到可疑电话都会录音。",
+          "干净，是你现在唯一的武器。"
+        ],
+        "failureMessages": [
+          "双面生活让你心力交瘁。",
+          "你开始分不清哪个是真的自己。"
+        ],
+        "successNextEventId": "matchfixing-lie-layers",
+        "failureNextEventId": "matchfixing-lie-layers"
+      }
+    },
+    {
+      "id": "trust-system",
+      "label": "信任调查组",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你把所有异常都汇报给了调查组。",
+          "有人替你挡在暗处。"
+        ],
+        "failureMessages": [
+          "你汇报了，但调查组也有力所不及。",
+          "你得学会自己保护自己。"
+        ],
+        "successNextEventId": "matchfixing-lie-layers",
+        "failureNextEventId": "matchfixing-lie-layers"
+      }
+    }
+  ],
+  "autoEffects": []
+}

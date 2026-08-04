@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-family-shame",
+  "title": "家人蒙羞",
+  "description": "妈妈打电话来，声音很轻：「新闻上说的是你吗？」你张了张嘴，说不出话。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-social-court"
+    }
+  ],
+  "options": [
+    {
+      "id": "tell-family",
+      "label": "如实告诉家人",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你讲了全部经过。",
+          "妈妈说：妈信你。"
+        ],
+        "failureMessages": [
+          "你只说「是误会」。",
+          "但妈妈听出了你的声音在抖。"
+        ],
+        "successNextEventId": "matchfixing-fan-exit",
+        "failureNextEventId": "matchfixing-fan-exit"
+      }
+    },
+    {
+      "id": "hide-truth",
+      "label": "瞒着家里",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你说没事，过段时间就好了。",
+          "撒谎让你心里更堵。"
+        ],
+        "failureMessages": [
+          "瞒着瞒着，家里还是从新闻里知道了。",
+          "那通电话里，妈妈的声音很失望。"
+        ],
+        "successNextEventId": "matchfixing-fan-exit",
+        "failureNextEventId": "matchfixing-fan-exit"
+      }
+    }
+  ],
+  "autoEffects": []
+}

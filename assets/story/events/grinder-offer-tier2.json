@@ -1,0 +1,109 @@
+{
+  "id": "grinder-offer-tier2",
+  "title": "次级报价",
+  "description": "次级联赛队伍开了合同：月薪 2000，包吃住，训练基地在一栋老居民楼里。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-scout-attention"
+    }
+  ],
+  "options": [
+    {
+      "id": "sign-humble",
+      "label": "签下合同",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 2000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "PRO_TIER2",
+            "flag": {
+              "id": "PRO_TIER2",
+              "name": "次级职业选手",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "2000 块不多，但它是职业合同。",
+          "你搬进老居民楼的那天，拍了张照发给家人。"
+        ],
+        "failureMessages": [
+          "签合同前你看了三遍条款。",
+          "字越看越紧，但你还是签了。"
+        ],
+        "successNextEventId": "grinder-contract-risky",
+        "failureNextEventId": "grinder-contract-risky"
+      }
+    },
+    {
+      "id": "negotiate-more",
+      "label": "再谈待遇",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 2600
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你提了伙食和训练时间的要求。",
+          "对方居然都答应了。"
+        ],
+        "failureMessages": [
+          "谈待遇差点谈崩。",
+          "对方说你「还没到挑条件的资格」。"
+        ],
+        "successNextEventId": "grinder-contract-risky",
+        "failureNextEventId": "grinder-contract-risky"
+      }
+    }
+  ],
+  "autoEffects": []
+}

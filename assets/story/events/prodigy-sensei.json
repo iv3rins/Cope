@@ -1,0 +1,105 @@
+{
+  "id": "prodigy-sensei",
+  "title": "亦师亦友",
+  "description": "一位传奇选手退役后开始带新人。他看了你的比赛，主动加了你。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-sabotage"
+    }
+  ],
+  "options": [
+    {
+      "id": "learn-sensei",
+      "label": "拜他为师",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "他每周给你开一次小灶。",
+          "你从他的复盘里看到了另一个世界。"
+        ],
+        "failureMessages": [
+          "你不好意思开口拜师。",
+          "但他的建议你每条都记了下来。"
+        ],
+        "successNextEventId": "prodigy-bet",
+        "failureNextEventId": "prodigy-bet"
+      }
+    },
+    {
+      "id": "stay-peers",
+      "label": "保持平辈交流",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你们以朋友身份交流。",
+          "他偶尔提醒你「别飘」。"
+        ],
+        "failureMessages": [
+          "平辈交流让你没能学到他的全部。",
+          "但那份关系很轻松。"
+        ],
+        "successNextEventId": "prodigy-bet",
+        "failureNextEventId": "prodigy-bet"
+      }
+    }
+  ],
+  "autoEffects": []
+}

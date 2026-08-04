@@ -1,0 +1,110 @@
+{
+  "id": "prodigy-second-wind",
+  "title": "第二春",
+  "description": "调整了三个月后，你打出了夺冠以来的最佳状态。有人说你「找回自己了」。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-coach-talk"
+    }
+  ],
+  "options": [
+    {
+      "id": "protect-fire",
+      "label": "保护好这股劲",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你学会了在状态好时留余力。",
+          "第二春不再是昙花一现。"
+        ],
+        "failureMessages": [
+          "你太怕第二春结束，反而又紧张了。",
+          "状态好景不长。"
+        ],
+        "successNextEventId": "prodigy-sponsor-war",
+        "failureNextEventId": "prodigy-sponsor-war"
+      }
+    },
+    {
+      "id": "seize-moment",
+      "label": "趁状态全开",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.008
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "TOTAL_KILLS",
+            "delta": 50
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你趁状态好打出了统治数据。",
+          "「天才回来了」的标题再次刷屏。"
+        ],
+        "failureMessages": [
+          "太用力，第二春提前结束。",
+          "你又在谷底待了两周。"
+        ],
+        "successNextEventId": "prodigy-sponsor-war",
+        "failureNextEventId": "prodigy-sponsor-war"
+      }
+    }
+  ],
+  "autoEffects": []
+}

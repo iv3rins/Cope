@@ -1,0 +1,103 @@
+{
+  "id": "rookie-prodigy-discovery",
+  "title": "天赋觉醒",
+  "description": "一支豪门战队的分析师看了你的比赛录像，给了你一个大胆的评价：「你是被埋没的天才。」",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-blackmail-hook"
+    }
+  ],
+  "options": [
+    {
+      "id": "embrace-talent",
+      "label": "接受天才定位",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "prodigy"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CROSSED_TO_PRODIGY",
+            "flag": {
+              "id": "CROSSED_TO_PRODIGY",
+              "name": "转入天才线",
+              "category": "CUSTOM"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你决定相信那份评价。",
+          "你的职业生涯翻开了新的一页。"
+        ],
+        "failureMessages": [
+          "你犹豫了，天才的帽子太重。",
+          "你还是留在了原来的轨迹上。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": "rookie-grinder-reality"
+      }
+    },
+    {
+      "id": "stay-course",
+      "label": "保持现状",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你选择一步一个脚印。",
+          "分析师的那份评价被你锁进了抽屉。"
+        ],
+        "failureMessages": [
+          "你嘴上说保持现状，心里却开始期待更多。",
+          "这种感觉让你坐立不安。"
+        ],
+        "successNextEventId": "rookie-grinder-reality",
+        "failureNextEventId": "rookie-grinder-reality"
+      }
+    }
+  ],
+  "autoEffects": []
+}

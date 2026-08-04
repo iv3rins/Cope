@@ -6,7 +6,10 @@
   "type": "CHOICE",
   "period": "NORMAL",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "comeback-injury" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-injury"
+    }
   ],
   "options": [
     {
@@ -16,19 +19,39 @@
       "successChance": {
         "baseChance": 0.6,
         "modifiers": [
-          { "attribute": "CONSISTENCY", "perPoint": 0.006 }
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.006
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "ATTRIBUTE_CHANGE", "attribute": "AIM", "delta": 5 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 5 }
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
         ],
-        "successNextEventId": "comeback-midseason"
+        "successNextEventId": "comeback-rehab-plan",
+        "failureNextEventId": "comeback-rehab-plan"
       }
     },
     {
@@ -38,20 +61,39 @@
       "successChance": {
         "baseChance": 0.5,
         "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.007 }
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.007
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 5 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 }
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -12 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -12
+          }
         ],
-        "successNextEventId": "comeback-midseason"
+        "successNextEventId": "comeback-rehab-plan",
+        "failureNextEventId": "comeback-rehab-plan"
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
 }

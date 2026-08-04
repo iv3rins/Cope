@@ -1,0 +1,95 @@
+{
+  "id": "matchfixing-evidence-gathering",
+  "title": "证据收集",
+  "description": "调查组约你做了正式笔录。他们问得很细：时间、地点、对话内容。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-manager-meeting"
+    }
+  ],
+  "options": [
+    {
+      "id": "full-cooperate",
+      "label": "全力配合",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你事无巨细地交代了。",
+          "调查员说：你的配合很有价值。"
+        ],
+        "failureMessages": [
+          "笔录过程中你紧张得直冒汗。",
+          "有几处细节你记不清，看起来像隐瞒。"
+        ],
+        "successNextEventId": "matchfixing-mole-hunt",
+        "failureNextEventId": "matchfixing-mole-hunt"
+      }
+    },
+    {
+      "id": "minimize",
+      "label": "轻描淡写",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你说那晚只是「普通的闲聊」。",
+          "调查员记下了，但眼神存疑。"
+        ],
+        "failureMessages": [
+          "你的轻描淡写和已知线索对不上。",
+          "你的嫌疑反而加重了。"
+        ],
+        "successNextEventId": "matchfixing-mole-hunt",
+        "failureNextEventId": "matchfixing-mole-hunt"
+      }
+    }
+  ],
+  "autoEffects": []
+}

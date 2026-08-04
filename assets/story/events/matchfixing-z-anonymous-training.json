@@ -1,0 +1,96 @@
+{
+  "id": "matchfixing-z-anonymous-training",
+  "title": "匿名训练",
+  "description": "你用小号打训练赛，没人知道你是谁。这种感觉反而让你专注。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "repeatable": true,
+  "phase": "POST_TOURNAMENT",
+  "weight": 0.35,
+  "priority": 10,
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "focus-anon",
+      "label": "专注提升",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "匿名让你敢尝试新打法。",
+          "进步发生在没人盯着你的时候。"
+        ],
+        "failureMessages": [
+          "匿名训练打得太随意。",
+          "你提醒自己：训练就是训练。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "test-calm",
+      "label": "练心态",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "你练习在逆风局稳住心态。",
+          "心态这东西，练了总有用。"
+        ],
+        "failureMessages": [
+          "逆风局你还是会急躁。",
+          "但你知道自己在进步。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

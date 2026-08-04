@@ -1,0 +1,110 @@
+{
+  "id": "comeback-semi-final",
+  "title": "半决赛",
+  "description": "你们杀进半决赛，对手是夺冠热门。赛前赔率不看好你们。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "IN_TOURNAMENT",
+  "weight": 0.75,
+  "priority": 80,
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-big-tournament"
+    }
+  ],
+  "options": [
+    {
+      "id": "veteran-mind",
+      "label": "发挥老将经验",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你用经验破解了他们的节奏。",
+          "你们爆冷晋级决赛。"
+        ],
+        "failureMessages": [
+          "经验在绝对实力面前不够用。",
+          "你们被碾压出局。"
+        ],
+        "successNextEventId": "comeback-final-return",
+        "failureNextEventId": "comeback-final-return"
+      }
+    },
+    {
+      "id": "emotional-fuel",
+      "label": "用情绪当燃料",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你的情绪感染了全队。",
+          "你们带着火气赢下了半决赛。"
+        ],
+        "failureMessages": [
+          "情绪让你上头，关键局失误。",
+          "半决赛止步。"
+        ],
+        "successNextEventId": "comeback-final-return",
+        "failureNextEventId": "comeback-final-return"
+      }
+    }
+  ],
+  "autoEffects": []
+}

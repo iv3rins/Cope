@@ -40,6 +40,12 @@ export class RetirementSummaryServiceImpl implements RetirementSummaryService {
       .map((record) => ({ year: record.year, rank: record.rank }))
       .sort((left, right) => left.year - right.year || left.rank - right.rank);
     const majorMvpCount = mvpRoom.filter((entry) => entry.level === 'MAJOR').length;
+    const peakRating = archive.reduce((peak, record) => Math.max(peak, record.rating), 0);
+    const ratingSeasons = new Map<number, number[]>();
+    for (const record of archive) ratingSeasons.set(record.year, [...(ratingSeasons.get(record.year) ?? []), record.rating]);
+    const seasonRatings = [...ratingSeasons.entries()].map(([year, ratings]) => ({ year, rating: ratings.reduce((sum, value) => sum + value, 0) / ratings.length }));
+    const peakSeason = seasonRatings.reduce<{ year: number | null; rating: number }>((best, item) => item.rating > best.rating ? item : best, { year: null, rating: 0 });
+    const grade = peakRating >= 1.2 ? 'S' : peakRating >= 1.1 ? 'A' : peakRating >= 1.0 ? 'B' : peakRating >= 0.9 ? 'C' : 'D';
 
     return {
       player: {
@@ -63,6 +69,17 @@ export class RetirementSummaryServiceImpl implements RetirementSummaryService {
         careerEarnings: player.career.careerEarnings,
         majorChampionships: player.trophies.majorChampionships,
         otherSTierTitles: player.trophies.otherSTierTitles,
+        grade,
+        retiredAge: player.age,
+        peakRating,
+        peakSeason: peakSeason.year,
+        peakSeasonRating: peakSeason.rating,
+        peakSeasons: seasonRatings.filter((item) => item.rating >= Math.max(1.05, peakSeason.rating - 0.05)).length,
+        tierBreakdown: {
+          T2: archive.filter((record) => record.level === 'T2').length,
+          T1: archive.filter((record) => record.level === 'T1').length,
+          MAJOR: archive.filter((record) => record.level === 'MAJOR').length,
+        },
       },
     };
   }

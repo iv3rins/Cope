@@ -1,0 +1,103 @@
+{
+  "id": "matchfixing-comeback-sacrifice",
+  "title": "赎罪复出",
+  "description": "有支队伍听说了你的故事，愿意给你一份「救赎合同」：低薪，但有完整上场时间。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-clean-life"
+    }
+  ],
+  "options": [
+    {
+      "id": "accept-redemption",
+      "label": "接受救赎合同",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "comeback"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CROSSED_TO_COMEBACK",
+            "flag": {
+              "id": "CROSSED_TO_COMEBACK",
+              "name": "转入复出线",
+              "category": "CUSTOM"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你签了救赎合同。",
+          "从污点里爬出来的人，最知道干净的珍贵。"
+        ],
+        "failureMessages": [
+          "你担心救赎合同是怜悯。",
+          "你犹豫了，没有签。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": "matchfixing-grinder-return"
+      }
+    },
+    {
+      "id": "decline-sacrifice",
+      "label": "不想被怜悯",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你谢绝了「救赎」的说法。",
+          "你想凭实力回去，而不是凭故事。"
+        ],
+        "failureMessages": [
+          "拒绝之后你有点后悔。",
+          "「故事」也是一种资源。"
+        ],
+        "successNextEventId": "matchfixing-grinder-return",
+        "failureNextEventId": "matchfixing-grinder-return"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,110 @@
+{
+  "id": "prodigy-new-home",
+  "title": "新队伍",
+  "description": "新队伍的训练风格和你习惯的完全不同：更严谨、更纪律化。你像重新当了一次新人。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-team-change"
+    }
+  ],
+  "options": [
+    {
+      "id": "adapt-system",
+      "label": "适应新体系",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你放下了天才的身段，重新学体系。",
+          "三个月后，你成了新体系的核心。"
+        ],
+        "failureMessages": [
+          "新体系和你格格不入。",
+          "你在新队伍的位置开始模糊。"
+        ],
+        "successNextEventId": "prodigy-captain-prodigy",
+        "failureNextEventId": "prodigy-captain-prodigy"
+      }
+    },
+    {
+      "id": "import-style",
+      "label": "坚持自己的打法",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你坚持自己的节奏。",
+          "新教练由着你，但配合始终差一口气。"
+        ],
+        "failureMessages": [
+          "「天才不服管」的名声传开了。",
+          "你在新队伍更加孤立。"
+        ],
+        "successNextEventId": "prodigy-captain-prodigy",
+        "failureNextEventId": "prodigy-captain-prodigy"
+      }
+    }
+  ],
+  "autoEffects": []
+}

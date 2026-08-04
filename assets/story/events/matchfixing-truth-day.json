@@ -1,0 +1,103 @@
+{
+  "id": "matchfixing-truth-day",
+  "title": "真相之日",
+  "description": "调查组告诉你：当年的事已经结案，你是清白的，也可以重新开始。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-lie-layers"
+    }
+  ],
+  "options": [
+    {
+      "id": "accept-clean2",
+      "label": "接受清白",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 14
+          },
+          {
+            "type": "FLAG_REMOVE",
+            "flagId": "UNDER_SUSPICION"
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "TRUTH_DAY",
+            "flag": {
+              "id": "TRUTH_DAY",
+              "name": "真相大白",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你站了很久，然后哭了。",
+          "清白迟到，但终究来了。"
+        ],
+        "failureMessages": [
+          "你听到「清白」两个字时愣住了。",
+          "你等这句话，等得太久了。"
+        ],
+        "successNextEventId": "matchfixing-final-verdict",
+        "failureNextEventId": "matchfixing-final-verdict"
+      }
+    },
+    {
+      "id": "write-it-down",
+      "label": "写下来封存",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把这段经历写成了一封信，封存起来。",
+          "有些事，写下来才算真的翻篇。"
+        ],
+        "failureMessages": [
+          "你提笔又放下，写不完整。",
+          "但你知道，它已经过去了。"
+        ],
+        "successNextEventId": "matchfixing-final-verdict",
+        "failureNextEventId": "matchfixing-final-verdict"
+      }
+    }
+  ],
+  "autoEffects": []
+}

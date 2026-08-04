@@ -14,20 +14,43 @@
       "successChance": {
         "baseChance": 0.5,
         "modifiers": [
-          { "attribute": "AIM", "perPoint": 0.008 }
+          {
+            "attribute": "AIM",
+            "perPoint": 0.008
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 18 },
-          { "type": "FLAG_ADD", "flagId": "LAN_DEBUT_STAR", "flag": { "id": "LAN_DEBUT_STAR", "name": "线下首秀明星", "category": "ACHIEVEMENT" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 18
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "LAN_DEBUT_STAR",
+            "flag": {
+              "id": "LAN_DEBUT_STAR",
+              "name": "线下首秀明星",
+              "category": "ACHIEVEMENT"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 15 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
         ],
-        "successNextEventId": "prodigy-hype-pressure",
-        "failureNextEventId": "prodigy-hype-pressure"
+        "successNextEventId": "prodigy-hype-check",
+        "failureNextEventId": "prodigy-hype-check"
       }
     },
     {
@@ -37,21 +60,39 @@
       "successChance": {
         "baseChance": 0.65,
         "modifiers": [
-          { "attribute": "CONSISTENCY", "perPoint": 0.007 }
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.007
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 10 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -8 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
         ],
-        "successNextEventId": "prodigy-hype-pressure",
-        "failureNextEventId": "prodigy-hype-pressure"
+        "successNextEventId": "prodigy-hype-check",
+        "failureNextEventId": "prodigy-hype-check"
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
 }

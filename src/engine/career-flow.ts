@@ -40,8 +40,6 @@ export interface CareerFlowSnapshot {
 }
 
 export interface CareerFlowService {
-  listAcademyOffers(input: { readonly region: string }): Promise<readonly AcademyTeamOffer[]>;
-  chooseAcademyTeam(teamId: HltvTeamId): Promise<CareerFlowSnapshot>;
   getSnapshot(): Promise<CareerFlowSnapshot>;
   advance(): Promise<CareerFlowSnapshot>;
   resolveEvent(input: { readonly eventId: string; readonly optionId: string; readonly randomRoll: number }): Promise<CareerFlowSnapshot>;

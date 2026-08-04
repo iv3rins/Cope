@@ -6,7 +6,10 @@
   "type": "CHOICE",
   "period": "OFFSEASON",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "comeback-rust" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-rust"
+    }
   ],
   "options": [
     {
@@ -16,17 +19,36 @@
       "successChance": {
         "baseChance": 0.65,
         "modifiers": [
-          { "attribute": "CONSISTENCY", "perPoint": 0.006 }
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.006
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 3 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -5 }
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -5
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 15 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
         ],
         "successNextEventId": "comeback-final"
       }
@@ -38,21 +60,47 @@
       "successChance": {
         "baseChance": 0.55,
         "modifiers": [
-          { "attribute": "LEADERSHIP", "perPoint": 0.007 }
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.007
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 10 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -10 },
-          { "type": "FLAG_ADD", "flagId": "COACH_TRUST", "flag": { "id": "COACH_TRUST", "name": "教练的信任", "category": "CAREER" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "COACH_TRUST",
+            "flag": {
+              "id": "COACH_TRUST",
+              "name": "教练的信任",
+              "category": "CAREER"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
         ],
         "successNextEventId": "comeback-final"
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "POST_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
 }

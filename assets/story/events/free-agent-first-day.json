@@ -1,0 +1,3 @@
+{
+  "id":"free-agent-first-day","title":"自由市场第一天","description":"经纪人把你的赛事档案和近期训练赛样本发给多支队伍，接下来要决定等待还是主动训练赛。","worldlineId":"rookie","type":"CHOICE","period":"OFFSEASON","conditions":[{"type":"FREE_AGENCY","expected":true}],"options":[{"id":"call-teams","label":"联系队伍并申请训练赛","requirements":[],"successChance":{"baseChance":0.75,"modifiers":[]},"outcome":{"successEffects":[{"type":"PLAYER_STAT_CHANGE","stat":"STRESS","delta":4}],"failureEffects":[{"type":"PLAYER_STAT_CHANGE","stat":"BALANCE","delta":-50}],"successMessages":["经纪人发出资料包，公开训练赛和 T2 训练赛进入日程。"],"failureMessages":["几支队伍没有回复，你需要承担更多生活成本。"],"successNextEventId":"free-agent-public-tryout"}}],"autoEffects":[],"phase":"POST_TOURNAMENT","weight":2,"priority":100
+}

@@ -1,0 +1,100 @@
+{
+  "id": "comeback-media-cruelty",
+  "title": "舆论残酷",
+  "description": "一篇长文分析「复出选手的经济账」，结论是：大部分复出不值得。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-management-push"
+    }
+  ],
+  "options": [
+    {
+      "id": "ignore-analysis",
+      "label": "不看这些分析",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你决定不再看这类文章。",
+          "「值不值得」只有你自己能回答。"
+        ],
+        "failureMessages": [
+          "你读完了全文，还读了评论区。",
+          "那晚你又失眠了。"
+        ],
+        "successNextEventId": "comeback-fan-support",
+        "failureNextEventId": "comeback-fan-support"
+      }
+    },
+    {
+      "id": "answer-back",
+      "label": "用表现回答",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你在下一场比赛打出了高分表现。",
+          "那篇文章的评论区开始反转。"
+        ],
+        "failureMessages": [
+          "你想用表现回答，结果发挥更差。",
+          "「果然不值得」的评论成了热评。"
+        ],
+        "successNextEventId": "comeback-fan-support",
+        "failureNextEventId": "comeback-fan-support"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,95 @@
+{
+  "id": "comeback-rival-doubt",
+  "title": "对手质疑",
+  "description": "有对手在采访里说：「他早就不行了，复出只是情怀。」",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-form-60"
+    }
+  ],
+  "options": [
+    {
+      "id": "silent-response",
+      "label": "不回应",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你什么都没说。",
+          "你打算在比赛里回答。"
+        ],
+        "failureMessages": [
+          "你的沉默被当成默认。",
+          "质疑声更大了一些。"
+        ],
+        "successNextEventId": "comeback-ignite",
+        "failureNextEventId": "comeback-ignite"
+      }
+    },
+    {
+      "id": "verbal-counter",
+      "label": "采访里回应",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你说：球场见。",
+          "这句话被反复剪辑播放。"
+        ],
+        "failureMessages": [
+          "你的回应被断章取义，成了「嘴硬」。",
+          "你只能靠比赛翻盘。"
+        ],
+        "successNextEventId": "comeback-ignite",
+        "failureNextEventId": "comeback-ignite"
+      }
+    }
+  ],
+  "autoEffects": []
+}

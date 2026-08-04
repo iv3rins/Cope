@@ -1,0 +1,100 @@
+{
+  "id": "grinder-national-tour",
+  "title": "全国巡回",
+  "description": "俱乐部组织了全国巡回表演赛。每个城市都有粉丝举着你的 ID 牌。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-leadership-chance"
+    }
+  ],
+  "options": [
+    {
+      "id": "enjoy-tour",
+      "label": "享受巡回赛",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 800
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你第一次感受到被粉丝包围的感觉。",
+          "一个小孩举着你的签名板等了两个小时。"
+        ],
+        "failureMessages": [
+          "连续赶场让你疲惫不堪。",
+          "后半程你的表演赛状态很差。"
+        ],
+        "successNextEventId": "grinder-media-recognition",
+        "failureNextEventId": "grinder-media-recognition"
+      }
+    },
+    {
+      "id": "keep-training",
+      "label": "巡回中也训练",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "你带着训练计划跑完了全程。",
+          "巡回结束后，你的状态没有掉队。"
+        ],
+        "failureMessages": [
+          "训练和赶场两头顾，你累垮了。",
+          "巡回结束你躺了三天。"
+        ],
+        "successNextEventId": "grinder-media-recognition",
+        "failureNextEventId": "grinder-media-recognition"
+      }
+    }
+  ],
+  "autoEffects": []
+}

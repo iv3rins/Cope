@@ -14,20 +14,51 @@
       "successChance": {
         "baseChance": 0.55,
         "modifiers": [
-          { "attribute": "AIM", "perPoint": 0.006 }
+          {
+            "attribute": "AIM",
+            "perPoint": 0.006
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 12 },
-          { "type": "FLAG_ADD", "flagId": "TRIAL_PASSED", "flag": { "id": "TRIAL_PASSED", "name": "试训通过", "category": "CAREER" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "TRIAL_PASSED",
+            "flag": {
+              "id": "TRIAL_PASSED",
+              "name": "试训通过",
+              "category": "CAREER"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 10 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你的准星在关键回合稳住了。",
+          "教练点头，示意你留下参加下一轮试训。"
+        ],
+        "failureMessages": [
+          "最后一个回合没有处理好。",
+          "教练记下了你的问题，但仍给你留下了下一次机会。"
         ],
         "successNextEventId": "rookie-academy-offer",
-        "failureNextEventId": "rookie-scrim-rotation"
+        "failureNextEventId": "rookie-academy-offer"
       }
     },
     {
@@ -37,21 +68,51 @@
       "successChance": {
         "baseChance": 0.5,
         "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.007 }
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.007
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 8 },
-          { "type": "FLAG_ADD", "flagId": "COACH_NOTICED", "flag": { "id": "COACH_NOTICED", "name": "教练注意到了你", "category": "CAREER" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "COACH_NOTICED",
+            "flag": {
+              "id": "COACH_NOTICED",
+              "name": "教练注意到了你",
+              "category": "CAREER"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 8 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你和教练聊清了战术理解。",
+          "对方决定把你列入重点观察名单。"
+        ],
+        "failureMessages": [
+          "你的回答没有完全打消教练的疑虑。",
+          "但这次谈话至少让你知道了下一步该补什么。"
         ],
         "successNextEventId": "rookie-academy-offer",
-        "failureNextEventId": "rookie-scrim-rotation"
+        "failureNextEventId": "rookie-academy-offer"
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50
 }

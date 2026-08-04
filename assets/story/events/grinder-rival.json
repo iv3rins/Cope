@@ -1,0 +1,115 @@
+{
+  "id": "grinder-rival",
+  "title": "宿敌对决",
+  "description": "联赛里有一支队伍总在针对你：赛前嘲讽、赛后阴阳、训练赛下死手。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-championship"
+    }
+  ],
+  "options": [
+    {
+      "id": "beat-them",
+      "label": "用胜利回击",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.008
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "TOTAL_KILLS",
+            "delta": 40
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你在对阵他们时打出了统治级表现。",
+          "赛后他们的社交媒体安静了很久。"
+        ],
+        "failureMessages": [
+          "你又输给了他们。",
+          "他们的嘲讽越发得意。"
+        ],
+        "successNextEventId": "grinder-veteran-advice2",
+        "failureNextEventId": "grinder-veteran-advice2"
+      }
+    },
+    {
+      "id": "ignore-them",
+      "label": "无视挑衅",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你选择无视，专注自己的比赛。",
+          "他们找不到你的情绪破绽，反而有点慌。"
+        ],
+        "failureMessages": [
+          "无视被解读成认怂。",
+          "队友说你太软了。"
+        ],
+        "successNextEventId": "grinder-veteran-advice2",
+        "failureNextEventId": "grinder-veteran-advice2"
+      }
+    }
+  ],
+  "autoEffects": []
+}

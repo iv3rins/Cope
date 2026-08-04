@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/teams/standings_global_2026_07_06.md",
+  "observedAt": "2026-07-06T00:00:00.000Z",
+  "teams": [
+    { "teamId": "spirit", "teamName": "Spirit", "region": "EUROPE", "tier": "T1", "vrsRank": 1, "players": [
+      { "playerId": "real-donk", "nickname": "donk", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-magixx", "nickname": "magixx", "role": "SUPPORT", "active": true },
+      { "playerId": "real-sh1ro", "nickname": "sh1ro", "role": "AWPER", "active": true },
+      { "playerId": "real-tn1r", "nickname": "tN1R", "role": "LURKER", "active": true },
+      { "playerId": "real-zont1x", "nickname": "zont1x", "role": "IGL", "active": true }
+    ] },
+    { "teamId": "falcons", "teamName": "Falcons", "region": "EUROPE", "tier": "T1", "vrsRank": 2, "players": [
+      { "playerId": "real-karrigan", "nickname": "karrigan", "role": "IGL", "active": true },
+      { "playerId": "real-kyousuke", "nickname": "kyousuke", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-m0nesy", "nickname": "m0NESY", "role": "AWPER", "active": true },
+      { "playerId": "real-niko", "nickname": "NiKo", "role": "LURKER", "active": true },
+      { "playerId": "real-teses", "nickname": "TeSeS", "role": "SUPPORT", "active": true }
+    ] },
+    { "teamId": "vitality", "teamName": "Vitality", "region": "EUROPE", "tier": "T1", "vrsRank": 3, "players": [
+      { "playerId": "real-apex", "nickname": "apEX", "role": "IGL", "active": true },
+      { "playerId": "real-flamez", "nickname": "flameZ", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-mezii", "nickname": "mezii", "role": "SUPPORT", "active": true },
+      { "playerId": "real-ropz", "nickname": "ropz", "role": "LURKER", "active": true },
+      { "playerId": "real-zywoo", "nickname": "ZywOo", "role": "AWPER", "active": true }
+    ] },
+    { "teamId": "natusvincere", "teamName": "Natus Vincere", "region": "EUROPE", "tier": "T1", "vrsRank": 4, "players": [
+      { "playerId": "real-aleksib", "nickname": "Aleksib", "role": "IGL", "active": true },
+      { "playerId": "real-b1t", "nickname": "b1t", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-im", "nickname": "iM", "role": "LURKER", "active": true },
+      { "playerId": "real-jl", "nickname": "jL", "role": "SUPPORT", "active": true },
+      { "playerId": "real-w0nderful", "nickname": "w0nderful", "role": "AWPER", "active": true }
+    ] },
+    { "teamId": "furia", "teamName": "FURIA", "region": "AMERICAS", "tier": "T1", "vrsRank": 6, "players": [
+      { "playerId": "real-kscerato", "nickname": "KSCERATO", "role": "LURKER", "active": true },
+      { "playerId": "real-yuurih", "nickname": "yuurih", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-fallen", "nickname": " FalleN", "role": "IGL", "active": true },
+      { "playerId": "real-chelo", "nickname": "chelo", "role": "SUPPORT", "active": true },
+      { "playerId": "real-molodoy", "nickname": "molodoy", "role": "AWPER", "active": true }
+    ] },
+    { "teamId": "mouz", "teamName": "MOUZ", "region": "EUROPE", "tier": "T1", "vrsRank": 7, "players": [
+      { "playerId": "real-xertion", "nickname": "xertioN", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-jimpphat", "nickname": "Jimpphat", "role": "LURKER", "active": true },
+      { "playerId": "real-siuhy", "nickname": "siuhy", "role": "IGL", "active": true },
+      { "playerId": "real-torzsi", "nickname": "torzsi", "role": "AWPER", "active": true },
+      { "playerId": "real-saken", "nickname": "sAw", "role": "SUPPORT", "active": true }
+    ] },
+    { "teamId": "tyloo", "teamName": "TYLOO", "region": "ASIA", "tier": "T1", "vrsRank": 20, "players": [
+      { "playerId": "real-summer", "nickname": "Summer", "role": "IGL", "active": true },
+      { "playerId": "real-moseyuh", "nickname": "Moseyuh", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-starry", "nickname": "starry", "role": "LURKER", "active": true },
+      { "playerId": "real-jiayuan", "nickname": "Jee", "role": "SUPPORT", "active": true },
+      { "playerId": "real-xy", "nickname": "xiaoyu", "role": "AWPER", "active": true }
+    ] },
+    { "teamId": "rareatom", "teamName": "Rare Atom", "region": "ASIA", "tier": "T2", "vrsRank": 33, "players": [
+      { "playerId": "real-kaze", "nickname": "kaze", "role": "AWPER", "active": true },
+      { "playerId": "real-moseyuh-ra", "nickname": "Moseyuh", "role": "ENTRY_FRAGGER", "active": true },
+      { "playerId": "real-zhoki", "nickname": "zhokiNg", "role": "IGL", "active": true },
+      { "playerId": "real-childking", "nickname": "childking", "role": "LURKER", "active": true },
+      { "playerId": "real-mikoto", "nickname": "Mikoto", "role": "SUPPORT", "active": true }
+    ] }
+  ]
+}

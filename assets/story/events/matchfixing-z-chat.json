@@ -1,0 +1,91 @@
+{
+  "id": "matchfixing-z-chat",
+  "title": "安静聊天",
+  "description": "老友约你视频，聊的都是些鸡毛蒜皮。你发现，平凡的对话也是奢侈品。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "repeatable": true,
+  "phase": "POST_TOURNAMENT",
+  "weight": 0.35,
+  "priority": 10,
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "enjoy-chat",
+      "label": "好好聊",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "你们聊了一个小时，什么都没聊。",
+          "但挂电话时，你笑了。"
+        ],
+        "failureMessages": [
+          "你心不在焉，聊了几句就挂了。",
+          "挂完你有点后悔。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "talk-sports",
+      "label": "聊比赛聊游戏",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你们讨论了最新的战术改动。",
+          "聊游戏的时候，你还是会两眼放光。"
+        ],
+        "failureMessages": [
+          "聊得太晚，第二天有点困。",
+          "但值得。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

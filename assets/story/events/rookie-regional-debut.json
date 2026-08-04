@@ -6,28 +6,50 @@
   "type": "CHOICE",
   "period": "FINAL_DECISIVE_MOMENT",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "rookie-scrim-rotation" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-scrim-rotation"
+    }
   ],
   "options": [
     {
       "id": "calm-debut",
       "label": "深呼吸，把它当成一场训练赛",
       "requirements": [
-        { "type": "PLAYER_STAT", "stat": "STRESS", "maximum": 60 }
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "maximum": 60
+        }
       ],
       "successChance": {
         "baseChance": 0.65,
         "modifiers": [
-          { "attribute": "CLUTCH", "perPoint": 0.006 }
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.006
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 15 },
-          { "type": "CAREER_STAT_CHANGE", "stat": "MAPS_PLAYED", "delta": 1 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "MAPS_PLAYED",
+            "delta": 1
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 15 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          }
         ]
       }
     },
@@ -38,20 +60,42 @@
       "successChance": {
         "baseChance": 0.35,
         "modifiers": [
-          { "attribute": "AIM", "perPoint": 0.005 }
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 20 },
-          { "type": "CAREER_STAT_CHANGE", "stat": "MAPS_PLAYED", "delta": 1 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 20
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "MAPS_PLAYED",
+            "delta": 1
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -12 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 18 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          }
         ]
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "IN_TOURNAMENT",
+  "weight": 1,
+  "priority": 80
 }

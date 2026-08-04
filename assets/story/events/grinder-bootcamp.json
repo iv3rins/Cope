@@ -1,0 +1,119 @@
+{
+  "id": "grinder-bootcamp",
+  "title": "集训营",
+  "description": "你决定辞掉白天的工作，专心投入训练。集训营报到那天，你只剩三个月的积蓄。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-parttime-dilemma"
+    }
+  ],
+  "options": [
+    {
+      "id": "full-commit",
+      "label": "全身心投入",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.007
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "FULL_TIME_PLAYER",
+            "flag": {
+              "id": "FULL_TIME_PLAYER",
+              "name": "全职选手",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "没有退路的训练格外有效。",
+          "一个月后你的枪法有了质的提升。"
+        ],
+        "failureMessages": [
+          "积蓄见底的速度比你想象得快。",
+          "训练时你总在算钱。"
+        ],
+        "successNextEventId": "grinder-half-day",
+        "failureNextEventId": "grinder-half-day"
+      }
+    },
+    {
+      "id": "part-time-plan",
+      "label": "保留兼职",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 600
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你保留了一份灵活的兼职。",
+          "钱够花，但训练时间被切碎。"
+        ],
+        "failureMessages": [
+          "兼职和训练两头烧，你两头都没做好。",
+          "你开始怀疑这个选择。"
+        ],
+        "successNextEventId": "grinder-half-day",
+        "failureNextEventId": "grinder-half-day"
+      }
+    }
+  ],
+  "autoEffects": []
+}

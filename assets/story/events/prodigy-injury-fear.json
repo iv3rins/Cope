@@ -1,0 +1,123 @@
+{
+  "id": "prodigy-injury-fear",
+  "title": "伤病恐惧",
+  "description": "你的手腕开始频繁酸痛。队医说：「你的训练量对职业选手来说太大了。」",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-coach-rescue"
+    }
+  ],
+  "options": [
+    {
+      "id": "cut-volume",
+      "label": "减少训练量",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "HAND_HEALTHY",
+            "flag": {
+              "id": "HAND_HEALTHY",
+              "name": "手腕无恙",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你开始科学安排训练量。",
+          "手腕不疼了，状态也没掉。"
+        ],
+        "failureMessages": [
+          "减少训练量让你焦虑。",
+          "你总觉得自己在退步。"
+        ],
+        "successNextEventId": "prodigy-major-run2",
+        "failureNextEventId": "prodigy-major-run2"
+      }
+    },
+    {
+      "id": "push-pain",
+      "label": "忍着继续练",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "WRIST_DAMAGE",
+            "flag": {
+              "id": "WRIST_DAMAGE",
+              "name": "手腕劳损",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "你咬牙撑过了这段魔鬼赛程。",
+          "手腕还在疼，但你赢了比赛。"
+        ],
+        "failureMessages": [
+          "你终于撑不住，被强制休养三周。",
+          "复出后，你总觉得手腕不如从前。"
+        ],
+        "successNextEventId": "prodigy-major-run2",
+        "failureNextEventId": "prodigy-major-run2"
+      }
+    }
+  ],
+  "autoEffects": []
+}

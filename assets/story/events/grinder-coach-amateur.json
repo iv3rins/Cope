@@ -1,0 +1,100 @@
+{
+  "id": "grinder-coach-amateur",
+  "title": "业余教练",
+  "description": "你们的教练本职是出租车司机，战术板是他在纸上画的箭头。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-teammates-rough"
+    }
+  ],
+  "options": [
+    {
+      "id": "work-with-him",
+      "label": "配合他的战术",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "他的箭头虽然糙，但有些思路意外地实用。",
+          "你开始认真研究这套「出租车战术」。"
+        ],
+        "failureMessages": [
+          "你在会上指出了战术的问题。",
+          "教练面子挂不住，战术执行变味了。"
+        ],
+        "successNextEventId": "grinder-scrim-money",
+        "failureNextEventId": "grinder-scrim-money"
+      }
+    },
+    {
+      "id": "self-study",
+      "label": "自己研究录像",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你自费买了战术书，自己研究录像。",
+          "你的理解开始超过教练。"
+        ],
+        "failureMessages": [
+          "自学太散，你研究了一周没成体系。",
+          "但至少你知道了职业选手在做什么。"
+        ],
+        "successNextEventId": "grinder-scrim-money",
+        "failureNextEventId": "grinder-scrim-money"
+      }
+    }
+  ],
+  "autoEffects": []
+}

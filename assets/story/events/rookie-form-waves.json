@@ -1,0 +1,100 @@
+{
+  "id": "rookie-form-waves",
+  "title": "状态起伏",
+  "description": "你的状态开始像过山车：上午神挡杀神，下午空枪三连。没人说得清为什么。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-breakthrough"
+    }
+  ],
+  "options": [
+    {
+      "id": "track-data",
+      "label": "记录状态曲线",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你开始记录每天的状态、睡眠和饮食。",
+          "一个月后你找到了自己的「黄金时段」。"
+        ],
+        "failureMessages": [
+          "记录坚持了一周就断了。",
+          "起伏还在继续。"
+        ],
+        "successNextEventId": "rookie-exhaustion",
+        "failureNextEventId": "rookie-exhaustion"
+      }
+    },
+    {
+      "id": "ride-waves",
+      "label": "顺其自然",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你接受状态有高低。",
+          "低谷时不硬撑，状态自然回来了。"
+        ],
+        "failureMessages": [
+          "你太随缘了，关键比赛的发挥变得不可控。",
+          "教练开始对你皱眉。"
+        ],
+        "successNextEventId": "rookie-exhaustion",
+        "failureNextEventId": "rookie-exhaustion"
+      }
+    }
+  ],
+  "autoEffects": []
+}

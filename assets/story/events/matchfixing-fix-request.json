@@ -1,0 +1,119 @@
+{
+  "id": "matchfixing-fix-request",
+  "title": "假赛要求",
+  "description": "最后通牒来了：下周的比赛，「放两分」。他们已经安排好了盘口。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-pressure-pay"
+    }
+  ],
+  "options": [
+    {
+      "id": "final-refuse",
+      "label": "坚决拒绝",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你说：不可能。",
+          "挂断电话，你的手在抖，但心很定。"
+        ],
+        "failureMessages": [
+          "你拒绝了，但声音在发抖。",
+          "对方说：你会后悔的。"
+        ],
+        "successNextEventId": "matchfixing-whistleblower",
+        "failureNextEventId": "matchfixing-whistleblower"
+      }
+    },
+    {
+      "id": "play-along",
+      "label": "先假意答应",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "PLAYED_ALONG",
+            "flag": {
+              "id": "PLAYED_ALONG",
+              "name": "假意周旋",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 16
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "你假装答应，心里在盘算脱身的办法。",
+          "这个谎言，你必须演到底。"
+        ],
+        "failureMessages": [
+          "假意答应被识破，你彻底暴露在明处。",
+          "你只能硬着头皮面对。"
+        ],
+        "successNextEventId": "matchfixing-whistleblower",
+        "failureNextEventId": "matchfixing-whistleblower"
+      }
+    }
+  ],
+  "autoEffects": []
+}

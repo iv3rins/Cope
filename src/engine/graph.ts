@@ -2,11 +2,15 @@ import type { HltvTeamId } from '../hltv/team';
 import type { TournamentId, TournamentInterventionType } from '../hltv/tournament';
 import type { EventCondition } from './condition';
 import type { PlayerAttribute, PlayerFlag, PlayerProfile, PlayerRole } from './profile';
-import type { ForceContractTerminationEffect } from './contract';
+import type { ForceContractTerminationEffect, PlayerContract } from './contract';
 import type { GameDifficultyMode } from './mode';
 
 /** 生涯剧情图接口：只描述内容和状态转换，不包含具体渲染与存储实现。 */
 export type EventPeriod = 'FINAL_DECISIVE_MOMENT' | 'OFFSEASON' | 'TRANSFER_WINDOW' | 'AFTER_TOP20' | 'NORMAL';
+/** 赛事相对阶段；缺省时由 period 推导，保证旧事件包可继续运行。 */
+export type StoryEventPhase = 'PRE_TOURNAMENT' | 'IN_TOURNAMENT' | 'POST_TOURNAMENT';
+/** 赛季编排窗口；具体事件仍由 StoryEngine 按 EventPeriod/条件从 JSON 选择。 */
+export type CareerEventWindow = 'SEASON_START' | 'PRE_TOURNAMENT' | 'POST_TOURNAMENT' | 'SEASON_END' | 'REPORT' | 'OFFSEASON';
 export type StoryEventType = 'CHOICE' | 'MANDATORY';
 export type PlayerMutableStat = 'MORALE' | 'ENERGY' | 'BALANCE' | 'STRESS' | 'RATING2';
 export type CareerStat = 'TOTAL_KILLS' | 'MAPS_PLAYED' | 'CLUTCH_WON' | 'CAREER_EARNINGS';
@@ -25,8 +29,11 @@ export interface PlayerStatChangeEffect {
 
 export interface TeamTransferEffect {
   readonly type: 'TEAM_TRANSFER';
-  readonly teamId: HltvTeamId;
+  readonly teamId?: HltvTeamId;
+  readonly offerRef?: 'CURRENT_TRANSFER_OFFER';
   readonly salaryPerMonth?: number;
+  readonly endsAt?: string;
+  readonly buyoutAmount?: number;
 }
 
 export interface RoleChangeEffect {
@@ -93,6 +100,9 @@ export interface SuccessChance {
 export interface EventOutcome {
   readonly successEffects: readonly EventEffect[];
   readonly failureEffects: readonly EventEffect[];
+  /** 事件内容可自定义的结果轮播文案；缺失时由展示层回退默认文案。 */
+  readonly successMessages?: readonly string[];
+  readonly failureMessages?: readonly string[];
   readonly successNextEventId?: string;
   readonly failureNextEventId?: string;
 }
@@ -107,6 +117,14 @@ export interface StoryEventOption {
   readonly outcome: EventOutcome;
 }
 
+export interface StoryContextFacts {
+  readonly activeContract?: PlayerContract | null;
+  readonly currentTeamRank?: number | null;
+  readonly transferWindowOpen?: boolean;
+  readonly lowRatingStreak?: number;
+  readonly advancedMapsPlayed?: number;
+}
+
 export interface StoryEvent {
   readonly id: string;
   readonly title: string;
@@ -115,6 +133,14 @@ export interface StoryEvent {
   readonly description: string;
   readonly worldlineId: string;
   readonly type: StoryEventType;
+  /** 可在指定周期再次出现的年度事件；具体周期仍由 period 数据控制。 */
+  readonly repeatable?: boolean;
+  /** 赛事前/中/后；旧事件缺省时按 period 推导。 */
+  readonly phase?: StoryEventPhase;
+  /** 同阶段候选事件的相对出现权重，非正数视为不可抽取。 */
+  readonly weight?: number;
+  /** 同一窗口内优先级更高的事件先形成抽取池。 */
+  readonly priority?: number;
   readonly period: EventPeriod;
   readonly conditions: readonly EventCondition[];
   readonly options: readonly StoryEventOption[];
@@ -144,7 +170,10 @@ export interface StoryDecisionResult {
   readonly appliedTournamentInterventionIds: readonly string[];
   /** 本次事件触发并成功执行的合同终止记录 ID。 */
   readonly terminatedContractId: string | null;
+  /** 合同聚合完成后的终止记录；缺省时保持旧调用方兼容。 */
+  readonly terminatedContract?: import('./contract').ContractTermination;
   readonly nextEventId: string | null;
+  readonly resultMessages: readonly string[];
 }
 
 export interface StoryRepository {
@@ -168,7 +197,7 @@ export interface StoryEngineDependencies {
 export interface StoryEngine {
   /** 当前策略负责根据 profile.difficultyMode 调整所有选项的最终成功率。 */
   readonly successChancePolicy: StorySuccessChancePolicy;
-  findAvailableEvents(input: { readonly profile: PlayerProfile; readonly period: EventPeriod; readonly randomRoll: number }): Promise<readonly StoryEvent[]>;
+  findAvailableEvents(input: { readonly profile: PlayerProfile; readonly period: EventPeriod; readonly phase?: StoryEventPhase; readonly randomRoll: number; readonly facts?: StoryContextFacts }): Promise<readonly StoryEvent[]>;
   /** 执行事件选项，并将其中的 TOURNAMENT_INTERVENTION 效果登记到赛事模块。 */
-  decide(input: { readonly profile: PlayerProfile; readonly decision: StoryDecision }): Promise<StoryDecisionResult>;
+  decide(input: { readonly profile: PlayerProfile; readonly decision: StoryDecision; readonly facts?: StoryContextFacts }): Promise<StoryDecisionResult>;
 }

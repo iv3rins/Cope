@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "source": "VRS roster and team tier data",
+  "targets": [
+    { "teamId": "spirit", "teamName": "Spirit", "region": "EUROPE", "tier": "T1", "minimumRank": 1, "maximumRank": 12, "requiredAttributes": { "aim": 78, "gameSense": 72, "consistency": 70 }, "salaryPerMonth": 2200, "buyoutAmount": 12000, "reason": "顶级 VRS 队伍，只考虑已经证明自己能打高压赛事的选手。" },
+    { "teamId": "vitality", "teamName": "Vitality", "region": "EUROPE", "tier": "T1", "minimumRank": 1, "maximumRank": 20, "requiredAttributes": { "aim": 74, "gameSense": 70, "consistency": 68 }, "salaryPerMonth": 2000, "buyoutAmount": 10000, "reason": "欧洲顶级阵容，试训重点是稳定性和残局执行。" },
+    { "teamId": "natusvincere", "teamName": "Natus Vincere", "region": "EUROPE", "tier": "T1", "minimumRank": 1, "maximumRank": 20, "requiredAttributes": { "gameSense": 76, "leadership": 68, "consistency": 70 }, "salaryPerMonth": 1900, "buyoutAmount": 9500, "reason": "体系化战队，要求选手能融入默认战术和沟通体系。" },
+    { "teamId": "furia", "teamName": "FURIA", "region": "AMERICAS", "tier": "T1", "minimumRank": 1, "maximumRank": 36, "requiredAttributes": { "aim": 72, "clutch": 68, "leadership": 55 }, "salaryPerMonth": 1700, "buyoutAmount": 7500, "reason": "高侵略性美洲阵容，重视主动打开局面的能力。" },
+    { "teamId": "tyloo", "teamName": "TYLOO", "region": "ASIA", "tier": "T1", "minimumRank": 1, "maximumRank": 40, "requiredAttributes": { "gameSense": 62, "consistency": 62 }, "salaryPerMonth": 1200, "buyoutAmount": 4000, "reason": "亚洲顶级赛区通道，适合已经有国际赛经验的选手。" },
+    { "teamId": "rareatom", "teamName": "Rare Atom", "region": "ASIA", "tier": "T2", "minimumRank": 1, "maximumRank": 80, "requiredAttributes": { "aim": 58, "gameSense": 55 }, "salaryPerMonth": 700, "buyoutAmount": 1800, "reason": "稳定参加地区和 CCT 赛事，是从青训进入职业赛场的现实路径。" },
+    { "teamId": "gamerlegion", "teamName": "GamerLegion", "region": "EUROPE", "tier": "T2", "minimumRank": 1, "maximumRank": 80, "requiredAttributes": { "aim": 60, "consistency": 58 }, "salaryPerMonth": 750, "buyoutAmount": 2200, "reason": "欧洲选手培养型队伍，重视训练赛样本和地图池成长。" },
+    { "teamId": "mouznxt", "teamName": "MOUZ NXT", "region": "EUROPE", "tier": "T3", "minimumRank": 1, "maximumRank": 150, "requiredAttributes": { "aim": 52, "gameSense": 50 }, "salaryPerMonth": 450, "buyoutAmount": 500, "reason": "青训体系入口，提供稳定训练和低级别赛事曝光。" }
+  ]
+}

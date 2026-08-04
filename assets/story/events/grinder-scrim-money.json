@@ -1,0 +1,105 @@
+{
+  "id": "grinder-scrim-money",
+  "title": "训练赛奖金",
+  "description": "一个赞助商办了低级别训练赛，冠军有 500 块奖金。全队眼睛都亮了。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-coach-amateur"
+    }
+  ],
+  "options": [
+    {
+      "id": "win-it",
+      "label": "全力争冠",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.007
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 500
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你们赢了，500 块到手。",
+          "这点钱不多，但它是你的第一笔比赛奖金。"
+        ],
+        "failureMessages": [
+          "决赛你们输给了更强的队伍。",
+          "500 块没拿到，但你知道差距在哪。"
+        ],
+        "successNextEventId": "grinder-family-pressure",
+        "failureNextEventId": "grinder-family-pressure"
+      }
+    },
+    {
+      "id": "treat-team",
+      "label": "保底参赛，重在参与",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你们抱着玩的心态打完了。",
+          "虽然没赢，但队伍气氛好了。"
+        ],
+        "failureMessages": [
+          "玩的心态让队伍输得很散。",
+          "有人开始认真，有人还在玩。"
+        ],
+        "successNextEventId": "grinder-family-pressure",
+        "failureNextEventId": "grinder-family-pressure"
+      }
+    }
+  ],
+  "autoEffects": []
+}

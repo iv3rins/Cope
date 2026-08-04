@@ -1,0 +1,110 @@
+{
+  "id": "grinder-championship",
+  "title": "季后赛",
+  "description": "季后赛首轮，你们对阵常规赛冠军。赛前赔率 1 比 7。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "IN_TOURNAMENT",
+  "weight": 0.75,
+  "priority": 80,
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-big-match"
+    }
+  ],
+  "options": [
+    {
+      "id": "giant-kill",
+      "label": "创造奇迹",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.4,
+        "modifiers": [
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.01
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你们爆冷淘汰了常规赛冠军。",
+          "解说管这轮系列赛叫「本年度最大冷门」。"
+        ],
+        "failureMessages": [
+          "奇迹没有发生，你们 0:3 出局。",
+          "但你们每一局都打得很拼。"
+        ],
+        "successNextEventId": "grinder-rival",
+        "failureNextEventId": "grinder-rival"
+      }
+    },
+    {
+      "id": "learn-series",
+      "label": "当学习机会",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你们输给了冠军，但偷到了他们的战术。",
+          "这套战术后来帮你们赢了不少比赛。"
+        ],
+        "failureMessages": [
+          "学习的机会变成了被碾压。",
+          "你们输得毫无还手之力。"
+        ],
+        "successNextEventId": "grinder-rival",
+        "failureNextEventId": "grinder-rival"
+      }
+    }
+  ],
+  "autoEffects": []
+}

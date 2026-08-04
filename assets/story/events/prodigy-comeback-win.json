@@ -1,0 +1,120 @@
+{
+  "id": "prodigy-comeback-win",
+  "title": "复仇",
+  "description": "一个月后，你们再次相遇。这一次，你带着复盘笔记上场。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-rival-lose"
+    }
+  ],
+  "options": [
+    {
+      "id": "execute-plan",
+      "label": "按计划复仇",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "TOTAL_KILLS",
+            "delta": 40
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你按计划打赢了。",
+          "他赛后主动和你握手，说了句「不错」。"
+        ],
+        "failureMessages": [
+          "计划执行到一半被打乱。",
+          "你又输了。"
+        ],
+        "successNextEventId": "prodigy-team-envy",
+        "failureNextEventId": "prodigy-team-envy"
+      }
+    },
+    {
+      "id": "gun-duel",
+      "label": "用枪法正名",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你和他对位三次，全赢。",
+          "舆论风向终于转了。"
+        ],
+        "failureMessages": [
+          "对位三次输三次。",
+          "「天才陨落」的标题开始出现。"
+        ],
+        "successNextEventId": "prodigy-team-envy",
+        "failureNextEventId": "prodigy-team-envy"
+      }
+    }
+  ],
+  "autoEffects": []
+}

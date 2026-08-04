@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 2,
+  "source": "HLTV annual reference data and 2026 VRS roster snapshot",
+  "season": 2026,
+  "players": [
+    { "playerId": "real-zywoo", "nickname": "ZywOo", "realName": "Mathieu Herbaut", "countryCode": "France", "teamName": "Vitality", "teamId": "vitality", "placement": 1 },
+    { "playerId": "real-donk", "nickname": "donk", "realName": "Danil Kryshkovets", "countryCode": "Russia", "teamName": "Spirit", "teamId": "spirit", "placement": 2 },
+    { "playerId": "real-ropz", "nickname": "ropz", "realName": "Robin Kool", "countryCode": "Estonia", "teamName": "Vitality", "teamId": "vitality", "placement": 3 },
+    { "playerId": "real-m0nesy", "nickname": "m0NESY", "realName": "Ilya Osipov", "countryCode": "Russia", "teamName": "Falcons", "teamId": "falcons", "placement": 4 },
+    { "playerId": "real-sh1ro", "nickname": "sh1ro", "realName": "Dmitry Sokolov", "countryCode": "Russia", "teamName": "Spirit", "teamId": "spirit", "placement": 5 },
+    { "playerId": "real-molodoy", "nickname": "molodoy", "realName": "Danil Golubenko", "countryCode": "Kazakhstan", "teamName": "FURIA", "teamId": "furia", "placement": 6 },
+    { "playerId": "real-flamez", "nickname": "flameZ", "realName": "Shahar Shushan", "countryCode": "Israel", "teamName": "Vitality", "teamId": "vitality", "placement": 7 },
+    { "playerId": "real-frozen", "nickname": "frozen", "realName": "David Čerňanský", "countryCode": "Slovakia", "teamName": "FaZe", "teamId": "faze", "placement": 8 },
+    { "playerId": "real-kscerato", "nickname": "KSCERATO", "realName": "Kaike Cerato", "countryCode": "Brazil", "teamName": "FURIA", "teamId": "furia", "placement": 9 },
+    { "playerId": "real-spinx", "nickname": "Spinx", "realName": "Lotan Giladi", "countryCode": "Israel", "teamName": "MOUZ", "teamId": "mouz", "placement": 10 },
+    { "playerId": "real-twistzz", "nickname": "Twistzz", "realName": "Russel Van Dulken", "countryCode": "Canada", "teamName": "Liquid", "teamId": "liquid", "placement": 11 },
+    { "playerId": "real-mezii", "nickname": "mezii", "realName": "William Merriman", "countryCode": "United Kingdom", "teamName": "Vitality", "teamId": "vitality", "placement": 12 },
+    { "playerId": "real-senzu", "nickname": "Senzu", "realName": "Azbayar Munkhbold", "countryCode": "Mongolia", "teamName": "The MongolZ", "teamId": "themongolz", "placement": 13 },
+    { "playerId": "real-xantares", "nickname": "XANTARES", "realName": "Ismailcan Dörtkardeş", "countryCode": "Turkey", "teamName": "Aurora", "teamId": "aurora", "placement": 14 },
+    { "playerId": "real-yekindar", "nickname": "YEKINDAR", "realName": "Mareks Gaļinskis", "countryCode": "Latvia", "teamName": "FURIA", "teamId": "furia", "placement": 15 },
+    { "playerId": "real-xertion", "nickname": "xertioN", "realName": "Dorian Berman", "countryCode": "Israel", "teamName": "MOUZ", "teamId": "mouz", "placement": 16 },
+    { "playerId": "real-torzsi", "nickname": "torzsi", "realName": "Ádám Torzsás", "countryCode": "Hungary", "teamName": "MOUZ", "teamId": "mouz", "placement": 17 },
+    { "playerId": "real-niko", "nickname": "NiKo", "realName": "Nikola Kovač", "countryCode": "Bosnia and Herzegovina", "teamName": "Falcons", "teamId": "falcons", "placement": 18 },
+    { "playerId": "real-im", "nickname": "iM", "realName": "Mihai Ivan", "countryCode": "Romania", "teamName": "Natus Vincere", "teamId": "natusvincere", "placement": 19 },
+    { "playerId": "real-jl", "nickname": "jL", "realName": "Justinas Lekavicius", "countryCode": "Lithuania", "teamName": "Natus Vincere", "teamId": "natusvincere", "placement": 20 }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": "matchfixing-fan-exit",
+  "title": "粉丝流失",
+  "description": "后援会解散了，直播间里只剩下阴阳怪气。曾经的支持者一夜之间消失。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-family-shame"
+    }
+  ],
+  "options": [
+    {
+      "id": "count-real",
+      "label": "数还剩下谁",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你发现还有几十个人在私信里鼓励你。",
+          "「这些人，比几万人珍贵。」"
+        ],
+        "failureMessages": [
+          "你盯着掉光的关注数发呆。",
+          "那些数字像判决书。"
+        ],
+        "successNextEventId": "matchfixing-friend-test",
+        "failureNextEventId": "matchfixing-friend-test"
+      }
+    },
+    {
+      "id": "ignore-numbers",
+      "label": "不看数据",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你卸载了所有看数据的软件。",
+          "眼不见，心不烦。"
+        ],
+        "failureMessages": [
+          "不看数据也挡不住别人的议论。",
+          "你决定换个环境生活。"
+        ],
+        "successNextEventId": "matchfixing-friend-test",
+        "failureNextEventId": "matchfixing-friend-test"
+      }
+    }
+  ],
+  "autoEffects": []
+}

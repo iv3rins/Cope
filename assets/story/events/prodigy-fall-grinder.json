@@ -1,0 +1,108 @@
+{
+  "id": "prodigy-fall-grinder",
+  "title": "坠落磨砺",
+  "description": "状态下滑后，没有豪门再愿意冒险。你的经纪人建议：「去低级别联赛，重新打出身价。」",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-museum"
+    }
+  ],
+  "options": [
+    {
+      "id": "humble-again",
+      "label": "放下身段去低级别",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "grinder"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CROSSED_TO_GRINDER",
+            "flag": {
+              "id": "CROSSED_TO_GRINDER",
+              "name": "转入磨砺线",
+              "category": "CUSTOM"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你去了低级别联赛。",
+          "从豪门核心到低级联赛，落差很大，但你还想打。"
+        ],
+        "failureMessages": [
+          "你放不下身段，拒绝了建议。",
+          "但市场上的邀约越来越少。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": "prodigy-fix-tempt"
+      }
+    },
+    {
+      "id": "stay-tier1",
+      "label": "留在顶级等机会",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你留在顶级联赛当替补。",
+          "机会还有，但要看运气。"
+        ],
+        "failureMessages": [
+          "替补席上坐久了，你的状态继续下滑。",
+          "「过气天才」的标签开始出现。"
+        ],
+        "successNextEventId": "prodigy-fix-tempt",
+        "failureNextEventId": "prodigy-fix-tempt"
+      }
+    }
+  ],
+  "autoEffects": []
+}

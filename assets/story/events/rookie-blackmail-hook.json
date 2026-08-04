@@ -1,0 +1,114 @@
+{
+  "id": "rookie-blackmail-hook",
+  "title": "敲诈阴影",
+  "description": "有人拿着你斗殴那晚的监控截图来找你：给钱，或者让截图「不小心」发出去。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-fight-incident"
+    }
+  ],
+  "options": [
+    {
+      "id": "go-clean",
+      "label": "直接报警",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CLEAN_ACCOUNT",
+            "flag": {
+              "id": "CLEAN_ACCOUNT",
+              "name": "履历干净",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把截图和聊天记录全部交给了警方。",
+          "对方被带走的那天，你睡了个好觉。"
+        ],
+        "failureMessages": [
+          "报警后对方跑了，截图仍在暗处。",
+          "这件事像根刺，偶尔会扎你一下。"
+        ],
+        "successNextEventId": "rookie-prodigy-discovery",
+        "failureNextEventId": "rookie-prodigy-discovery"
+      }
+    },
+    {
+      "id": "pay-up",
+      "label": "花钱消灾",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -3000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -5000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          }
+        ],
+        "successMessages": [
+          "你转了一笔钱，截图没有流出去。",
+          "但你知道对方留着底片。"
+        ],
+        "failureMessages": [
+          "对方得寸进尺，要了一次又一次。",
+          "你意识到这是无底洞。"
+        ],
+        "successNextEventId": "rookie-prodigy-discovery",
+        "failureNextEventId": "rookie-prodigy-discovery"
+      }
+    }
+  ],
+  "autoEffects": []
+}

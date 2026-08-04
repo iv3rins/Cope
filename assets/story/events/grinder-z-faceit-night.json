@@ -1,0 +1,96 @@
+{
+  "id": "grinder-z-faceit-night",
+  "title": "平台之夜",
+  "description": "晚上没事，你打开平台打排位。这一打，可能又是一整夜。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "repeatable": true,
+  "phase": "POST_TOURNAMENT",
+  "weight": 0.35,
+  "priority": 10,
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "queue-some",
+      "label": "打几把就下",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你打了几把，赢了就收手。",
+          "自律让明天的训练更轻松。"
+        ],
+        "failureMessages": [
+          "「最后一把」说了四次。",
+          "凌晨两点你才关电脑。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "coach-friends",
+      "label": "带朋友上分",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "successMessages": [
+          "你带朋友上了个段位。",
+          "朋友谢了又谢，你心情不错。"
+        ],
+        "failureMessages": [
+          "朋友菜得让你上头。",
+          "你差点说出伤人的话。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

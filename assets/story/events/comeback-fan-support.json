@@ -1,0 +1,95 @@
+{
+  "id": "comeback-fan-support",
+  "title": "粉丝支持",
+  "description": "你的粉丝组织了一场线上应援：把你复出以来的每一场比赛做成合集。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-media-cruelty"
+    }
+  ],
+  "options": [
+    {
+      "id": "feel-warm",
+      "label": "收下这份支持",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你看了那个合集，看到一半眼眶热了。",
+          "你回复了一句：谢谢，我会继续。"
+        ],
+        "failureMessages": [
+          "感动之外，你也感到了压力。",
+          "「不能让粉丝失望」变成了新的负担。"
+        ],
+        "successNextEventId": "comeback-surgery-choice",
+        "failureNextEventId": "comeback-surgery-choice"
+      }
+    },
+    {
+      "id": "meet-fans",
+      "label": "办线下见面会",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 500
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "见面会来了几百人。",
+          "有个粉丝举的牌子写着：谢谢你没放弃。"
+        ],
+        "failureMessages": [
+          "见面会排场太大，你有点累。",
+          "但被需要的幸福感很真实。"
+        ],
+        "successNextEventId": "comeback-surgery-choice",
+        "failureNextEventId": "comeback-surgery-choice"
+      }
+    }
+  ],
+  "autoEffects": []
+}

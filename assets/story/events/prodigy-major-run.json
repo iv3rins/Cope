@@ -6,30 +6,68 @@
   "type": "CHOICE",
   "period": "FINAL_DECISIVE_MOMENT",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "prodigy-title-shot" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-title-shot"
+    }
   ],
   "options": [
     {
       "id": "all-in",
       "label": "倾尽全力，赌上职业生涯的高光",
       "requirements": [
-        { "type": "PLAYER_STAT", "stat": "MORALE", "minimum": 70 }
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 70
+        }
       ],
       "successChance": {
         "baseChance": 0.35,
         "modifiers": [
-          { "attribute": "CLUTCH", "perPoint": 0.009 }
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.009
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "TROPHY_CHANGE", "trophy": "MAJOR", "delta": 1 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 25 },
-          { "type": "FLAG_ADD", "flagId": "MAJOR_CHAMPION", "flag": { "id": "MAJOR_CHAMPION", "name": "Major 冠军", "category": "ACHIEVEMENT" } }
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "MAJOR",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 25
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "MAJOR_CHAMPION",
+            "flag": {
+              "id": "MAJOR_CHAMPION",
+              "name": "Major 冠军",
+              "category": "ACHIEVEMENT"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -12 },
-          { "type": "FLAG_ADD", "flagId": "MAJOR_CHOKE", "flag": { "id": "MAJOR_CHOKE", "name": "Major 失利阴影", "category": "MENTAL" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "MAJOR_CHOKE",
+            "flag": {
+              "id": "MAJOR_CHOKE",
+              "name": "Major 失利阴影",
+              "category": "MENTAL"
+            }
+          }
         ]
       }
     },
@@ -40,19 +78,37 @@
       "successChance": {
         "baseChance": 0.5,
         "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.007 }
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.007
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "TROPHY_CHANGE", "trophy": "MAJOR", "delta": 1 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 15 }
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "MAJOR",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
         ]
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "IN_TOURNAMENT",
+  "weight": 1,
+  "priority": 80
 }

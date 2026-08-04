@@ -1,0 +1,114 @@
+{
+  "id": "prodigy-rest-revolt",
+  "title": "拒绝休息",
+  "description": "教练强制你休息一周。你半夜爬起来偷偷训练，被抓个正着。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-schedule-madness"
+    }
+  ],
+  "options": [
+    {
+      "id": "obey-rest",
+      "label": "老实休息",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你老实休息了一周。",
+          "回来时你发现状态前所未有的好。"
+        ],
+        "failureMessages": [
+          "休息让你焦虑，你总想「落后」。",
+          "你休息得不踏实。"
+        ],
+        "successNextEventId": "prodigy-burnout",
+        "failureNextEventId": "prodigy-burnout"
+      }
+    },
+    {
+      "id": "sneak-train",
+      "label": "偷偷加练",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "OVERTRAINED",
+            "flag": {
+              "id": "OVERTRAINED",
+              "name": "训练过度",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "你偷偷练了三天，枪感确实在。",
+          "但教练的眼神说明他什么都知道了。"
+        ],
+        "failureMessages": [
+          "偷偷加练让你身体彻底罢工。",
+          "你被抬进了医务室。"
+        ],
+        "successNextEventId": "prodigy-burnout",
+        "failureNextEventId": "prodigy-burnout"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,105 @@
+{
+  "id": "prodigy-major-run2",
+  "title": "大赛之旅",
+  "description": "你们杀入大赛四强。半决赛的对手是卫冕冠军，全场都期待你「封神」。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "IN_TOURNAMENT",
+  "weight": 0.75,
+  "priority": 80,
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-injury-fear"
+    }
+  ],
+  "options": [
+    {
+      "id": "peak-show",
+      "label": "拿出巅峰状态",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你在半决赛打出了职业生涯代表作。",
+          "「天才」这个词被解说喊了三遍。"
+        ],
+        "failureMessages": [
+          "半决赛你发挥平平，差点被淘汰。",
+          "好在队友兜住了。"
+        ],
+        "successNextEventId": "prodigy-finals-choke",
+        "failureNextEventId": "prodigy-finals-choke"
+      }
+    },
+    {
+      "id": "team-tactics",
+      "label": "靠战术取胜",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你放弃个人表现，专注战术执行。",
+          "半决赛赢了，虽然你没拿到 MVP。"
+        ],
+        "failureMessages": [
+          "战术执行被对手破解。",
+          "你们靠个人能力惊险过关。"
+        ],
+        "successNextEventId": "prodigy-finals-choke",
+        "failureNextEventId": "prodigy-finals-choke"
+      }
+    }
+  ],
+  "autoEffects": []
+}

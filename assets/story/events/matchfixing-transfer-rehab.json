@@ -1,0 +1,95 @@
+{
+  "id": "matchfixing-transfer-rehab",
+  "title": "转会康复",
+  "description": "新队伍给了你合同，但有附加条款：前三个月没有首发保证。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-return-to-pro"
+    }
+  ],
+  "options": [
+    {
+      "id": "prove-again",
+      "label": "接受条件证明自己",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 3000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你接受了条款，从替补打起。",
+          "三个月后，你抢回了首发。"
+        ],
+        "failureMessages": [
+          "替补身份让你压力很大。",
+          "你担心自己再也回不去。"
+        ],
+        "successNextEventId": "matchfixing-lesson",
+        "failureNextEventId": "matchfixing-lesson"
+      }
+    },
+    {
+      "id": "no-conditions",
+      "label": "要求对等条款",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你坚持要平等的合同。",
+          "谈判拖了很久，最终各让一步。"
+        ],
+        "failureMessages": [
+          "谈判崩了，你错过了这个机会。",
+          "「又要重来一次」的疲惫感袭来。"
+        ],
+        "successNextEventId": "matchfixing-lesson",
+        "failureNextEventId": "matchfixing-lesson"
+      }
+    }
+  ],
+  "autoEffects": []
+}

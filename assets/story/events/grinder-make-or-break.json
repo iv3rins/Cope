@@ -6,7 +6,10 @@
   "type": "CHOICE",
   "period": "FINAL_DECISIVE_MOMENT",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "grinder-lower-tier" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-lower-tier"
+    }
   ],
   "options": [
     {
@@ -16,18 +19,48 @@
       "successChance": {
         "baseChance": 0.5,
         "modifiers": [
-          { "attribute": "CLUTCH", "perPoint": 0.007 },
-          { "attribute": "CONSISTENCY", "perPoint": 0.004 }
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.007
+          },
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.004
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 18 },
-          { "type": "FLAG_ADD", "flagId": "LOWER_TIER_CHAMPION", "flag": { "id": "LOWER_TIER_CHAMPION", "name": "次级联赛冠军", "category": "ACHIEVEMENT" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 18
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "LOWER_TIER_CHAMPION",
+            "flag": {
+              "id": "LOWER_TIER_CHAMPION",
+              "name": "次级联赛冠军",
+              "category": "ACHIEVEMENT"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -15 },
-          { "type": "FLAG_ADD", "flagId": "LOWER_TIER_HEARTBREAK", "flag": { "id": "LOWER_TIER_HEARTBREAK", "name": "次级联赛遗憾", "category": "MENTAL" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "LOWER_TIER_HEARTBREAK",
+            "flag": {
+              "id": "LOWER_TIER_HEARTBREAK",
+              "name": "次级联赛遗憾",
+              "category": "MENTAL"
+            }
+          }
         ]
       }
     },
@@ -35,24 +68,50 @@
       "id": "stay-composed",
       "label": "保持冷静，相信团队",
       "requirements": [
-        { "type": "PLAYER_STAT", "stat": "STRESS", "maximum": 65 }
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "maximum": 65
+        }
       ],
       "successChance": {
         "baseChance": 0.6,
         "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.006 }
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.006
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 12 },
-          { "type": "FLAG_ADD", "flagId": "LOWER_TIER_CHAMPION", "flag": { "id": "LOWER_TIER_CHAMPION", "name": "次级联赛冠军", "category": "ACHIEVEMENT" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "LOWER_TIER_CHAMPION",
+            "flag": {
+              "id": "LOWER_TIER_CHAMPION",
+              "name": "次级联赛冠军",
+              "category": "ACHIEVEMENT"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -8 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
         ]
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "IN_TOURNAMENT",
+  "weight": 1,
+  "priority": 80
 }

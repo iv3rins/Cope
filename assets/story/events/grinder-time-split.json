@@ -1,0 +1,100 @@
+{
+  "id": "grinder-time-split",
+  "title": "时间分配",
+  "description": "训练、比赛、直播、休息，四件事在抢你的 24 小时。你第一次体会到时间管理的重要。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-stream-side"
+    }
+  ],
+  "options": [
+    {
+      "id": "build-schedule",
+      "label": "做时间表",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你给自己排了严格的时间表。",
+          "执行一周后，效率明显提升。"
+        ],
+        "failureMessages": [
+          "时间表排得太满，执行三天就崩了。",
+          "你学会了给计划留白。"
+        ],
+        "successNextEventId": "grinder-injury-poverty",
+        "failureNextEventId": "grinder-injury-poverty"
+      }
+    },
+    {
+      "id": "flex-mode",
+      "label": "顺其自然",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你不强求计划，状态好就多练。",
+          "这套弹性模式意外地适合你。"
+        ],
+        "failureMessages": [
+          "顺其自然的代价是训练时长不稳。",
+          "教练开始过问你的作息。"
+        ],
+        "successNextEventId": "grinder-injury-poverty",
+        "failureNextEventId": "grinder-injury-poverty"
+      }
+    }
+  ],
+  "autoEffects": []
+}

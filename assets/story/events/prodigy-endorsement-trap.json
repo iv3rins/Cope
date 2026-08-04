@@ -1,0 +1,109 @@
+{
+  "id": "prodigy-endorsement-trap",
+  "title": "代言陷阱",
+  "description": "一份代言合同里夹着「负面舆情兜底条款」：你出丑闻，代言费要翻倍退回。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-sponsor-war"
+    }
+  ],
+  "options": [
+    {
+      "id": "read-fineprint",
+      "label": "仔细读条款",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 5000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "SHARP_CONTRACT",
+            "flag": {
+              "id": "SHARP_CONTRACT",
+              "name": "合同专家",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你发现了那个条款，让律师改了。",
+          "品牌方夸你「专业」。"
+        ],
+        "failureMessages": [
+          "你读出了问题，但对方不松口。",
+          "你最后拒签了这份合同。"
+        ],
+        "successNextEventId": "prodigy-fan-club",
+        "failureNextEventId": "prodigy-fan-club"
+      }
+    },
+    {
+      "id": "sign-quick",
+      "label": "大笔一挥就签",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 8000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "钱到手很快。",
+          "但那笔「兜底」的代价，你还没机会意识到。"
+        ],
+        "failureMessages": [
+          "签完你才仔细看条款，冷汗直冒。",
+          "你开始祈祷别出事。"
+        ],
+        "successNextEventId": "prodigy-fan-club",
+        "failureNextEventId": "prodigy-fan-club"
+      }
+    }
+  ],
+  "autoEffects": []
+}

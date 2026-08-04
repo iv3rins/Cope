@@ -1,0 +1,91 @@
+{
+  "id": "comeback-z-film-day",
+  "title": "录像日",
+  "description": "今天的任务是复盘自己受伤前和复出后的比赛录像，对比差距。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "repeatable": true,
+  "phase": "POST_TOURNAMENT",
+  "weight": 0.35,
+  "priority": 10,
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "compare-film",
+      "label": "认真对比",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "对比让你看到了自己的成长。",
+          "有些旧习惯，你真的改掉了。"
+        ],
+        "failureMessages": [
+          "对比太扎心，你看了半小时就关了。",
+          "「过去的我更强」的念头又来了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "study-opponents",
+      "label": "研究对手录像",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你研究了一下午对手的习惯。",
+          "这些笔记会在比赛里用上。"
+        ],
+        "failureMessages": [
+          "录像看多了，眼睛发酸。",
+          "你揉了揉眼，继续看。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-real-friends",
+  "title": "真朋友",
+  "description": "老友说：就算你打不了职业了，你还有我。这句话让你在深夜哭了很久。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-friend-test"
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-onto",
+      "label": "抓住这份情谊",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你开始重新相信人。",
+          "低谷里，这是最贵的东西。"
+        ],
+        "failureMessages": [
+          "你感动，却不敢依赖任何人。",
+          "那道裂痕还在。"
+        ],
+        "successNextEventId": "matchfixing-clean-return",
+        "failureNextEventId": "matchfixing-clean-return"
+      }
+    },
+    {
+      "id": "give-back",
+      "label": "也当他的后盾",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "后来老友创业失败，你陪着他。",
+          "「朋友」两个字，从此有了分量。"
+        ],
+        "failureMessages": [
+          "你想帮，但自己都在泥里。",
+          "你只能陪着，说些没营养的话。"
+        ],
+        "successNextEventId": "matchfixing-clean-return",
+        "failureNextEventId": "matchfixing-clean-return"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,114 @@
+{
+  "id": "rookie-captain-notice",
+  "title": "队长注意",
+  "description": "队长在赛后找到你，说他观察了你三场比赛。你的某些习惯让他印象深刻。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-stage-fright"
+    }
+  ],
+  "options": [
+    {
+      "id": "ask-details",
+      "label": "虚心请教具体问题",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CAPTAIN_EYE",
+            "flag": {
+              "id": "CAPTAIN_EYE",
+              "name": "队长看好你",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "队长给你讲了三个站位问题。",
+          "他把你的 ID 记在了手机备忘录里。"
+        ],
+        "failureMessages": [
+          "你听得一知半解，没好意思追问。",
+          "但至少队长认识你了。"
+        ],
+        "successNextEventId": "rookie-role-experiment",
+        "failureNextEventId": "rookie-role-experiment"
+      }
+    },
+    {
+      "id": "brag-a-little",
+      "label": "说自己状态很好",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你说自己没问题。",
+          "队长笑了笑，让你拿比赛说话。"
+        ],
+        "failureMessages": [
+          "你吹了两句，结果被队长举出的数据打脸。",
+          "你涨红了脸。"
+        ],
+        "successNextEventId": "rookie-role-experiment",
+        "failureNextEventId": "rookie-role-experiment"
+      }
+    }
+  ],
+  "autoEffects": []
+}

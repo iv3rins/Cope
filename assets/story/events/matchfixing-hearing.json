@@ -1,0 +1,100 @@
+{
+  "id": "matchfixing-hearing",
+  "title": "听证会",
+  "description": "赛事纪律委员会召开听证会。你坐在房间里，对面是一排面无表情的委员。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "matchfixing-betrayer"
+    }
+  ],
+  "options": [
+    {
+      "id": "present-proof",
+      "label": "提交证据陈述",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你一条条陈述，证据链完整。",
+          "有委员点了点头。"
+        ],
+        "failureMessages": [
+          "陈述时你声音发抖。",
+          "有几处逻辑你自己都觉得牵强。"
+        ],
+        "successNextEventId": "matchfixing-verdict-clean",
+        "failureNextEventId": "matchfixing-verdict-guilty"
+      }
+    },
+    {
+      "id": "lawyer-speak",
+      "label": "让律师代言",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -2000
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你请了律师，让他替你陈述。",
+          "律师的专业让听证会有条不紊。"
+        ],
+        "failureMessages": [
+          "律师没预料到对方出示了新证据。",
+          "场面一度失控。"
+        ],
+        "successNextEventId": "matchfixing-verdict-clean",
+        "failureNextEventId": "matchfixing-verdict-guilty"
+      }
+    }
+  ],
+  "autoEffects": []
+}

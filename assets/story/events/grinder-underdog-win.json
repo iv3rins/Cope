@@ -1,0 +1,95 @@
+{
+  "id": "grinder-underdog-win",
+  "title": "爆冷取胜",
+  "description": "你们 2:0 击败了排名第一的队伍。赛后采访，记者把话筒递给了你。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-first-tier1-match"
+    }
+  ],
+  "options": [
+    {
+      "id": "humble-words",
+      "label": "把功劳归给团队",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "successMessages": [
+          "你说这是全队的胜利。",
+          "队友们在群里疯狂截图夸你会说话。"
+        ],
+        "failureMessages": [
+          "你话说得太官方，显得疏远。",
+          "但比赛赢了，没人计较。"
+        ],
+        "successNextEventId": "grinder-consistency-problem",
+        "failureNextEventId": "grinder-consistency-problem"
+      }
+    },
+    {
+      "id": "share-joy",
+      "label": "真情实感庆祝",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你说自己等了三年才等到这场胜利。",
+          "这段话被剪成了短片，传播很广。"
+        ],
+        "failureMessages": [
+          "你激动到语无伦次。",
+          "但那股真诚反而很圈粉。"
+        ],
+        "successNextEventId": "grinder-consistency-problem",
+        "failureNextEventId": "grinder-consistency-problem"
+      }
+    }
+  ],
+  "autoEffects": []
+}

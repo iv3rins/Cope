@@ -1,0 +1,104 @@
+{
+  "id": "prodigy-media-darling",
+  "title": "媒体宠儿",
+  "description": "采访邀约排到了下个月。记者们的问题从比赛问到你的早餐吃什么。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-hype-check"
+    }
+  ],
+  "options": [
+    {
+      "id": "give-interviews",
+      "label": "配合采访",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "MEDIA_FAV",
+            "flag": {
+              "id": "MEDIA_FAV",
+              "name": "媒体宠儿",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你的采访都很配合，报道很正面。",
+          "但训练时间被采访悄悄吃掉。"
+        ],
+        "failureMessages": [
+          "连续采访让你疲惫，状态下滑。",
+          "媒体开始质疑你的专注度。"
+        ],
+        "successNextEventId": "prodigy-stream-explosion",
+        "failureNextEventId": "prodigy-stream-explosion"
+      }
+    },
+    {
+      "id": "limit-media",
+      "label": "限制采访次数",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "successMessages": [
+          "你把采访控制在每周一次。",
+          "媒体觉得你「有架子」，但训练没落下。"
+        ],
+        "failureMessages": [
+          "拒绝采访让公关部很为难。",
+          "俱乐部开始催你「配合工作」。"
+        ],
+        "successNextEventId": "prodigy-stream-explosion",
+        "failureNextEventId": "prodigy-stream-explosion"
+      }
+    }
+  ],
+  "autoEffects": []
+}

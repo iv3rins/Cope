@@ -1,0 +1,105 @@
+{
+  "id": "grinder-stream-side",
+  "title": "直播副业",
+  "description": "有平台想签你做兼职主播：每月播 40 小时，收入按礼物分成。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-sponsor-local"
+    }
+  ],
+  "options": [
+    {
+      "id": "stream-extra",
+      "label": "接下直播合同",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 1500
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "直播带来了额外收入，人气也在涨。",
+          "但 40 小时是真的挤时间。"
+        ],
+        "failureMessages": [
+          "直播和训练打架，你两边的质量都下滑。",
+          "你不得不砍掉一半直播。"
+        ],
+        "successNextEventId": "grinder-time-split",
+        "failureNextEventId": "grinder-time-split"
+      }
+    },
+    {
+      "id": "no-stream",
+      "label": "不碰直播",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你回绝了直播合同。",
+          "少一笔钱，多一份清净。"
+        ],
+        "failureMessages": [
+          "看着别人直播带货，你偶尔也眼热。",
+          "但你的训练表确实排不下。"
+        ],
+        "successNextEventId": "grinder-time-split",
+        "failureNextEventId": "grinder-time-split"
+      }
+    }
+  ],
+  "autoEffects": []
+}

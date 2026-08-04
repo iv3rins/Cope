@@ -1,0 +1,124 @@
+{
+  "id": "rookie-fight-incident",
+  "title": "队内斗殴",
+  "description": "训练赛里有个队友骂了你母亲。你们在训练室动了手，椅子翻了一地。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-online-harassment"
+    }
+  ],
+  "options": [
+    {
+      "id": "report-first",
+      "label": "先上报俱乐部",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "DISCIPLINED",
+            "flag": {
+              "id": "DISCIPLINED",
+              "name": "纪律优先",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "俱乐部罚了他，也给了你警告。",
+          "事情闹到台面，反而没人再敢阴阳怪气。"
+        ],
+        "failureMessages": [
+          "上报后处理结果模棱两可。",
+          "你在更衣室里变得更加孤立。"
+        ],
+        "successNextEventId": "rookie-blackmail-hook",
+        "failureNextEventId": "rookie-blackmail-hook"
+      }
+    },
+    {
+      "id": "settle-hands",
+      "label": "私了，靠拳头",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把他按在墙上的那一下，全队都看见了。",
+          "从那以后没人敢惹你，但隔阂也留下了。"
+        ],
+        "failureMessages": [
+          "你被俱乐部记了大过。",
+          "他没事，你却背上了处分。"
+        ],
+        "successNextEventId": "rookie-blackmail-hook",
+        "failureNextEventId": "rookie-blackmail-hook"
+      }
+    }
+  ],
+  "autoEffects": []
+}

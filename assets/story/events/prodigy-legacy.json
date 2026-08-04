@@ -1,0 +1,90 @@
+{
+  "id": "prodigy-legacy",
+  "title": "传奇之证",
+  "description": "你的职业生涯被写进了行业年鉴。编辑问你：你觉得自己的故事该怎么结尾？",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-redefine"
+    }
+  ],
+  "options": [
+    {
+      "id": "open-ending",
+      "label": "未完待续",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你说：故事还没结束。",
+          "编辑笑了笑，把这句话写进了导语。"
+        ],
+        "failureMessages": [
+          "你想了半天没想好结尾。",
+          "编辑说：那留白也挺好。"
+        ],
+        "successNextEventId": "prodigy-retire-star",
+        "failureNextEventId": "prodigy-retire-star"
+      }
+    },
+    {
+      "id": "full-circle",
+      "label": "回望起点",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你把故事的起点写成了第一场比赛。",
+          "那年你 17 岁，赢了第一场线下赛。"
+        ],
+        "failureMessages": [
+          "回望起点时你有点感伤。",
+          "时间过得真快。"
+        ],
+        "successNextEventId": "prodigy-retire-star",
+        "failureNextEventId": "prodigy-retire-star"
+      }
+    }
+  ],
+  "autoEffects": []
+}

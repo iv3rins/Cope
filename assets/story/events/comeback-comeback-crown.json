@@ -1,0 +1,120 @@
+{
+  "id": "comeback-comeback-crown",
+  "title": "复出巅峰",
+  "description": "季后赛，你打出了复出以来的巅峰状态。解说开始用「不可思议」来形容你。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "IN_TOURNAMENT",
+  "weight": 0.75,
+  "priority": 80,
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-coach-faith"
+    }
+  ],
+  "options": [
+    {
+      "id": "peak-forever",
+      "label": "打出生涯最佳",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.01
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "TOTAL_KILLS",
+            "delta": 45
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你打出了生涯最佳系列赛。",
+          "这次不是奇迹，是实力。"
+        ],
+        "failureMessages": [
+          "巅峰状态没能延续到最关键一场。",
+          "但你已经证明了自己还能打。"
+        ],
+        "successNextEventId": "comeback-legacy-match",
+        "failureNextEventId": "comeback-legacy-match"
+      }
+    },
+    {
+      "id": "guide-team",
+      "label": "带着队伍赢",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你没有数据上的高光，但每个关键决策都有你。",
+          "教练说：这就是复出的意义。"
+        ],
+        "failureMessages": [
+          "你的决策没能换来胜利。",
+          "但队伍还是走了很远。"
+        ],
+        "successNextEventId": "comeback-legacy-match",
+        "failureNextEventId": "comeback-legacy-match"
+      }
+    }
+  ],
+  "autoEffects": []
+}

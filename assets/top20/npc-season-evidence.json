@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "season": 2026,
+  "source": "annual performance reference projection",
+  "players": [
+    { "playerId": "real-zywoo", "maps": 112, "titles": ["ESL 卡托维兹 Major 2026", "IEM 科隆 2026"], "rating": 1.27, "playoffRating": 1.31, "top5Rating": 1.28, "finalRating": 1.30, "honors": [{ "type": "MVP", "honorClass": "MAJOR" }, { "type": "MVP", "honorClass": "SUPER_ELITE" }, { "type": "EVP", "honorClass": "ELITE" }] },
+    { "playerId": "real-donk", "maps": 118, "titles": ["BLAST 秋季总决赛 2026"], "rating": 1.25, "playoffRating": 1.29, "top5Rating": 1.26, "finalRating": 1.28, "honors": [{ "type": "MVP", "honorClass": "SUPER_ELITE" }, { "type": "EVP", "honorClass": "MAJOR" }, { "type": "EVP", "honorClass": "ELITE" }] },
+    { "playerId": "real-ropz", "maps": 106, "titles": ["IEM 达拉斯 2026"], "rating": 1.22, "playoffRating": 1.25, "top5Rating": 1.23, "finalRating": 1.24, "honors": [{ "type": "MVP", "honorClass": "SUPER_ELITE" }, { "type": "EVP", "honorClass": "ELITE" }, { "type": "EVP", "honorClass": "LARGE" }] },
+    { "playerId": "real-m0nesy", "maps": 110, "rating": 1.21, "playoffRating": 1.24, "top5Rating": 1.22, "finalRating": 1.23, "honors": [{ "type": "EVP", "honorClass": "MAJOR" }, { "type": "EVP", "honorClass": "SUPER_ELITE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-sh1ro", "maps": 104, "rating": 1.20, "playoffRating": 1.22, "top5Rating": 1.21, "finalRating": 1.22, "honors": [{ "type": "EVP", "honorClass": "MAJOR" }, { "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-molodoy", "maps": 98, "rating": 1.19, "playoffRating": 1.21, "top5Rating": 1.20, "finalRating": 1.21, "honors": [{ "type": "EVP", "honorClass": "MAJOR" }, { "type": "EVP", "honorClass": "ELITE" }] },
+    { "playerId": "real-flamez", "maps": 100, "rating": 1.18, "playoffRating": 1.20, "top5Rating": 1.19, "finalRating": 1.20, "honors": [{ "type": "EVP", "honorClass": "SUPER_ELITE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-frozen", "maps": 96, "rating": 1.17, "playoffRating": 1.19, "top5Rating": 1.18, "finalRating": 1.19, "honors": [{ "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "LARGE" }] },
+    { "playerId": "real-kscerato", "maps": 94, "rating": 1.16, "playoffRating": 1.18, "top5Rating": 1.17, "finalRating": 1.18, "honors": [{ "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-spinx", "maps": 92, "rating": 1.15, "playoffRating": 1.17, "top5Rating": 1.16, "finalRating": 1.17, "honors": [{ "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "LARGE" }] },
+    { "playerId": "real-twistzz", "maps": 90, "rating": 1.14, "playoffRating": 1.16, "top5Rating": 1.15, "finalRating": 1.16, "honors": [{ "type": "EVP", "honorClass": "LARGE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-mezii", "maps": 88, "rating": 1.13, "playoffRating": 1.15, "top5Rating": 1.14, "finalRating": 1.15, "honors": [{ "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "LARGE" }] },
+    { "playerId": "real-senzu", "maps": 84, "rating": 1.12, "playoffRating": 1.14, "top5Rating": 1.13, "finalRating": 1.14, "honors": [{ "type": "EVP", "honorClass": "LARGE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-xantares", "maps": 82, "rating": 1.11, "playoffRating": 1.13, "top5Rating": 1.12, "finalRating": 1.13, "honors": [{ "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "LARGE" }] },
+    { "playerId": "real-yekindar", "maps": 80, "rating": 1.10, "playoffRating": 1.12, "top5Rating": 1.11, "finalRating": 1.12, "honors": [{ "type": "EVP", "honorClass": "LARGE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-xertion", "maps": 78, "rating": 1.10, "playoffRating": 1.11, "top5Rating": 1.10, "finalRating": 1.11, "honors": [{ "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "LARGE" }] },
+    { "playerId": "real-torzsi", "maps": 76, "rating": 1.09, "playoffRating": 1.11, "top5Rating": 1.10, "finalRating": 1.10, "honors": [{ "type": "EVP", "honorClass": "LARGE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-niko", "maps": 74, "rating": 1.08, "playoffRating": 1.10, "top5Rating": 1.09, "finalRating": 1.09, "honors": [{ "type": "EVP", "honorClass": "ELITE" }, { "type": "VP", "honorClass": "LARGE" }] },
+    { "playerId": "real-im", "maps": 72, "rating": 1.07, "playoffRating": 1.09, "top5Rating": 1.08, "finalRating": 1.08, "honors": [{ "type": "EVP", "honorClass": "LARGE" }, { "type": "VP", "honorClass": "ELITE" }] },
+    { "playerId": "real-jl", "maps": 70, "rating": 1.06, "playoffRating": 1.08, "top5Rating": 1.07, "finalRating": 1.07, "honors": [{ "type": "EVP", "honorClass": "LARGE" }, { "type": "VP", "honorClass": "ELITE" }] }
+  ]
+}

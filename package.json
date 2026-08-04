@@ -4,9 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "vitest run",
-    "test:unit": "vitest run tests/unit",
-    "test:e2e": "playwright test",
     "build:engine": "esbuild src/browser-entry.ts --bundle --outfile=public/engine.bundle.js --format=iife --target=es2020",
     "build": "npm run build:engine",
     "dev": "npm run build:engine && node scripts/static-server.mjs",
@@ -15,8 +12,6 @@
   "devDependencies": {
     "@types/node": "^22.15.30",
     "esbuild": "^0.25.9",
-    "@playwright/test": "^1.54.2",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "typescript": "^5.9.2"
   }
 }

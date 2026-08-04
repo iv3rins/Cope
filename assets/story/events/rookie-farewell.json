@@ -1,0 +1,109 @@
+{
+  "id": "rookie-farewell",
+  "title": "青训告别",
+  "description": "你正式离开青训体系，成为完全的职业选手。离开那天，训练室的门在你身后关上。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-veteran-handoff"
+    }
+  ],
+  "options": [
+    {
+      "id": "graduate",
+      "label": "带着收获离开",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "MVP",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "ROOKIE_GRADUATE",
+            "flag": {
+              "id": "ROOKIE_GRADUATE",
+              "name": "青训毕业",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你回头看了一眼训练室。",
+          "下一站，职业赛场。"
+        ],
+        "failureMessages": [
+          "离开时你有点怅然。",
+          "但你的脚步没有停。"
+        ],
+        "successNextEventId": "rookie-gear-choice",
+        "failureNextEventId": "rookie-gear-choice"
+      }
+    },
+    {
+      "id": "thank-team",
+      "label": "请全队吃顿饭",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "散伙饭上，老将破天荒敬了你一杯。",
+          "这一顿饭花掉你不少钱，但你觉得很值。"
+        ],
+        "failureMessages": [
+          "饭局上有人提起了那场斗殴。",
+          "气氛微妙地安静了几秒。"
+        ],
+        "successNextEventId": "rookie-gear-choice",
+        "failureNextEventId": "rookie-gear-choice"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,148 @@
+{
+  "id": "rookie-championship-point",
+  "title": "冠军点",
+  "description": "决赛 15:14，你们手握赛点。整座场馆的灯都亮着，你能听见自己的心跳。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "IN_TOURNAMENT",
+  "weight": 0.75,
+  "priority": 80,
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-title-run"
+    }
+  ],
+  "options": [
+    {
+      "id": "ice-veins",
+      "label": "心如止水打最后一局",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.01
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "FIRST_TITLE",
+            "flag": {
+              "id": "FIRST_TITLE",
+              "name": "首个冠军",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 16
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你在最后十秒完成了决定性击杀。",
+          "夺冠的那一刻，你听见全场在喊你的 ID。"
+        ],
+        "failureMessages": [
+          "赛点局你空枪了。",
+          "加时赛你们没能顶住，冠军擦肩而过。"
+        ],
+        "successNextEventId": "rookie-team-disband",
+        "failureNextEventId": "rookie-team-disband"
+      }
+    },
+    {
+      "id": "go-all-in",
+      "label": "最后一波全压",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.4,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "TOTAL_KILLS",
+            "delta": 30
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "FIRST_TITLE",
+            "flag": {
+              "id": "FIRST_TITLE",
+              "name": "首个冠军",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "你带头冲锋，一波流带走比赛。",
+          "冠军奖杯比想象中沉。"
+        ],
+        "failureMessages": [
+          "全压变成全送。",
+          "冠军奖杯在对面手里，你站在原地看完全场。"
+        ],
+        "successNextEventId": "rookie-team-disband",
+        "failureNextEventId": "rookie-team-disband"
+      }
+    }
+  ],
+  "autoEffects": []
+}

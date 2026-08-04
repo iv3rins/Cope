@@ -1,0 +1,105 @@
+{
+  "id": "comeback-bench-return",
+  "title": "替补回归",
+  "description": "你回到了正式名单，但只是替补。那个顶替你首发的人打得很不错。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-first-scrim"
+    }
+  ],
+  "options": [
+    {
+      "id": "bench-patient",
+      "label": "耐心等待机会",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你坐回替补席，认真看比赛。",
+          "你发现新人确实有值得学的地方。"
+        ],
+        "failureMessages": [
+          "替补席让你焦躁。",
+          "「这是我的位置」的念头一直冒出来。"
+        ],
+        "successNextEventId": "comeback-crowd-fear",
+        "failureNextEventId": "comeback-crowd-fear"
+      }
+    },
+    {
+      "id": "push-coach",
+      "label": "向教练要上场时间",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "教练给了你半场机会。",
+          "你打出了点东西，但还不足以夺回首发。"
+        ],
+        "failureMessages": [
+          "要时间让教练觉得你「急了」。",
+          "你的机会被压得更后了。"
+        ],
+        "successNextEventId": "comeback-crowd-fear",
+        "failureNextEventId": "comeback-crowd-fear"
+      }
+    }
+  ],
+  "autoEffects": []
+}

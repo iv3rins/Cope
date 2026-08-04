@@ -1,0 +1,95 @@
+{
+  "id": "rookie-film-study",
+  "title": "录像分析",
+  "description": "复盘课上新教练要求每个人讲自己的一场失误。你翻出了三年前的黑历史。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-farewell"
+    }
+  ],
+  "options": [
+    {
+      "id": "share-cringe",
+      "label": "公开讲黑历史",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你把自己最蠢的失误投到了大屏幕上。",
+          "大家笑完之后，讨论得很认真。"
+        ],
+        "failureMessages": [
+          "讲黑历史讲到一半你卡壳了。",
+          "尴尬归尴尬，但教训是记住了。"
+        ],
+        "successNextEventId": "rookie-z-training-day",
+        "failureNextEventId": "rookie-z-training-day"
+      }
+    },
+    {
+      "id": "pick-easy",
+      "label": "挑个简单的讲",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 1
+          }
+        ],
+        "successMessages": [
+          "你讲了个无关痛痒的失误。",
+          "新教练看了你一眼，没说什么。"
+        ],
+        "failureMessages": [
+          "有人嘀咕了一句「不敢讲真问题」。",
+          "你假装没听见。"
+        ],
+        "successNextEventId": "rookie-z-training-day",
+        "failureNextEventId": "rookie-z-training-day"
+      }
+    }
+  ],
+  "autoEffects": []
+}

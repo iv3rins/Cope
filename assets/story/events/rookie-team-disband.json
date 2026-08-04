@@ -1,0 +1,99 @@
+{
+  "id": "rookie-team-disband",
+  "title": "队伍解散",
+  "description": "俱乐部宣布重组：两名主力被卖，教练离职，你的位置突然悬空。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-championship-point"
+    }
+  ],
+  "options": [
+    {
+      "id": "wait-out",
+      "label": "留下来等新阵容",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你选择赌俱乐部的重建计划。",
+          "新教练到任第一天，点名让你进首发。"
+        ],
+        "failureMessages": [
+          "等待的日子很难熬，训练都变得形式化。",
+          "你开始想别的出路。"
+        ],
+        "successNextEventId": "rookie-online-harassment",
+        "failureNextEventId": "rookie-online-harassment"
+      }
+    },
+    {
+      "id": "jump-ship",
+      "label": "主动找下家",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TEAM_TRANSFER",
+            "teamId": "mouz"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          }
+        ],
+        "successMessages": [
+          "你在转会窗关闭前谈好了新队。",
+          "新环境让你重新燃起了斗志。"
+        ],
+        "failureMessages": [
+          "谈了两家都黄了。",
+          "你只能留在原地，处境尴尬。"
+        ],
+        "successNextEventId": "rookie-online-harassment",
+        "failureNextEventId": "rookie-online-harassment"
+      }
+    }
+  ],
+  "autoEffects": []
+}

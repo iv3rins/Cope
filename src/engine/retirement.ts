@@ -90,6 +90,13 @@ export interface RetirementSummary {
     readonly careerEarnings: number;
     readonly majorChampionships: number;
     readonly otherSTierTitles: number;
+    readonly grade: 'S' | 'A' | 'B' | 'C' | 'D';
+    readonly retiredAge: number;
+    readonly peakRating: number;
+    readonly peakSeason: number | null;
+    readonly peakSeasonRating: number;
+    readonly peakSeasons: number;
+    readonly tierBreakdown: Readonly<{ readonly T2: number; readonly T1: number; readonly MAJOR: number }>;
   };
 }
 

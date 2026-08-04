@@ -1,0 +1,105 @@
+{
+  "id": "prodigy-finals-triumph",
+  "title": "决赛封神",
+  "description": "你终于拿到了梦寐以求的冠军。颁奖台上，聚光灯追着你，你听见全场高呼你的 ID。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-finals-choke"
+    }
+  ],
+  "options": [
+    {
+      "id": "celebrate",
+      "label": "尽情庆祝",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "MVP",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 5000
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把奖杯举过头顶，转了三圈。",
+          "这个画面后来被印在了杂志封面上。"
+        ],
+        "failureMessages": [
+          "庆祝时你有一瞬间恍惚。",
+          "「这一切是真的吗？」"
+        ],
+        "successNextEventId": "prodigy-backlash",
+        "failureNextEventId": "prodigy-backlash"
+      }
+    },
+    {
+      "id": "stay-humble",
+      "label": "保持谦逊",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你在采访里说这只是开始。",
+          "「这个天才有点不一样」的评论很多。"
+        ],
+        "failureMessages": [
+          "过度谦逊让气氛有点尴尬。",
+          "队友调侃你「得了便宜还卖乖」。"
+        ],
+        "successNextEventId": "prodigy-backlash",
+        "failureNextEventId": "prodigy-backlash"
+      }
+    }
+  ],
+  "autoEffects": []
+}

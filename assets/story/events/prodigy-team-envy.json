@@ -1,0 +1,110 @@
+{
+  "id": "prodigy-team-envy",
+  "title": "队内嫉妒",
+  "description": "你的光环越来越亮，队里有人开始阴阳怪气：「天才不用训练，闭着眼睛都能赢。」",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-comeback-win"
+    }
+  ],
+  "options": [
+    {
+      "id": "downplay-self",
+      "label": "主动低调",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你开始把功劳分给队友。",
+          "嫉妒的声音小了一些。"
+        ],
+        "failureMessages": [
+          "你的低调被当成虚伪。",
+          "阴阳怪气变成了当面嘲讽。"
+        ],
+        "successNextEventId": "prodigy-ally",
+        "failureNextEventId": "prodigy-ally"
+      }
+    },
+    {
+      "id": "confront-envy",
+      "label": "当面挑明",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你把话挑明了：我不欠你们任何人。",
+          "说完之后，反而没人再阴阳了。"
+        ],
+        "failureMessages": [
+          "挑明变成了撕破脸。",
+          "更衣室分裂成两派。"
+        ],
+        "successNextEventId": "prodigy-ally",
+        "failureNextEventId": "prodigy-ally"
+      }
+    }
+  ],
+  "autoEffects": []
+}

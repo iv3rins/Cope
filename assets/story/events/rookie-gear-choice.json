@@ -1,0 +1,105 @@
+{
+  "id": "rookie-gear-choice",
+  "title": "外设抉择",
+  "description": "新赛季赞助商换了，你不得不用新键盘。旧键盘的每个键位你都记得。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-farewell"
+    }
+  ],
+  "options": [
+    {
+      "id": "adapt-fast",
+      "label": "快速适应新外设",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.006
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你花了一周适应新键盘的键程。",
+          "手感回来了，钱也省了。"
+        ],
+        "failureMessages": [
+          "新键盘怎么都不顺手。",
+          "你在直播间吐槽了两句，被赞助商看到。"
+        ],
+        "successNextEventId": "rookie-gym-routine",
+        "failureNextEventId": "rookie-gym-routine"
+      }
+    },
+    {
+      "id": "buy-old",
+      "label": "自费买同款旧键盘",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": -200
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你自费买了一把同款。",
+          "训练状态立刻回来了。"
+        ],
+        "failureMessages": [
+          "同款停产了，你只能买二手。",
+          "二手键盘的按键偶尔失灵。"
+        ],
+        "successNextEventId": "rookie-gym-routine",
+        "failureNextEventId": "rookie-gym-routine"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,106 @@
+{
+  "id": "rookie-z-training-day",
+  "title": "训练日常",
+  "description": "普通的一天：热手、训练赛、复盘、加练。职业选手的日常就是这么枯燥。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "repeatable": true,
+  "phase": "POST_TOURNAMENT",
+  "weight": 0.35,
+  "priority": 10,
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "steady-grind",
+      "label": "按计划完成训练",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "今天的训练完成度很高。",
+          "你按部就班地变强。"
+        ],
+        "failureMessages": [
+          "训练到一半你走神了。",
+          "你决定明天补上。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "extra-drills",
+      "label": "给自己加练",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "加练的专项让你的枪感更好。",
+          "但明天可能会困。"
+        ],
+        "failureMessages": [
+          "加练过头，反而影响了状态。",
+          "你学会了什么叫适度。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

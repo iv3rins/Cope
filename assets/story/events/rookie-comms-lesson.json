@@ -1,0 +1,114 @@
+{
+  "id": "rookie-comms-lesson",
+  "title": "沟通课",
+  "description": "指挥说你的报点太啰嗦。信息像堵车一样卡在队伍频道里。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "rookie-substitute-life"
+    }
+  ],
+  "options": [
+    {
+      "id": "short-calls",
+      "label": "练习三秒报点",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你把报点压缩成关键词。",
+          "队伍频道清静了很多，指挥开始听你的信息。"
+        ],
+        "failureMessages": [
+          "你越想简短越说错。",
+          "有队友说：还不如闭嘴。"
+        ],
+        "successNextEventId": "rookie-lan-debut",
+        "failureNextEventId": "rookie-lan-debut"
+      }
+    },
+    {
+      "id": "speak-more",
+      "label": "抢着提供信息",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.45,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "CALLER_ROOKIE",
+            "flag": {
+              "id": "CALLER_ROOKIE",
+              "name": "敢喊话的新人",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "TEAM_CONFLICT",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你开始主动报位置和血量。",
+          "有几条信息真的救了局。"
+        ],
+        "failureMessages": [
+          "频道里七嘴八舌，指挥吼了一声。",
+          "你决定以后少说两句。"
+        ],
+        "successNextEventId": "rookie-lan-debut",
+        "failureNextEventId": "rookie-lan-debut"
+      }
+    }
+  ],
+  "autoEffects": []
+}

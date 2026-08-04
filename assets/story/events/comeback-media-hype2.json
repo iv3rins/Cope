@@ -1,0 +1,95 @@
+{
+  "id": "comeback-media-hype2",
+  "title": "复出热度",
+  "description": "媒体开始写你的复出故事：「从伤病到回归，他用了 400 天。」采访邀约涌来。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-protect-ratio"
+    }
+  ],
+  "options": [
+    {
+      "id": "share-story",
+      "label": "分享完整故事",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CAREER_EARNINGS",
+            "delta": 1000
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你讲了 400 天的细节，包括最难的那段。",
+          "报道发出去后，评论区都在鼓励你。"
+        ],
+        "failureMessages": [
+          "故事讲得太沉重，媒体剪得面目全非。",
+          "你决定以后少说两句。"
+        ],
+        "successNextEventId": "comeback-doc-checks",
+        "failureNextEventId": "comeback-doc-checks"
+      }
+    },
+    {
+      "id": "low-key",
+      "label": "低调处理",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你只接受了一次简单采访。",
+          "热度过去后，你继续安静训练。"
+        ],
+        "failureMessages": [
+          "低调让你错过了一次曝光机会。",
+          "经纪人替你可惜。"
+        ],
+        "successNextEventId": "comeback-doc-checks",
+        "failureNextEventId": "comeback-doc-checks"
+      }
+    }
+  ],
+  "autoEffects": []
+}

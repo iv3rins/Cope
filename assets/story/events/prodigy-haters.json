@@ -1,0 +1,105 @@
+{
+  "id": "prodigy-haters",
+  "title": "全网黑",
+  "description": "一次失利后，全网开始清算你的「历史最佳候选」言论。你的每条动态下都是嘲讽。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-backlash"
+    }
+  ],
+  "options": [
+    {
+      "id": "block-world",
+      "label": "卸载社交软件",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你卸载了所有社交软件。",
+          "世界安静了，训练也专注了。"
+        ],
+        "failureMessages": [
+          "你卸载了，但借队友的手机看。",
+          "你控制不住自己。"
+        ],
+        "successNextEventId": "prodigy-meltdown",
+        "failureNextEventId": "prodigy-meltdown"
+      }
+    },
+    {
+      "id": "fight-back",
+      "label": "发文回应",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你发了一条长文，不卑不亢。",
+          "舆论开始分化，但你站稳了。"
+        ],
+        "failureMessages": [
+          "你的回应被断章取义，火上浇油。",
+          "你第一次体会到百口莫辩。"
+        ],
+        "successNextEventId": "prodigy-meltdown",
+        "failureNextEventId": "prodigy-meltdown"
+      }
+    }
+  ],
+  "autoEffects": []
+}

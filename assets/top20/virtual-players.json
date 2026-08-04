@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 2,
+  "source": "COPE career simulation pool, aligned with 2026 VRS team tiers",
+  "players": [
+    { "playerId": "npc-virtual-001", "nickname": "aether", "countryCode": "Sweden", "teamName": "Northstar", "teamId": "northstar", "teamTier": "T1" },
+    { "playerId": "npc-virtual-002", "nickname": "kairo", "countryCode": "United States", "teamName": "Vertex", "teamId": "vertex", "teamTier": "T1" },
+    { "playerId": "npc-virtual-003", "nickname": "mistral", "countryCode": "France", "teamName": "Helix", "teamId": "helix", "teamTier": "T1" },
+    { "playerId": "npc-virtual-004", "nickname": "sable", "countryCode": "Canada", "teamName": "Monument", "teamId": "monument", "teamTier": "T1" },
+    { "playerId": "npc-virtual-005", "nickname": "vanta", "countryCode": "Brazil", "teamName": "Orbit", "teamId": "orbit", "teamTier": "T1" },
+    { "playerId": "npc-virtual-006", "nickname": "rune", "countryCode": "Norway", "teamName": "Frostline", "teamId": "frostline", "teamTier": "T2" },
+    { "playerId": "npc-virtual-007", "nickname": "nox", "countryCode": "Poland", "teamName": "Forge", "teamId": "forge", "teamTier": "T2" },
+    { "playerId": "npc-virtual-008", "nickname": "cinder", "countryCode": "Australia", "teamName": "Pacific", "teamId": "pacific", "teamTier": "T2" },
+    { "playerId": "npc-virtual-009", "nickname": "vesper", "countryCode": "Russia", "teamName": "Aurora", "teamId": "aurora", "teamTier": "T1" },
+    { "playerId": "npc-virtual-010", "nickname": "halcyon", "countryCode": "Brazil", "teamName": "FURIA", "teamId": "furia", "teamTier": "T1" },
+    { "playerId": "npc-virtual-011", "nickname": "quartz", "countryCode": "China", "teamName": "Rare Atom", "teamId": "rareatom", "teamTier": "T2" },
+    { "playerId": "npc-virtual-012", "nickname": "drift", "countryCode": "China", "teamName": "TYLOO", "teamId": "tyloo", "teamTier": "T1" },
+    { "playerId": "npc-virtual-013", "nickname": "ember", "countryCode": "Germany", "teamName": "GamerLegion", "teamId": "gamerlegion", "teamTier": "T2" },
+    { "playerId": "npc-virtual-014", "nickname": "atlas", "countryCode": "Denmark", "teamName": "Astralis", "teamId": "astralis", "teamTier": "T1" },
+    { "playerId": "npc-virtual-015", "nickname": "wisp", "countryCode": "United Kingdom", "teamName": "Liquid", "teamId": "liquid", "teamTier": "T1" },
+    { "playerId": "npc-virtual-016", "nickname": "cobalt", "countryCode": "United States", "teamName": "NRG", "teamId": "nrg", "teamTier": "T1" },
+    { "playerId": "npc-virtual-017", "nickname": "lyric", "countryCode": "Ukraine", "teamName": "Natus Vincere Junior", "teamId": "natusvincere", "teamTier": "T2" },
+    { "playerId": "npc-virtual-018", "nickname": "nova", "countryCode": "France", "teamName": "MOUZ NXT", "teamId": "mouznxt", "teamTier": "T3" },
+    { "playerId": "npc-virtual-019", "nickname": "solace", "countryCode": "Brazil", "teamName": "FURIA Academy", "teamId": "furiafe", "teamTier": "T3" },
+    { "playerId": "npc-virtual-020", "nickname": "tundra", "countryCode": "Serbia", "teamName": "Falcons Force", "teamId": "falconsforce", "teamTier": "T3" },
+    { "playerId": "npc-virtual-021", "nickname": "radian", "countryCode": "Sweden", "teamName": "HEROIC Academy", "teamId": "heroicacademy", "teamTier": "T3" },
+    { "playerId": "npc-virtual-022", "nickname": "morrow", "countryCode": "Poland", "teamName": "G2 Ares", "teamId": "g2ares", "teamTier": "T3" },
+    { "playerId": "npc-virtual-023", "nickname": "kinetic", "countryCode": "Romania", "teamName": "paiN Academy", "teamId": "painacademy", "teamTier": "T3" },
+    { "playerId": "npc-virtual-024", "nickname": "echo", "countryCode": "Russia", "teamName": "Aurora Young Blud", "teamId": "aurorayoungblud", "teamTier": "T3" }
+  ]
+}

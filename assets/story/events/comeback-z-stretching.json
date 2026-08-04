@@ -1,0 +1,96 @@
+{
+  "id": "comeback-z-stretching",
+  "title": "拉伸课",
+  "description": "复出后的必修课：每天两小时的拉伸和核心训练，比比赛还枯燥。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "repeatable": true,
+  "phase": "POST_TOURNAMENT",
+  "weight": 0.35,
+  "priority": 10,
+  "period": "NORMAL",
+  "conditions": [],
+  "options": [
+    {
+      "id": "do-stretch",
+      "label": "认真完成",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "拉伸做得一丝不苟。",
+          "身体反馈很好。"
+        ],
+        "failureMessages": [
+          "拉伸草草了事。",
+          "你下午的腰有点紧。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "meditate",
+      "label": "加练冥想",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你在拉伸后加了十分钟冥想。",
+          "心静了不少。"
+        ],
+        "failureMessages": [
+          "冥想时你满脑子都是比赛。",
+          "但至少身体放松了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

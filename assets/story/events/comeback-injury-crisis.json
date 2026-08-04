@@ -1,0 +1,110 @@
+{
+  "id": "comeback-injury-crisis",
+  "title": "伤病危机",
+  "description": "训练中你的旧伤再次发作，这次疼得你站不起来。你被直接送进了医院。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-record"
+    }
+  ],
+  "options": [
+    {
+      "id": "full-stop",
+      "label": "立即停赛",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你停赛一个月，彻底休息。",
+          "复出后你开始更珍惜身体。"
+        ],
+        "failureMessages": [
+          "停赛的决定让你痛苦。",
+          "「才刚回来又要走」的念头挥之不去。"
+        ],
+        "successNextEventId": "comeback-retire-push",
+        "failureNextEventId": "comeback-retire-push"
+      }
+    },
+    {
+      "id": "play-through2",
+      "label": "带伤打完赛季",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.4,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你带伤撑完了赛季。",
+          "成绩不错，但身体付出了代价。"
+        ],
+        "failureMessages": [
+          "带伤作战让伤情恶化。",
+          "你被迫缺席了更长时间。"
+        ],
+        "successNextEventId": "comeback-retire-push",
+        "failureNextEventId": "comeback-retire-push"
+      }
+    }
+  ],
+  "autoEffects": []
+}

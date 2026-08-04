@@ -1,0 +1,108 @@
+{
+  "id": "prodigy-team-change",
+  "title": "转会风波",
+  "description": "有豪门开出了天价转会费。俱乐部想留你，但价格足够让所有人动摇。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "phase": "PRE_TOURNAMENT",
+  "weight": 1,
+  "priority": 50,
+  "period": "TRANSFER_WINDOW",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-sports-psych"
+    }
+  ],
+  "options": [
+    {
+      "id": "stay-put2",
+      "label": "留下",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "LOYAL_STAR",
+            "flag": {
+              "id": "LOYAL_STAR",
+              "name": "忠诚明星",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你选择留下。",
+          "俱乐部把你写进了长期计划。"
+        ],
+        "failureMessages": [
+          "留下后，转会传闻还是缠着你。",
+          "「他是不是在等更好的报价？」"
+        ],
+        "successNextEventId": "prodigy-new-home",
+        "failureNextEventId": "prodigy-new-home"
+      }
+    },
+    {
+      "id": "move-on2",
+      "label": "转会豪门",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TEAM_TRANSFER",
+            "teamId": "faze"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你转会到了豪门。",
+          "新环境、新队友、更高的舞台。"
+        ],
+        "failureMessages": [
+          "转会谈判拖了一个月，最后黄了。",
+          "你留在老东家，处境却尴尬了。"
+        ],
+        "successNextEventId": "prodigy-new-home",
+        "failureNextEventId": "prodigy-new-home"
+      }
+    }
+  ],
+  "autoEffects": []
+}

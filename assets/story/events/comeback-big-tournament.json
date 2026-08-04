@@ -1,0 +1,115 @@
+{
+  "id": "comeback-big-tournament",
+  "title": "大赛回归",
+  "description": "你以主力身份参加复出后的第一个大赛。开赛前，你发了条动态：我回来了。",
+  "worldlineId": "comeback",
+  "type": "CHOICE",
+  "phase": "IN_TOURNAMENT",
+  "weight": 0.75,
+  "priority": 80,
+  "period": "FINAL_DECISIVE_MOMENT",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-comeback2"
+    }
+  ],
+  "options": [
+    {
+      "id": "calm-stage",
+      "label": "稳住节奏打",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "你没有追求高光，但每一场都很扎实。",
+          "「他回来了」成了媒体这周的关键词。"
+        ],
+        "failureMessages": [
+          "大赛的强度让复出后的身体吃不消。",
+          "小组赛你打得挣扎。"
+        ],
+        "successNextEventId": "comeback-semi-final",
+        "failureNextEventId": "comeback-semi-final"
+      }
+    },
+    {
+      "id": "statement-return",
+      "label": "打一场宣言战",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": [
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.009
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 14
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你在淘汰赛首轮打出了复出代表作。",
+          "「老兵不死」四个字重回标题。"
+        ],
+        "failureMessages": [
+          "宣言战打成了车祸现场。",
+          "你被换下，坐回了熟悉的替补席。"
+        ],
+        "successNextEventId": "comeback-semi-final",
+        "failureNextEventId": "comeback-semi-final"
+      }
+    }
+  ],
+  "autoEffects": []
+}

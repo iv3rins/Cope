@@ -6,30 +6,68 @@
   "type": "CHOICE",
   "period": "FINAL_DECISIVE_MOMENT",
   "conditions": [
-    { "type": "COMPLETED_EVENT", "eventId": "comeback-midseason" }
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "comeback-midseason"
+    }
   ],
   "options": [
     {
       "id": "clutch-comeback",
       "label": "残局里站出来，亲手终结质疑",
       "requirements": [
-        { "type": "PLAYER_STAT", "stat": "MORALE", "minimum": 55 }
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
       ],
       "successChance": {
         "baseChance": 0.45,
         "modifiers": [
-          { "attribute": "CLUTCH", "perPoint": 0.008 }
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.008
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "TROPHY_CHANGE", "trophy": "S_TIER", "delta": 1 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 20 },
-          { "type": "FLAG_ADD", "flagId": "COMEBACK_COMPLETE", "flag": { "id": "COMEBACK_COMPLETE", "name": "涅槃重生", "category": "ACHIEVEMENT" } }
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 20
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "COMEBACK_COMPLETE",
+            "flag": {
+              "id": "COMEBACK_COMPLETE",
+              "name": "涅槃重生",
+              "category": "ACHIEVEMENT"
+            }
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -15 },
-          { "type": "FLAG_ADD", "flagId": "COMEBACK_FAILED", "flag": { "id": "COMEBACK_FAILED", "name": "复出失败", "category": "MENTAL" } }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "COMEBACK_FAILED",
+            "flag": {
+              "id": "COMEBACK_FAILED",
+              "name": "复出失败",
+              "category": "MENTAL"
+            }
+          }
         ]
       }
     },
@@ -40,19 +78,37 @@
       "successChance": {
         "baseChance": 0.6,
         "modifiers": [
-          { "attribute": "GAME_SENSE", "perPoint": 0.006 }
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.006
+          }
         ]
       },
       "outcome": {
         "successEffects": [
-          { "type": "TROPHY_CHANGE", "trophy": "S_TIER", "delta": 1 },
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 10 }
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          }
         ],
         "failureEffects": [
-          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
         ]
       }
     }
   ],
-  "autoEffects": []
+  "autoEffects": [],
+  "phase": "IN_TOURNAMENT",
+  "weight": 1,
+  "priority": 80
 }
