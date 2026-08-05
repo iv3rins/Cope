@@ -1,0 +1,90 @@
+{
+  "id": "veteran-youth-challenge",
+  "worldlineId": "shared",
+  "title": "后浪",
+  "description": "训练赛结束，那个 17 岁的新秀在队伍频道里刷了一句：\"前辈，你那个位置该让出来了。\"训练室安静了三秒，所有人的目光都落在他脸上。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 60,
+  "conditions": [
+    { "type": "AGE", "minimum": 25 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "teach-him",
+      "label": "当场教他做人",
+      "description": "后浪可以浪，但今天这局训练赛，得先学会怎么游。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.55, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": -4 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ],
+        "successMessages": [
+          "你用一把 1v3 残局回答了那个问题。新秀赛后主动来加你微信，备注写着：\"前辈，教教我。\""
+        ],
+        "failureMessages": [
+          "你打了一整局，被他压制了一整局。训练室没人说话，比说了还难受。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "mentor-him",
+      "label": "把他叫到一边",
+      "description": "\"想坐这个位置？先告诉我，你为它熬过几个通宵。\"",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "LEADERSHIP", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 2 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": -2 }
+        ],
+        "successMessages": [
+          "你跟他聊了十分钟。第二天起，他训练赛里开始主动给你报点。"
+        ],
+        "failureMessages": [
+          "他听完，回了句\"知道了\"，然后继续练他的干拉。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "ignore",
+      "label": "当没听见",
+      "description": "跟 17 岁的小孩较劲，掉价。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": -3 }
+        ],
+        "successMessages": [
+          "你没接话。但那天之后，教练开始让他顶你的训练赛位置。"
+        ],
+        "failureMessages": [
+          "你没接话，新秀也没再提。但有些东西，不提不代表不存在。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

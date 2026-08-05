@@ -1,0 +1,67 @@
+{
+  "id": "veteran-legend",
+  "worldlineId": "shared",
+  "title": "传奇的代价",
+  "description": "解说在转播里说：\"他是活着的传奇。\"话音刚落，弹幕刷过一句扎眼的：\"传奇？传奇就是该退了的人。\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 60,
+  "conditions": [
+    { "type": "AGE", "minimum": 28 },
+    { "type": "NARRATIVE_METRIC", "metric": "FAME", "minimum": 60 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "embrace",
+      "label": "接住这个称号",
+      "description": "传奇就传奇，我还能让这个称号再亮几年。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 5 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 4 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 5 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 8 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -3 }
+        ],
+        "successMessages": [
+          "你接住了。传奇这个称号很重，但你还能扛。"
+        ],
+        "failureMessages": [
+          "你接住了称号，也接住了它的重量——每场都被按传奇的标准审判。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "decline",
+      "label": "拒绝被定义",
+      "description": "\"别叫我传奇，叫我还在打比赛的人。\"",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -5 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": -3 }
+        ],
+        "successMessages": [
+          "你拒绝了称号。但解说台已经开始用\"拒绝传奇之名的传奇\"介绍你了。"
+        ],
+        "failureMessages": [
+          "你拒绝了，可那两个字像口香糖一样粘在你身上。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

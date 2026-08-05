@@ -125,3 +125,29 @@ test('冲突支线：黑马羞辱线复仇局锁定决赛周期', async () => {
   const normal = await engine.findAvailableEvents({ profile: ready, period: 'NORMAL', randomRoll: 0.5 });
   assert.ok(!normal.some((event) => event.id === 'upset-revenge'), 'NORMAL 周期不出现复仇局');
 });
+
+test('生涯后期：老将事件按 AGE 门控，25 岁前不可见', async () => {
+  const engine = await buildEngine();
+  const young = sampleProfile({ age: 20 });
+  const youngEvents = await engine.findAvailableEvents({ profile: young, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!youngEvents.some((event) => event.id === 'veteran-youth-challenge'), '20 岁不应看到后浪挑战');
+  const veteran = sampleProfile({ age: 25 });
+  const veteranEvents = await engine.findAvailableEvents({ profile: veteran, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(veteranEvents.some((event) => event.id === 'veteran-youth-challenge'), '25 岁应看到后浪挑战');
+  const contract = await engine.findAvailableEvents({ profile: sampleProfile({ age: 26 }), period: 'TRANSFER_WINDOW', randomRoll: 0.5 });
+  assert.ok(contract.some((event) => event.id === 'veteran-last-contract'), '26 岁转会窗应看到最后一份合同');
+});
+
+test('荣誉时刻：TOP20_RANK 上榜前不可见，上榜后按排名解锁', async () => {
+  const engine = await buildEngine();
+  const unranked = sampleProfile({});
+  const unrankedEvents = await engine.findAvailableEvents({ profile: unranked, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!unrankedEvents.some((event) => event.id === 'honor-first-top20'), '未上榜时不应看到首次上榜事件');
+  const top14 = sampleProfile({ trophies: { majorChampionships: 0, otherSTierTitles: 0, mvpAwards: 0, evpAwards: 0, top20Records: [{ year: 2030, rank: 14 }] } });
+  const top14Events = await engine.findAvailableEvents({ profile: top14, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(top14Events.some((event) => event.id === 'honor-first-top20'), '第 14 名应解锁首次上榜事件');
+  assert.ok(!top14Events.some((event) => event.id === 'honor-mvp-target'), '第 14 名不应解锁 TOP5 事件');
+  const top3 = sampleProfile({ trophies: { majorChampionships: 0, otherSTierTitles: 0, mvpAwards: 0, evpAwards: 0, top20Records: [{ year: 2030, rank: 3 }] } });
+  const top3Events = await engine.findAvailableEvents({ profile: top3, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(top3Events.some((event) => event.id === 'honor-mvp-target'), '第 3 名应解锁研究你事件');
+});

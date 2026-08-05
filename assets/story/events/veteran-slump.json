@@ -1,0 +1,67 @@
+{
+  "id": "veteran-slump",
+  "worldlineId": "shared",
+  "title": "退役倒计时",
+  "description": "你连续五场 rating 没过 0.9，网上开始有人用红字给你做\"退役倒计时\"——每天更新，配着你这赛季的数据曲线。曲线一路向下。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 60,
+  "conditions": [
+    { "type": "AGE", "minimum": 26 },
+    { "type": "NARRATIVE_METRIC", "metric": "FORM", "maximum": 45 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "grind-back",
+      "label": "加练硬扛",
+      "description": "让那条曲线在退役之前先掉头向上。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.5, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": -8 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": -10 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "successMessages": [
+          "你加练了一周，状态回来了些。倒计时帖更新到一半，停更了。"
+        ],
+        "failureMessages": [
+          "你练得越多，手腕越疼，曲线还在往下走。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "change-style",
+      "label": "调整打法",
+      "description": "年纪大了，拼枪拼不过，那就拼脑子。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.65, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -2 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -4 }
+        ],
+        "successMessages": [
+          "你开始用预判代替反应，用走位代替拼枪。数据没涨，但失误少了。"
+        ],
+        "failureMessages": [
+          "你换了打法，队友配合不上，数据更难看了一周。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

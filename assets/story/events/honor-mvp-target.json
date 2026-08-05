@@ -1,0 +1,65 @@
+{
+  "id": "honor-mvp-target",
+  "worldlineId": "shared",
+  "title": "研究你",
+  "description": "年度 TOP5 的代价：每支队伍的分析师都建了一个以你命名的文件夹。训练赛里，对手开始用完全针对你的打法——烟雾弹里藏两个人，就为了等你露头。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 58,
+  "conditions": [
+    { "type": "TOP20_RANK", "minimum": 1, "maximum": 5 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "evolve",
+      "label": "打乱自己的习惯",
+      "description": "他们研究的是过去的你，那就让他们研究个寂寞。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -5 }
+        ],
+        "successMessages": [
+          "你花了两个星期改掉自己的小习惯。对手的文件夹，全废了。"
+        ],
+        "failureMessages": [
+          "你试图改变打法，结果把自己也研究懵了，状态直线下滑。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "lean-in",
+      "label": "让针对来得更猛烈",
+      "description": "他们越研究你，说明你越值得研究。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 1 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 5 }
+        ],
+        "successMessages": [
+          "你照常打，照常赢。对手的分析师开始互相甩锅——\"你的文件夹呢？\""
+        ],
+        "failureMessages": [
+          "你照常打，然后被针对得体无完肤。那一周，你的数据像过山车。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

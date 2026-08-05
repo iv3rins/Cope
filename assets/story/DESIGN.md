@@ -147,3 +147,27 @@ TRANSFER_WINDOW  接触试探 / 续约谈判（日常）
 2. 支线事件 `worldlineId: 'shared'`、`repeatable: false`（每条支线一生一次）、`priority` 高于日常、低于主线。
 3. 所有 FLAG 在 `assets/story/events/*.json` 的 `FLAG_ADD` 中定义，`flag.id` 全局唯一（kebab-case）。
 4. 修改故事体系先改本文档，再改事件 JSON。
+
+## 六、生涯后期与荣誉时刻
+
+主线 finale（事件 8，AGE≥24）之后，生涯并未结束——25 岁后进入老将阶段，由状态驱动的 shared 事件继续推进，直到玩家选择退役。这一阶段的核心冲突：**被后浪挑战、状态下滑、俱乐部施压、舆论造"最后一舞"**。
+
+### 6.1 老将阶段（AGE 门控，repeatable，冲突向）
+
+| 事件 | 门控 | 内容 | 戏剧冲突 |
+|---|---|---|---|
+| `veteran-youth-challenge` | AGE≥25 | 队里 17 岁新秀训练赛对位打爆你，公开喊话"前辈该让位了" | 当着全队下你的面子 |
+| `veteran-slump` | AGE≥26 + FORM≤45 | 数据下滑，网上开始算"退役倒计时" | 每个失误都被慢放 |
+| `veteran-last-contract` | AGE≥26 + 转会窗 | 俱乐部递来最后一份合同，只有一年 | 一年之后，你还能去哪？ |
+| `veteran-farewell-tour` | AGE≥27 + FAME≥50 | 媒体开始造"最后一舞"的舆论，你还没说要退役 | 所有人都在替你告别 |
+| `veteran-legend` | AGE≥28 + FAME≥60 | 解说叫你"传奇"——传奇，就是该退了的另一种说法 | 接住称号，还是拒绝？ |
+
+### 6.2 荣誉时刻（TOP20_RANK 门控，一生一次）
+
+| 事件 | 门控 | 内容 | 戏剧冲突 |
+|---|---|---|---|
+| `honor-first-top20` | TOP20_RANK 首次 | 第一次进年度 TOP20 榜单 | 榜单放大了你的每个名字，也放大了质疑 |
+| `honor-top10-controversy` | TOP20_RANK 1-10 | 进了 TOP10，却被说"数据刷子" | 你的排名成了争议中心 |
+| `honor-mvp-target` | TOP20_RANK 1-5 | 年度 TOP5，成了全联盟研究的对象 | 对手的录像师比你还了解你 |
+
+> 老将与荣誉事件都属于 shared 池，priority 60（高于日常、低于主线）。荣誉时刻一生一次（repeatable: false），老将事件可重复（repeatable: true）。

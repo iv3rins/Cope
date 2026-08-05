@@ -1,0 +1,66 @@
+{
+  "id": "veteran-last-contract",
+  "worldlineId": "shared",
+  "title": "最后一份合同",
+  "description": "转会窗口，经纪人把合同推到你面前：一年，薪水打七折，附带条款写着\"若赛季表现低于预期，俱乐部有权赛季中解约\"。窗口里没有第二份报价。",
+  "period": "TRANSFER_WINDOW",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 60,
+  "conditions": [
+    { "type": "AGE", "minimum": 26 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "sign",
+      "label": "签了",
+      "description": "有地方打，总比没地方打好。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 400 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -6 }
+        ],
+        "successMessages": [
+          "你签了。签字的时候，你注意到经纪人没敢看你的眼睛。"
+        ],
+        "failureMessages": [
+          "你签了，但那条\"表现低于预期可解约\"的条款，像根刺一样扎在合同里。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "hold-out",
+      "label": "拒签，赌自由身",
+      "description": "要么给我像样的合同，要么我赛季中变成自由人，让市场重新定价。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.45, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 6 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": -300 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 8 }
+        ],
+        "successMessages": [
+          "你赌赢了，窗口最后两天有队抬了价。经纪人的脸色比合同还难看。"
+        ],
+        "failureMessages": [
+          "你赌输了。窗口关闭，你成了无队可去的自由人，训练赛都得蹭别人的。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}
