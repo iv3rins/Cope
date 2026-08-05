@@ -14,11 +14,11 @@ export class NpcTransferMarketServiceImpl implements TransferMarketService {
   }
 
   public async releasePlayer(input: { readonly teamId: string; readonly playerId: string; readonly reason: string; readonly occurredAt: string }): Promise<TransferMarketDecision> {
-    return { id: `npc-release-${input.teamId}-${input.playerId}-${input.occurredAt}`, teamId: input.teamId, type: 'RELEASE', playerId: input.playerId, source: 'NPC', reason: input.reason, assessment: this.assessment(input.teamId, input.occurredAt, []) };
+    return { id: `npc-release-${input.teamId}-${input.playerId}-${input.occurredAt}`, teamId: input.teamId, type: 'RELEASE', playerId: input.playerId, source: 'NPC', reason: input.reason, assessment: this.assessment(input.teamId, input.occurredAt, []), occurredAt: input.occurredAt };
   }
 
   public async signCandidate(input: { readonly teamId: string; readonly candidate: TransferCandidate; readonly occurredAt: string }): Promise<TransferMarketDecision> {
-    return { id: `npc-sign-${input.teamId}-${input.candidate.playerId}-${input.occurredAt}`, teamId: input.teamId, type: 'SIGN', playerId: input.candidate.playerId, source: input.candidate.source, reason: '阵容短板与候选角色匹配。', assessment: this.assessment(input.teamId, input.occurredAt, []) };
+    return { id: `npc-sign-${input.teamId}-${input.candidate.playerId}-${input.occurredAt}`, teamId: input.teamId, type: 'SIGN', playerId: input.candidate.playerId, source: input.candidate.source, reason: '阵容短板与候选角色匹配。', assessment: this.assessment(input.teamId, input.occurredAt, []), occurredAt: input.occurredAt };
   }
 
   public async runManagerWindow(input: { readonly teamId: string; readonly at: string; readonly maxMoves: number; readonly npcPlayers?: readonly NpcPlayerProfile[] }): Promise<TransferMarketResult> {

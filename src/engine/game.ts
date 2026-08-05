@@ -3,7 +3,7 @@ import type { CareerEventWindow, EventPeriod, StoryDecision, StoryDecisionResult
 import type { PlayerProfile } from './profile';
 import type { AgeProgressionResult, PlayerProgressionService } from './progression';
 import type { CareerGameState, CareerGameStateRepository } from './save-state';
-import type { TournamentAdvanceResult, TournamentEdition, TournamentStandInAssignment, TournamentStandInOffer } from '../hltv/tournament';
+import type { TournamentAdvanceResult, TournamentEdition, TournamentResult, TournamentStandInAssignment, TournamentStandInOffer } from '../hltv/tournament';
 import type { TransferOffer, TransferTargetView } from '../hltv/transfer-targets';
 import type { RankingSource } from '../hltv/team';
 import type { DailyActionService } from './daily-action';
@@ -17,6 +17,8 @@ export type CareerTournamentAdvanceMode = 'NEXT_NODE' | 'UNTIL_DECISION_OR_COMPL
 /** 生涯游戏的顶层应用接口，UI/命令行/测试均通过它驱动引擎。 */
 export interface CareerGame {
   getProfile(): Promise<PlayerProfile>;
+  /** 正式赛事与预选赛保持独立语义，但统一提供给总结 UI。 */
+  getTournamentSummary(): Promise<{ readonly official: PlayerProfile['tournamentArchive']; readonly qualifiers: readonly TournamentResult[] }>;
   /** 在半年开始时锁定 VRS 快照并生成完整赛历；重复调用必须返回同一赛历。 */
   startSeason(): Promise<readonly TournamentEdition[]>;
   /** 返回由 TournamentService 自动生成且尚未完成的下一场赛事。 */

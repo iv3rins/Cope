@@ -136,6 +136,7 @@ export interface TournamentSimulationContext {
   readonly editionId: TournamentId;
   readonly baseTeamStrength: number;
   readonly baseOpponentStrength: Readonly<Record<HltvTeamId, number>>;
+  readonly opponentRanks?: Readonly<Record<HltvTeamId, number | null>>;
   readonly interventions: readonly TournamentIntervention[];
   /** [0, 1) 的可回放掷骰；仅在没有 FORCE_UPSET 时用于判定爆冷。 */
   readonly upsetRoll: number;

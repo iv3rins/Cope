@@ -52,7 +52,7 @@ export class RetirementSummaryServiceImpl implements RetirementSummaryService {
         playerId: player.id,
         gameId: player.gameId,
         retiredAt: player.retiredAt,
-        reason: null,
+        reason: player.retirementReason ?? null,
       },
       top20History,
       trophyRoom,

@@ -20,6 +20,11 @@ export class CareerGameConfigurationError extends Error {
   public constructor(dependency: string) { super(`CareerGame is missing required runtime dependency: ${dependency}.`); this.name = 'CareerGameConfigurationError'; }
 }
 
+export interface VrsResultProjectionPort {
+  readonly rulesVersion: string;
+  apply(state: { readonly pointsByTeam: Readonly<Record<string, number>>; readonly appliedResultIds: readonly string[] }, result: TournamentResult): { readonly pointsByTeam: Readonly<Record<string, number>>; readonly appliedResultIds: readonly string[] };
+}
+
 export interface CareerGameRuntimeServices {
   readonly story?: StoryEngine;
   readonly progressionRules?: PlayerProgressionRuleRepository;
@@ -35,12 +40,17 @@ export interface CareerGameRuntimeServices {
   readonly npcGenerationProfiles?: readonly NpcGenerationProfile[];
   readonly transferMarket?: TransferMarketService;
   readonly transferMarketTeamIds?: readonly string[];
+  readonly vrsResultProjector?: VrsResultProjectionPort;
 }
 
 export class CareerGameImpl implements CareerGame {
   public constructor(private readonly dependencies: CareerGameDependencies, private readonly runtime: CareerGameRuntimeServices = {}) {}
 
   public async getProfile(): Promise<PlayerProfile> { return (await this.requireSave()).state.player; }
+  public async getTournamentSummary(): Promise<{ readonly official: PlayerProfile['tournamentArchive']; readonly qualifiers: readonly TournamentResult[] }> {
+    const state = (await this.requireSave()).state;
+    return this.copy({ official: state.player.tournamentArchive, qualifiers: state.qualificationResults ?? [] });
+  }
 
   public async startSeason(): Promise<readonly TournamentEdition[]> {
     const envelope = await this.requireSave();
@@ -171,12 +181,16 @@ export class CareerGameImpl implements CareerGame {
     const envelope = await this.requireSave();
     const state = envelope.state;
     if (state.seasonPhase === 'REPORT' && state.halfSeasonSettlement) return this.copy(state.halfSeasonSettlement);
-    const results = state.tournamentResults ?? [];
+    const currentEditionIds = new Set(state.scheduledTournaments.map((edition) => edition.id));
+    const results = (state.tournamentResults ?? []).filter((result) => currentEditionIds.has(result.editionId));
+    const qualifierIds = new Set(state.scheduledTournaments.map((edition) => `${edition.id}-qualifier`));
+    const qualificationResults = (state.qualificationResults ?? []).filter((result) => qualifierIds.has(result.editionId));
+    const statisticalResults = [...results, ...qualificationResults];
     if ((state.tournamentCursor ?? 0) < state.scheduledTournaments.length) return null;
     const totalPrizeMoney = results.reduce((sum, result) => sum + (result.playerPrizeIncome ?? 0), 0);
-    const mapsPlayed = results.reduce((sum, result) => sum + (result.playerPerformances.find((item) => item.playerId === state.player.id)?.maps ?? 0), 0);
-    const kills = results.reduce((sum, result) => sum + (result.playerPerformances.find((item) => item.playerId === state.player.id)?.kills ?? 0), 0);
-    const clutchWon = results.reduce((sum, result) => sum + (result.playerPerformances.find((item) => item.playerId === state.player.id)?.clutchesWon ?? 0), 0);
+    const mapsPlayed = statisticalResults.reduce((sum, result) => sum + (result.playerPerformances.find((item) => item.playerId === state.player.id)?.maps ?? 0), 0);
+    const kills = statisticalResults.reduce((sum, result) => sum + (result.playerPerformances.find((item) => item.playerId === state.player.id)?.kills ?? 0), 0);
+    const clutchWon = statisticalResults.reduce((sum, result) => sum + (result.playerPerformances.find((item) => item.playerId === state.player.id)?.clutchesWon ?? 0), 0);
     const stateDate = new Date(Date.parse(state.currentDate));
     const stateYear = state.season;
     const half = state.careerHalf === 2 ? 2 as const : 1 as const;
@@ -227,14 +241,19 @@ export class CareerGameImpl implements CareerGame {
     const repeatableHistory = envelope.state.repeatableEventHistory ?? [];
     const eligibleEvents = events.filter((candidate) => candidate.repeatable ? !repeatableHistory.some((entry) => entry.eventId === candidate.id && entry.season === envelope.state.season) : true);
     const forced = systemQueue.find((queued) => queued.period === period && eligibleEvents.some((candidate) => candidate.id === queued.eventId));
-    if (!forced && (envelope.state.seasonNarrativeEventCount ?? envelope.state.storyEventsThisHalf ?? 0) >= 4) return null;
+    const transactional = envelope.state.pendingTransferOffer
+      ? eligibleEvents.filter((candidate) => candidate.system === true && candidate.consumesTransferOffer === true)
+      : [];
+    const quotaExempt = Boolean(forced) || transactional.length > 0;
+    if (!quotaExempt && (envelope.state.seasonNarrativeEventCount ?? envelope.state.storyEventsThisHalf ?? 0) >= 4) return null;
     const event = (forced ? eligibleEvents.find((candidate) => candidate.id === forced.eventId) : undefined)
+      ?? this.pickWeightedEvent(this.highestPriorityEvents(transactional), this.nextRoll())
       ?? (preferredEventId ? eligibleEvents.find((candidate) => candidate.id === preferredEventId) : undefined)
       ?? this.pickWeightedEvent(this.highestPriorityEvents(eligibleEvents), this.nextRoll())
       ?? null;
     if (!event) return null;
     const resume: import('../save-state').CareerEventResume = window === 'SEASON_START' ? 'START_SEASON' : window === 'REPORT' ? 'CONTINUE_REPORT' : window === 'OFFSEASON' ? 'CONTINUE_OFFSEASON' : window === 'TRANSFER_WINDOW' ? 'CONTINUE_TRANSFER_WINDOW' : 'CONTINUE_SEASON';
-    const state = { ...envelope.state, seasonNarrativeEventCount: forced ? (envelope.state.seasonNarrativeEventCount ?? 0) : (envelope.state.seasonNarrativeEventCount ?? envelope.state.storyEventsThisHalf ?? 0) + 1, pendingSystemEvents: forced ? systemQueue.filter((queued) => queued.triggerId !== forced.triggerId) : systemQueue, seasonPhase: 'EVENT' as const, eventResume: { mode: resume, eventId: event.id, tournamentId: envelope.state.activeTournamentId ?? envelope.state.scheduledTournaments[envelope.state.tournamentCursor ?? 0]?.id ?? null } };
+    const state = { ...envelope.state, seasonNarrativeEventCount: quotaExempt ? (envelope.state.seasonNarrativeEventCount ?? 0) : (envelope.state.seasonNarrativeEventCount ?? envelope.state.storyEventsThisHalf ?? 0) + 1, pendingSystemEvents: forced ? systemQueue.filter((queued) => queued.triggerId !== forced.triggerId) : systemQueue, seasonPhase: 'EVENT' as const, eventResume: { mode: resume, eventId: event.id, tournamentId: envelope.state.activeTournamentId ?? envelope.state.scheduledTournaments[envelope.state.tournamentCursor ?? 0]?.id ?? null } };
     await this.saveEnvelope({ ...envelope, state });
     return this.copy(event);
   }
@@ -284,9 +303,10 @@ export class CareerGameImpl implements CareerGame {
       const scheduledTournaments = state.scheduledTournaments.map((candidate, index) => index === cursor ? updatedEdition : candidate);
       const qualifierPerformance = normalizedQualifierResult.playerPerformances.find((item) => item.playerId === activeState.player.id) ?? null;
       const qualifierPlayer = qualifierPerformance
-        ? { ...activeState.player, career: { ...activeState.player.career, mapsPlayed: activeState.player.career.mapsPlayed + qualifierPerformance.maps, totalKills: activeState.player.career.totalKills + qualifierPerformance.kills } }
+        ? this.accumulateCareerPerformance(activeState.player, qualifierPerformance)
         : activeState.player;
-      const commonState = { ...activeState, player: qualifierPlayer, scheduledTournaments, qualificationResults: [...(activeState.qualificationResults ?? []), normalizedQualifierResult], activeTournamentState: null, tournamentPhase: qualified ? 'PRE' as const : 'POST' as const, tournamentMatchCursor: 0 };
+      const projectedVrs = this.projectVrsResult(activeState, normalizedQualifierResult);
+      const commonState = { ...activeState, ...projectedVrs, player: qualifierPlayer, scheduledTournaments, qualificationResults: [...(activeState.qualificationResults ?? []), normalizedQualifierResult], activeTournamentState: null, tournamentPhase: qualified ? 'PRE' as const : 'POST' as const, tournamentMatchCursor: 0 };
       if (qualified) {
         await this.saveEnvelope({ ...envelope, state: commonState });
         return { status: 'ONGOING', state: null, lifecycleHook: 'POST_TOURNAMENT', uiData: { mode: 'FAST', qualifier: true, qualified: true, qualifierResult: normalizedQualifierResult, qualifierPerformance, countedInCareer: true, countedInTop20: false, mainEventNext: true }, result: null };
@@ -318,7 +338,8 @@ export class CareerGameImpl implements CareerGame {
     const pendingSystemEvents = await this.tournamentTriggeredEvents(player, result, activeState.pendingSystemEvents ?? []);
     const standInCompleted = activeState.standInAssignment?.editionId === edition.id;
     const completedLedger = (activeState.standInLedger ?? []).map((entry) => standInCompleted && entry.offerId === activeState.standInAssignment?.offerId ? { ...entry, status: 'COMPLETED' as const, occurredAt: activeState.currentDate } : entry);
-    await this.saveEnvelope({ ...envelope, state: { ...activeState, player, pendingSystemEvents, activeTournamentState: null, tournamentResults: [...(activeState.tournamentResults ?? []), result], tournamentCursor: cursor + 1, tournamentPhase: 'POST', tournamentMatchCursor: 0, activeTournamentId: edition.id, unsettledTournamentIds: activeState.unsettledTournamentIds.filter((id) => id !== edition.id), standInLedger: completedLedger, ...(standInCompleted ? { standInAssignment: null, pendingStandInOffer: null, scheduledTournaments: [], unsettledTournamentIds: [], tournamentCursor: 0 } : {}) } });
+    const projectedVrs = this.projectVrsResult(activeState, result);
+    await this.saveEnvelope({ ...envelope, state: { ...activeState, ...projectedVrs, player, pendingSystemEvents, activeTournamentState: null, tournamentResults: [...(activeState.tournamentResults ?? []), result], tournamentCursor: cursor + 1, tournamentPhase: 'POST', tournamentMatchCursor: 0, activeTournamentId: edition.id, unsettledTournamentIds: activeState.unsettledTournamentIds.filter((id) => id !== edition.id), standInLedger: completedLedger, ...(standInCompleted ? { standInAssignment: null, pendingStandInOffer: null, scheduledTournaments: [], unsettledTournamentIds: [], tournamentCursor: 0 } : {}) } });
     return { ...progress, result };
   }
 
@@ -326,42 +347,60 @@ export class CareerGameImpl implements CareerGame {
     this.assertRoll(input.randomRoll);
     const envelope = await this.requireSave();
     this.assertActive(envelope.state.player);
-    const calendarTransition = input.period === 'OFFSEASON' && envelope.state.seasonPhase === 'REPORT';
+    const calendarTransition = input.period === 'OFFSEASON' && (envelope.state.seasonPhase === 'REPORT' || envelope.state.seasonPhase === 'OFFSEASON');
     const nextSeason = calendarTransition && envelope.state.careerHalf === 2 ? envelope.state.season + 1 : envelope.state.season;
     const nextHalf = calendarTransition ? (envelope.state.careerHalf === 1 ? 2 : 1) : (new Date(Date.parse(envelope.state.currentDate)).getUTCMonth() < 6 ? 1 : 2);
     const nextDate = calendarTransition
       ? new Date(Date.UTC(nextSeason, nextHalf === 1 ? 0 : 6, 1)).toISOString()
       : this.advanceDate(envelope.state.currentDate, input.period);
-    const player = calendarTransition && envelope.state.careerHalf === 2
+    let player = calendarTransition && envelope.state.careerHalf === 2
       ? (await this.dependencies.progression.advanceAge({ profile: envelope.state.player, originRule: await this.requireOriginRule(envelope.state.player.originRegion) })).profile
       : envelope.state.player;
-    const npcProgression = calendarTransition && envelope.state.careerHalf === 2 && this.runtime.npcGeneration
-      ? await this.runtime.npcGeneration.advanceSeason({ season: nextSeason, players: envelope.state.npcPlayers })
+    let contracts = [...envelope.state.contracts];
+    const currentContract = player.currentContractId ? contracts.find((contract) => contract.id === player.currentContractId && contract.status === 'ACTIVE') : undefined;
+    if (currentContract && Date.parse(currentContract.endsAt) <= Date.parse(nextDate)) {
+      const contractService = this.runtime.contractService ?? new SaveContractService(contracts, new ConditionEvaluatorImpl(), (candidate) => ({ player: candidate, currentTeamId: candidate.currentTeamId, opponentTeamId: null, randomRoll: input.randomRoll, difficultyMode: candidate.difficultyMode }), this.runtime.teamTier ?? (() => undefined));
+      const expiration = await contractService.expire({ profile: player, contractId: currentContract.id, occurredAt: nextDate });
+      if ('contract' in expiration && !('reason' in expiration)) {
+        player = expiration.profile;
+        contracts = [...contractService.snapshot];
+      }
+    }
+    if (!player.isRetired && player.age >= 40) {
+      player = await this.dependencies.retirement.retire({ player, reason: '达到职业生涯自然退役年龄', retiredAt: nextDate });
+      contracts = contracts.map((contract) => contract.playerId === player.id && contract.status === 'ACTIVE' ? { ...contract, status: 'TERMINATED' as const, termination: { reason: 'MUTUAL_AGREEMENT' as const, terminatedAt: nextDate, matchedConditions: [], note: '选手自然退役，合同同步终止。' } } : contract);
+    }
+    const npcGeneration = this.runtime.npcGeneration;
+    const npcProgression = calendarTransition && envelope.state.careerHalf === 2 && npcGeneration
+      ? await npcGeneration.advanceSeason({ season: nextSeason, players: envelope.state.npcPlayers })
       : null;
     let worldNpcPlayers = npcProgression?.progressed ?? envelope.state.npcPlayers;
-    if (calendarTransition && envelope.state.careerHalf === 2 && this.runtime.npcGeneration) {
+    if (calendarTransition && envelope.state.careerHalf === 2 && npcGeneration) {
       const activePopulation = worldNpcPlayers.filter((npc) => npc.availability !== 'RETIRED').length;
       const targetPopulation = Math.max(24, envelope.state.npcPlayers.filter((npc) => npc.availability !== 'RETIRED').length);
       if (activePopulation < targetPopulation) {
-        const generated = await this.runtime.npcGeneration.generateSeason({ season: nextSeason, targetPopulation: targetPopulation - activePopulation, profiles: this.runtime.npcGenerationProfiles ?? [] });
+        const generated = await npcGeneration.generateSeason({ season: nextSeason, targetPopulation: targetPopulation - activePopulation, profiles: this.runtime.npcGenerationProfiles ?? [] });
         const known = new Set(worldNpcPlayers.map((npc) => npc.id));
         worldNpcPlayers = [...worldNpcPlayers, ...generated.generated.filter((npc) => !known.has(npc.id))];
       }
     }
-    if (calendarTransition && envelope.state.careerHalf === 2 && this.runtime.transferMarket) {
-      for (const teamId of this.runtime.transferMarketTeamIds ?? []) {
-        const market = await this.runtime.transferMarket.runManagerWindow({ teamId, at: nextDate, maxMoves: 1, npcPlayers: worldNpcPlayers });
+    const transferMarket = this.runtime.transferMarket;
+    if (calendarTransition && envelope.state.careerHalf === 2 && transferMarket) {
+      const configuredTeams = this.runtime.transferMarketTeamIds ?? [];
+      const dynamicTeams = worldNpcPlayers.map((npc) => npc.currentTeamId).filter((teamId): teamId is string => teamId !== null);
+      for (const teamId of [...new Set([...configuredTeams, ...dynamicTeams])]) {
+        const market = await transferMarket.runManagerWindow({ teamId, at: nextDate, maxMoves: 1, npcPlayers: worldNpcPlayers });
         worldNpcPlayers = market.npcPlayers ?? worldNpcPlayers;
       }
     }
     const state = calendarTransition
-      ? { ...envelope.state, currentDate: nextDate, careerHalf: nextHalf, season: nextSeason, player, npcPlayers: worldNpcPlayers, ...(nextSeason !== envelope.state.season ? { seasonNarrativeEventCount: 0 } : {}), seasonPhase: 'ACTIVE' as const, tournamentCursor: 0, tournamentResults: [], qualificationResults: envelope.state.qualificationResults ?? [], scheduledTournaments: [], unsettledTournamentIds: [], activeVrsSnapshot: null, activeTournamentState: null, halfSeasonSettlement: null, eventResume: null }
-      : { ...envelope.state, currentDate: nextDate, careerHalf: nextHalf, season: nextSeason };
+      ? { ...envelope.state, currentDate: nextDate, careerHalf: nextHalf, season: nextSeason, player, contracts, npcPlayers: worldNpcPlayers, ...(nextSeason !== envelope.state.season ? { seasonNarrativeEventCount: 0 } : {}), seasonPhase: 'ACTIVE' as const, tournamentCursor: 0, tournamentResults: envelope.state.tournamentResults ?? [], qualificationResults: envelope.state.qualificationResults ?? [], scheduledTournaments: [], unsettledTournamentIds: [], activeVrsSnapshot: null, activeTournamentState: null, halfSeasonSettlement: null, eventResume: null }
+      : { ...envelope.state, currentDate: nextDate, careerHalf: nextHalf, season: nextSeason, player, contracts };
     const agedPendingEvents = player.age !== envelope.state.player.age
       ? await this.enqueueTriggerFacts(player, [{ type: 'AGE_MILESTONE', playerId: player.id, age: player.age }], state.pendingSystemEvents ?? [])
       : state.pendingSystemEvents ?? [];
-    await this.saveEnvelope({ ...envelope, state: { ...state, pendingSystemEvents: agedPendingEvents } });
-    return state.player;
+    await this.saveEnvelope({ ...envelope, state: { ...state, player, contracts, pendingSystemEvents: agedPendingEvents, ...(player.isRetired ? { currentStoryEventId: null } : {}) } });
+    return player;
   }
 
   public async advanceAge(years?: number): Promise<AgeProgressionResult> {
@@ -382,7 +421,7 @@ export class CareerGameImpl implements CareerGame {
     const envelope = await this.requireSave();
     this.assertActive(envelope.state.player);
     const result = await story.decide({ profile: envelope.state.player, decision, facts: this.storyFacts(envelope.state) });
-    const consumedOffer = decision.eventId.endsWith('-transfer-offer') ? envelope.state.pendingTransferOffer ?? null : null;
+    const consumedOffer = result.consumedTransferOffer === true ? envelope.state.pendingTransferOffer ?? null : null;
     if (decision.optionId === 'accept-offer' && consumedOffer && Date.parse(consumedOffer.expiresAt) <= Date.parse(envelope.state.currentDate)) throw new Error('Current transfer offer has expired.');
     const resume = envelope.state.eventResume;
     const nextPhase = resume?.mode === 'CONTINUE_REPORT' ? 'REPORT' : resume?.mode === 'CONTINUE_OFFSEASON' || resume?.mode === 'CONTINUE_TRANSFER_WINDOW' ? 'OFFSEASON' : resume ? 'ACTIVE' : envelope.state.seasonPhase;
@@ -393,7 +432,7 @@ export class CareerGameImpl implements CareerGame {
       envelope.state.contracts,
       new ConditionEvaluatorImpl(),
       (profile) => ({ player: profile, currentTeamId: profile.currentTeamId, opponentTeamId: null, randomRoll: decision.randomRoll, difficultyMode: profile.difficultyMode }),
-      this.runtime.teamTier,
+      this.runtime.teamTier ?? (() => undefined),
     );
     let player = result.profile;
     let contracts = [...envelope.state.contracts];
@@ -454,9 +493,10 @@ export class CareerGameImpl implements CareerGame {
   }
 
   public async findAvailableStoryEvents(input: { readonly period: EventPeriod; readonly randomRoll: number }): Promise<readonly StoryEvent[]> {
-    if (!this.runtime.story) return [];
+    const story = this.runtime.story;
+    if (!story) return [];
     const envelope = await this.requireSave();
-    return this.runtime.story.findAvailableEvents({ profile: envelope.state.player, ...input, facts: this.storyFacts(envelope.state) });
+    return story.findAvailableEvents({ profile: envelope.state.player, ...input, facts: this.storyFacts(envelope.state) });
   }
 
   public async executeDailyAction(actionId: string, randomRoll: number): Promise<PlayerProfile> {
@@ -478,7 +518,8 @@ export class CareerGameImpl implements CareerGame {
     const player = await this.dependencies.retirement.retire(reason === undefined
       ? { player: envelope.state.player, retiredAt: envelope.state.currentDate }
       : { player: envelope.state.player, reason, retiredAt: envelope.state.currentDate });
-    await this.saveEnvelope({ ...envelope, state: { ...envelope.state, player, currentStoryEventId: null } });
+    const contracts = envelope.state.contracts.map((contract) => contract.playerId === player.id && contract.status === 'ACTIVE' ? { ...contract, status: 'TERMINATED' as const, termination: { reason: 'MUTUAL_AGREEMENT' as const, terminatedAt: envelope.state.currentDate, matchedConditions: [], note: reason ?? '选手主动退役，合同同步终止。' } } : contract);
+    await this.saveEnvelope({ ...envelope, state: { ...envelope.state, player, contracts, currentStoryEventId: null } });
     return player;
   }
 
@@ -547,14 +588,19 @@ export class CareerGameImpl implements CareerGame {
 
   private async advanceTournamentState(service: TournamentService, edition: TournamentEdition, state: CareerSaveEnvelope['state'], upsetRoll: number): Promise<TournamentAdvanceResult> {
     const interventions = await service.findPendingInterventions(edition.id);
+    const rankRange = this.opponentRankRange(edition);
     const rankedOpponents = (state.activeVrsSnapshot?.entries ?? [])
-      .filter((entry) => entry.teamId !== edition.teamId)
+      .filter((entry) => entry.teamId !== edition.teamId && entry.snapshotRank >= rankRange.minimum && entry.snapshotRank <= rankRange.maximum)
       .sort((left, right) => left.snapshotRank - right.snapshotRank)
       .slice(0, 5);
+    const fallbackOpponents = rankedOpponents.length ? null : this.fallbackOpponents(edition);
     const baseOpponentStrength = rankedOpponents.length
       ? Object.fromEntries(rankedOpponents.map((entry) => [entry.teamId, this.clamp(92 - entry.snapshotRank * 0.65, 62, 90)]))
-      : { 'sim-opponent': 70, 'sim-opponent-2': 74, 'sim-opponent-3': 79, 'sim-opponent-4': 83, 'sim-opponent-5': 87 };
-    const context: TournamentSimulationContext = { editionId: edition.id, baseTeamStrength: this.teamStrength(state.player), baseOpponentStrength, interventions, upsetRoll };
+      : Object.fromEntries(fallbackOpponents!.map((entry) => [entry.teamId, entry.strength]));
+    const opponentRanks = rankedOpponents.length
+      ? Object.fromEntries(rankedOpponents.map((entry) => [entry.teamId, entry.snapshotRank]))
+      : Object.fromEntries(fallbackOpponents!.map((entry) => [entry.teamId, entry.rank]));
+    const context: TournamentSimulationContext = { editionId: edition.id, baseTeamStrength: this.teamStrength(state.player), baseOpponentStrength, opponentRanks, interventions, upsetRoll };
     const assignment = state.standInAssignment?.editionId === edition.id ? state.standInAssignment : null;
     const activeContract = state.player.currentContractId ? state.contracts.find((contract) => contract.id === state.player.currentContractId && contract.status === 'ACTIVE') : undefined;
     const configured = (await service.lockRoster({ edition, roster: [], careerHalf: state.careerHalf })).roster;
@@ -571,6 +617,20 @@ export class CareerGameImpl implements CareerGame {
     return state.activeTournamentState
       ? service.advance({ edition, context, roster, state: state.activeTournamentState })
       : service.start({ edition, context, roster });
+  }
+
+  private opponentRankRange(edition: TournamentEdition): { readonly minimum: number; readonly maximum: number } {
+    if (edition.qualificationSource === 'PUBLIC_QUALIFIER' || edition.tier === 'QUALIFIER') return { minimum: 1, maximum: 30 };
+    if (edition.tier === 'MAJOR') return { minimum: 1, maximum: 8 };
+    if (edition.tier === 'T1') return { minimum: 1, maximum: 15 };
+    if (edition.tier === 'T2') return { minimum: 15, maximum: 50 };
+    return { minimum: 50, maximum: 100 };
+  }
+
+  private fallbackOpponents(edition: TournamentEdition): readonly { readonly teamId: string; readonly rank: number; readonly strength: number }[] {
+    const range = this.opponentRankRange(edition);
+    const ranks = Array.from({ length: 5 }, (_, index) => Math.round(range.minimum + (range.maximum - range.minimum) * index / 4));
+    return ranks.map((rank, index) => ({ teamId: `sim-opponent-${index + 1}`, rank, strength: this.clamp(92 - rank * 0.65, 62, 90) }));
   }
 
   private async tournamentTriggeredEvents(player: PlayerProfile, result: TournamentResult, existing: readonly import('../event-trigger').TriggeredEvent[]): Promise<readonly import('../event-trigger').TriggeredEvent[]> {
@@ -594,6 +654,28 @@ export class CareerGameImpl implements CareerGame {
     return queue;
   }
 
+  private projectVrsResult(state: CareerSaveEnvelope['state'], result: TournamentResult): Pick<CareerSaveEnvelope['state'], 'vrsPointsByTeam' | 'vrsAppliedResultIds' | 'vrsProjectionRulesVersion'> {
+    const projector = this.runtime.vrsResultProjector;
+    if (!projector) return { vrsPointsByTeam: state.vrsPointsByTeam ?? {}, vrsAppliedResultIds: state.vrsAppliedResultIds ?? [], ...(state.vrsProjectionRulesVersion ? { vrsProjectionRulesVersion: state.vrsProjectionRulesVersion } : {}) };
+    if (state.vrsProjectionRulesVersion && state.vrsProjectionRulesVersion !== projector.rulesVersion) throw new Error(`VRS projection rules version mismatch: save=${state.vrsProjectionRulesVersion}, runtime=${projector.rulesVersion}.`);
+    const projected = projector.apply({ pointsByTeam: state.vrsPointsByTeam ?? {}, appliedResultIds: state.vrsAppliedResultIds ?? [] }, result);
+    return { vrsPointsByTeam: projected.pointsByTeam, vrsAppliedResultIds: projected.appliedResultIds, vrsProjectionRulesVersion: projector.rulesVersion };
+  }
+
+  private accumulateCareerPerformance(profile: PlayerProfile, performance: TournamentResult['playerPerformances'][number], earnings = 0): PlayerProfile {
+    return {
+      ...profile,
+      career: {
+        ...profile.career,
+        totalKills: profile.career.totalKills + performance.kills,
+        mapsPlayed: profile.career.mapsPlayed + performance.maps,
+        clutchWon: profile.career.clutchWon + (performance.clutchesWon ?? 0),
+        careerEarnings: profile.career.careerEarnings + earnings,
+        rating2: performance.rating,
+      },
+    };
+  }
+
   private archiveResult(profile: PlayerProfile, result: TournamentResult): PlayerProfile {
     const performance = result.playerPerformances.find((item) => item.playerId === profile.id);
     if (!performance || profile.tournamentArchive.some((record) => record.editionId === result.editionId)) return profile;
@@ -611,7 +693,8 @@ export class CareerGameImpl implements CareerGame {
     const moraleDelta = champion ? 5 : -8;
     const energyDelta = champion ? -4 : -10;
     const stressDelta = champion ? -5 : 8;
-    return { ...profile, tournamentArchive: [...profile.tournamentArchive, record], career: { ...profile.career, totalKills: profile.career.totalKills + performance.kills, mapsPlayed: profile.career.mapsPlayed + performance.maps, clutchWon: profile.career.clutchWon + (performance.clutchesWon ?? 0), careerEarnings: profile.career.careerEarnings + (result.playerPrizeIncome ?? 0), rating2: performance.rating }, trophies: { ...profile.trophies, majorChampionships: profile.trophies.majorChampionships + major, otherSTierTitles: profile.trophies.otherSTierTitles + stier, mvpAwards: profile.trophies.mvpAwards + (mvp ? 1 : 0), evpAwards: profile.trophies.evpAwards + evp }, morale: this.clamp(profile.morale + moraleDelta, 0, 100), energy: this.clamp(profile.energy + energyDelta, 0, 100), life: { ...profile.life, stress: this.clamp(profile.life.stress + stressDelta, 0, 100) } };
+    const accumulated = this.accumulateCareerPerformance(profile, performance, result.playerPrizeIncome ?? 0);
+    return { ...accumulated, tournamentArchive: [...profile.tournamentArchive, record], trophies: { ...profile.trophies, majorChampionships: profile.trophies.majorChampionships + major, otherSTierTitles: profile.trophies.otherSTierTitles + stier, mvpAwards: profile.trophies.mvpAwards + (mvp ? 1 : 0), evpAwards: profile.trophies.evpAwards + evp }, morale: this.clamp(profile.morale + moraleDelta, 0, 100), energy: this.clamp(profile.energy + energyDelta, 0, 100), life: { ...profile.life, stress: this.clamp(profile.life.stress + stressDelta, 0, 100) } };
   }
 
   private storyFacts(state: CareerSaveEnvelope['state']): StoryContextFacts {

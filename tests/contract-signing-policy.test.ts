@@ -48,6 +48,24 @@ test('合同条款保留报价中的角色与预计出场率', async () => {
   }
 });
 
+test('合同到期后进入自由市场并保留 EXPIRED 合同记录', async () => {
+  const contracts = service({ academy: 'T3' });
+  const signed = await contracts.sign({ profile: profile(), terms: { ...terms('academy'), endsAt: '2026-07-01T00:00:00.000Z' }, occurredAt: '2026-01-01T00:00:00.000Z' });
+  assert.ok('contract' in signed && !('reason' in signed));
+  if (!('contract' in signed) || 'reason' in signed) return;
+  const early = await contracts.expire({ profile: signed.profile, contractId: signed.contract.id, occurredAt: '2026-06-30T00:00:00.000Z' });
+  assert.equal('reason' in early ? early.reason : null, 'INVALID_TERMS');
+  const expired = await contracts.expire({ profile: signed.profile, contractId: signed.contract.id, occurredAt: '2026-07-01T00:00:00.000Z' });
+  assert.ok('contract' in expired && !('reason' in expired));
+  if ('contract' in expired) {
+    assert.equal(expired.contract.status, 'EXPIRED');
+    assert.equal(expired.profile.currentTeamId, null);
+    assert.equal(expired.profile.currentContractId, null);
+    assert.equal(expired.profile.freeAgencyStatus, 'FREE_AGENT');
+    assert.equal(expired.profile.releaseReason, 'CONTRACT_EXPIRED');
+  }
+});
+
 test('首次签约未知 tier fail-closed', async () => {
   const rejected = await service({}).sign({ profile: profile(), terms: terms('unknown'), occurredAt: terms('unknown').startedAt });
   assert.equal('reason' in rejected ? rejected.reason : null, 'FIRST_CONTRACT_REQUIRES_T3');

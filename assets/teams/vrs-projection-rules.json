@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "rulesVersion": "local-vrs-results-v1",
+  "winPointsByTier": {
+    "MAJOR": 36,
+    "T1": 24,
+    "T2": 14,
+    "QUALIFIER": 6,
+    "UNRANKED": 3
+  },
+  "lossMultiplier": 0.35,
+  "upsetRankPointFactor": 0.4,
+  "maximumUpsetBonus": 20
+}

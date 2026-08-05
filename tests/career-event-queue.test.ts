@@ -19,6 +19,7 @@ function player(): PlayerProfile {
 }
 
 const postEvent: StoryEvent = { id: 'forced-post', title: 'Forced', description: 'Forced', worldlineId: 'rookie', type: 'MANDATORY', period: 'NORMAL', phase: 'POST_TOURNAMENT', conditions: [], options: [], autoEffects: [] };
+const transferEvent: StoryEvent = { id: 'transfer-confirmation', title: 'Transfer', description: 'Transfer', worldlineId: 'rookie', type: 'CHOICE', system: true, consumesTransferOffer: true, period: 'TRANSFER_WINDOW', phase: 'POST_TOURNAMENT', conditions: [], options: [], autoEffects: [] };
 const preEvent: StoryEvent = { id: 'random-pre', title: 'Random', description: 'Random', worldlineId: 'rookie', type: 'CHOICE', period: 'NORMAL', phase: 'PRE_TOURNAMENT', conditions: [], options: [], autoEffects: [] };
 
 function envelope(): CareerSaveEnvelope {
@@ -45,7 +46,7 @@ class MemoryState implements CareerGameStateRepository {
 function storyEngine(): StoryEngine {
   return {
     successChancePolicy: { adjust: ({ baseChance }) => baseChance },
-    findAvailableEvents: async ({ phase }) => phase === 'POST_TOURNAMENT' ? [postEvent] : [preEvent],
+    findAvailableEvents: async ({ period, phase }) => period === 'TRANSFER_WINDOW' ? [transferEvent] : phase === 'POST_TOURNAMENT' ? [postEvent] : [preEvent],
     decide: async () => { throw new Error('not used'); },
   };
 }
@@ -63,6 +64,15 @@ test('incompatible windows retain queued system events and exhausted narrative q
   const career = game(state);
   assert.equal(await career.findCareerEvent('PRE_TOURNAMENT'), null);
   assert.equal(state.value.state.pendingSystemEvents?.length, 1);
+  assert.equal(state.value.state.seasonNarrativeEventCount, 4);
+});
+
+test('pending transfer offer system event bypasses narrative quota without consuming it', async () => {
+  const value = envelope();
+  const pendingTransferOffer = { offerId: 'offer-1', teamId: 'team-2', teamName: 'Team 2', tier: 'T2' as const, salaryPerMonth: 1000, buyoutAmount: 0, roleOffer: 'STARTER' as const, contract: { salaryPerMonth: 1000, buyoutAmount: 0, lengthMonths: 12, role: 'STARTER' as const, expectedPlaytimePercentage: 80 }, source: 'CONFIGURED_TARGET' as const, createdAt: value.state.currentDate, expiresAt: '2026-02-01T00:00:00.000Z' };
+  const state = new MemoryState({ ...value, state: { ...value.state, pendingSystemEvents: [], pendingTransferOffer } });
+  const event = await game(state).findCareerEvent('TRANSFER_WINDOW');
+  assert.equal(event?.id, transferEvent.id);
   assert.equal(state.value.state.seasonNarrativeEventCount, 4);
 });
 

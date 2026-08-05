@@ -84,7 +84,7 @@
           "你签下了附带考察期的合同。"
         ],
         "failureMessages": [
-          "未争取到目标席位，你转入了兜底 T3 队 JiJieHao。"
+          "考察期开局不顺，但合同仍然生效。"
         ],
         "successNextEventId": "rookie-role-audit",
         "failureNextEventId": "rookie-role-audit"

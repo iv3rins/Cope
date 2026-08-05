@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { CareerGameImpl } from '../src/engine/impl/career-game';
 import type { CareerGameDependencies } from '../src/engine/game';
+import { RetirementServiceImpl } from '../src/engine/impl/retirement-service';
+import type { PlayerContract } from '../src/engine/contract';
 import type { PlayerProfile } from '../src/engine/profile';
 import type { CareerGameStateRepository, CareerSaveEnvelope } from '../src/engine/save-state';
 import type { StoryEngine } from '../src/engine/graph';
@@ -43,10 +45,10 @@ const tournaments: TournamentService = {
   settle: async ({ result: r }) => ({ type: 'TOURNAMENT_COMPLETED', occurredAt: '2026-01-01', result: r }),
 };
 
-function makeGame(p: PlayerProfile, options: { phase?: 'ACTIVE' | 'REPORT'; story?: StoryEngine } = {}) {
-  const state = new State({ format: 'COPE_CAREER_SAVE', version: 1, state: { schemaVersion: 1, savedAt: '2026-01-01', currentDate: '2026-01-01', season: 2026, careerHalf: 1, seasonPhase: options.phase ?? 'ACTIVE', player: p, contracts: [], npcPlayers: [], worldlines: [], currentStoryEventId: null, completedEventIds: [], scheduledTournaments: [], unsettledTournamentIds: [], pendingTournamentInterventions: [], activeVrsSnapshot: snapshot } });
-  const deps = { playerId: p.id, difficultyMode: 'HARDCORE', stateRepository: state, hltv: { freezeVrsSnapshot: async () => 'snapshot', applyTournamentIntervention: async (intervention) => ({ type: 'TOURNAMENT_INTERVENTION_APPLIED' as const, occurredAt: '2026-01-01', intervention }), settleTournament: async () => {}, findTop20: async (season) => ({ season, rulesVersion: 'v1', entries: [], careerPlayerRank: null }), synchronizeCareerHonors: async (x) => x }, progression: {} as CareerGameDependencies['progression'], dailyActions: {} as CareerGameDependencies['dailyActions'], economy: {} as CareerGameDependencies['economy'], triggers: { evaluate: async () => [], markTriggered: async () => {} }, retirement: {} as CareerGameDependencies['retirement'], retirementSummary: {} as CareerGameDependencies['retirementSummary'] } satisfies CareerGameDependencies;
-  const game = new CareerGameImpl(deps, { tournaments, vrsSnapshot: async () => snapshot, random: { next: () => 0 }, transferTargets: { list: async ({ player: candidate }) => snapshot.entries.map((entry) => { const tier = entry.snapshotRank <= 12 ? 'T1' as const : entry.snapshotRank <= 32 ? 'T2' as const : 'T3' as const; return { teamId: entry.teamId, teamName: entry.teamId, region: 'EUROPE' as const, tier, minimumRank: tier === 'T1' ? 1 : tier === 'T2' ? 13 : 33, maximumRank: tier === 'T1' ? 12 : tier === 'T2' ? 32 : 999, requiredAttributes: {}, salaryPerMonth: 0, buyoutAmount: 0, reason: `${tier} stand-in`, eligible: tier === (candidate.attributes.aim >= 72 ? 'T1' : candidate.attributes.aim >= 58 ? 'T2' : 'T3'), unmetRequirements: [], fitScore: candidate.attributes.aim, interestScore: candidate.attributes.aim, availability: 'RECOMMENDED' as const, reasons: [`${tier} fit`], risks: [], contract: { salaryPerMonth: 0, buyoutAmount: 0, lengthMonths: 6, role: 'STARTER' as const, expectedPlaytimePercentage: 100 } }; }) }, ...(options.story ? { story: options.story } : {}) });
+function makeGame(p: PlayerProfile, options: { phase?: 'ACTIVE' | 'REPORT'; story?: StoryEngine; contracts?: readonly PlayerContract[] } = {}) {
+  const state = new State({ format: 'COPE_CAREER_SAVE', version: 1, state: { schemaVersion: 1, savedAt: '2026-01-01', currentDate: '2026-01-01', season: 2026, careerHalf: 1, seasonPhase: options.phase ?? 'ACTIVE', player: p, contracts: [...(options.contracts ?? [])], npcPlayers: [], worldlines: [], currentStoryEventId: null, completedEventIds: [], scheduledTournaments: [], unsettledTournamentIds: [], pendingTournamentInterventions: [], activeVrsSnapshot: snapshot } });
+  const deps = { playerId: p.id, difficultyMode: 'HARDCORE', stateRepository: state, hltv: { freezeVrsSnapshot: async () => 'snapshot', applyTournamentIntervention: async (intervention) => ({ type: 'TOURNAMENT_INTERVENTION_APPLIED' as const, occurredAt: '2026-01-01', intervention }), settleTournament: async () => {}, findTop20: async (season) => ({ season, rulesVersion: 'v1', entries: [], careerPlayerRank: null }), synchronizeCareerHonors: async (x) => x }, progression: {} as CareerGameDependencies['progression'], dailyActions: {} as CareerGameDependencies['dailyActions'], economy: {} as CareerGameDependencies['economy'], triggers: { evaluate: async () => [], markTriggered: async () => {} }, retirement: new RetirementServiceImpl(), retirementSummary: {} as CareerGameDependencies['retirementSummary'] } satisfies CareerGameDependencies;
+  const game = new CareerGameImpl(deps, { tournaments, vrsSnapshot: async () => snapshot, random: { next: () => 0 }, teamTier: (teamId) => teamId === 't1' ? 'T1' : teamId === 't2' ? 'T2' : 'T3', transferTargets: { list: async ({ player: candidate }) => snapshot.entries.map((entry) => { const tier = entry.snapshotRank <= 12 ? 'T1' as const : entry.snapshotRank <= 32 ? 'T2' as const : 'T3' as const; return { teamId: entry.teamId, teamName: entry.teamId, region: 'EUROPE' as const, tier, minimumRank: tier === 'T1' ? 1 : tier === 'T2' ? 13 : 33, maximumRank: tier === 'T1' ? 12 : tier === 'T2' ? 32 : 999, requiredAttributes: {}, salaryPerMonth: 0, buyoutAmount: 0, reason: `${tier} stand-in`, eligible: tier === (candidate.attributes.aim >= 72 ? 'T1' : candidate.attributes.aim >= 58 ? 'T2' : 'T3'), unmetRequirements: [], fitScore: candidate.attributes.aim, interestScore: candidate.attributes.aim, availability: 'RECOMMENDED' as const, reasons: [`${tier} fit`], risks: [], contract: { salaryPerMonth: 0, buyoutAmount: 0, lengthMonths: 6, role: 'STARTER' as const, expectedPlaytimePercentage: 100 } }; }) }, ...(options.story ? { story: options.story } : {}) });
   return { game, state };
 }
 
@@ -63,6 +65,45 @@ test('TRANSFER_WINDOW 窗口准确映射到 StoryEngine period', async () => {
   const { game } = makeGame(profile(60), { phase: 'REPORT', story });
   assert.equal(await game.findCareerEvent('TRANSFER_WINDOW'), null);
   assert.equal(received, 'TRANSFER_WINDOW');
+});
+
+test('签约玩家可确认市场报价并由现有 transfer 契约完成换队', async () => {
+  const signed = { ...profile(90), currentTeamId: 't3', currentTeamTier: 'T3' as const, currentContractId: 'contract-old', freeAgencyStatus: 'SIGNED' as const, career: { ...profile(90).career, teamHistory: ['t3'] } };
+  const oldContract: PlayerContract = { id: 'contract-old', playerId: signed.id, teamId: 't3', startedAt: '2025-01-01T00:00:00.000Z', endsAt: '2027-01-01T00:00:00.000Z', salaryPerMonth: 500, status: 'ACTIVE', buyoutAmount: 0 };
+  const transferStory: StoryEngine = {
+    successChancePolicy: { adjust: ({ baseChance }) => baseChance },
+    findAvailableEvents: async () => [{ id: 'transfer-confirmation', title: '报价确认', description: '确认', worldlineId: 'rookie', type: 'CHOICE', system: true, consumesTransferOffer: true, period: 'TRANSFER_WINDOW', phase: 'POST_TOURNAMENT', conditions: [], options: [], autoEffects: [] }],
+    decide: async ({ profile: current }) => ({ profile: { ...current, completedEventIds: [...current.completedEventIds, 'transfer-confirmation'] }, succeeded: true, appliedEffects: [{ type: 'TEAM_TRANSFER', offerRef: 'CURRENT_TRANSFER_OFFER' }], consumedTransferOffer: true, appliedTournamentInterventionIds: [], terminatedContractId: null, nextEventId: null, resultMessages: ['已完成转会。'] }),
+  };
+  const { game, state } = makeGame(signed, { phase: 'REPORT', story: transferStory, contracts: [oldContract] });
+  await game.selectTransferTarget('t1');
+  assert.equal((await game.findCareerEvent('TRANSFER_WINDOW'))?.id, 'transfer-confirmation');
+  const decision = await game.chooseStoryOption({ eventId: 'transfer-confirmation', optionId: 'accept-offer', randomRoll: 0 });
+  assert.equal(decision.profile.currentTeamId, 't1');
+  assert.equal(decision.profile.currentTeamTier, 'T1');
+  assert.equal(decision.profile.freeAgencyStatus, 'SIGNED');
+  assert.equal(state.value.state.pendingTransferOffer, null);
+  assert.equal(state.value.state.contracts.find((contract) => contract.id === 'contract-old')?.status, 'EXPIRED');
+  const active = state.value.state.contracts.find((contract) => contract.status === 'ACTIVE');
+  assert.equal(active?.teamId, 't1');
+  assert.equal(active?.id, decision.profile.currentContractId);
+});
+
+test('OFFSEASON 事件恢复后仍会切换半年', async () => {
+  const value = makeGame(profile(60), { phase: 'REPORT' });
+  value.state.value = { ...value.state.value, state: { ...value.state.value.state, seasonPhase: 'OFFSEASON' } };
+  await value.game.advancePeriod({ period: 'OFFSEASON', randomRoll: 0 });
+  assert.equal(value.state.value.state.careerHalf, 2);
+  assert.equal(value.state.value.state.seasonPhase, 'ACTIVE');
+});
+
+test('手动退役会同步终止 ACTIVE 合同', async () => {
+  const signed = { ...profile(60), currentTeamId: 't2', currentContractId: 'contract', freeAgencyStatus: 'SIGNED' as const };
+  const active: PlayerContract = { id: 'contract', playerId: signed.id, teamId: 't2', startedAt: '2026-01-01', endsAt: '2027-01-01', salaryPerMonth: 1000, buyoutAmount: 0, status: 'ACTIVE' };
+  const value = makeGame(signed, { contracts: [active] });
+  const retired = await value.game.retire('主动结束职业生涯');
+  assert.equal(retired.isRetired, true);
+  assert.equal(value.state.value.state.contracts[0]?.status, 'TERMINATED');
 });
 
 test('半年切换会使旧 VRS 快照失效并由现有赛历流程重新冻结', async () => {

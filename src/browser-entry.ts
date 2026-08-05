@@ -23,11 +23,13 @@ import { DailyActionServiceImpl } from './engine/impl/daily-action-service';
 import { RetirementServiceImpl } from './engine/impl/retirement-service';
 import { MatchSimulationServiceImpl } from './hltv/match-simulation-service-impl';
 import { TournamentServiceImpl } from './hltv/tournament-service-impl';
+import { VrsResultProjector, type VrsResultProjectionRules } from './hltv/vrs-result-projector';
 import { ConditionEvaluatorImpl } from './engine/impl/condition-evaluator';
 import { SaveContractService } from './engine/impl/contract-service';
 import { AssetEventTriggerRuleRepository, EventTriggerServiceImpl } from './engine/impl/event-trigger-service';
 import { CareerGameImpl, CareerGameRuntimeServices } from './engine/impl/career-game';
 import { InMemoryStateRepository } from './engine/impl/in-memory-state-repository';
+import { LocalStorageStateRepository } from './engine/impl/local-storage-state-repository';
 import { PlayerProgressionServiceImpl } from './engine/impl/player-progression-service';
 import { RetirementSummaryServiceImpl } from './engine/impl/retirement-summary-service';
 import { StoryEngineImpl } from './engine/impl/story-engine';
@@ -279,13 +281,21 @@ function createBaseProfile(config: BrowserCareerConfig): PlayerProfile {
   };
 }
 
+function browserStateRepository(): import('./engine/save-state').CareerGameStateRepository {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) return new LocalStorageStateRepository(window.localStorage);
+  } catch {
+    // Privacy modes may deny localStorage; retain the process-local fallback.
+  }
+  return InMemoryStateRepository.getInstance();
+}
+
 let currentGame: BrowserCareerGame | null = null;
 let currentGateway: EngineHltvGateway | null = null;
 
-export async function initCareerGame(config: BrowserCareerConfig): Promise<BrowserCareerGame> {
+async function composeCareerGame(config: BrowserCareerConfig, restoredState: CareerSaveEnvelope | null = null): Promise<BrowserCareerGame> {
   if (!config.gameId.trim()) throw new Error('Game ID is required.');
-  const stateRepository = InMemoryStateRepository.getInstance();
-  await stateRepository.delete(config.gameId);
+  const stateRepository = browserStateRepository();
   const progression = new PlayerProgressionServiceImpl(progressionRules);
   const unsignedPlayer = await progression.createProfile({ profile: createBaseProfile(config), difficultyMode: config.mode, originRule: ORIGIN_RULES[config.region], modeRule: MODE_RULES[config.mode] });
   const clock = new BrowserClock();
@@ -305,19 +315,23 @@ export async function initCareerGame(config: BrowserCareerConfig): Promise<Brows
   const regional = academyPayload.teams.filter((team) => team.initialCandidate && !team.storyOnly && team.region === config.region && team.tier === 'T3' && (ranksByTeam.get(team.teamId) ?? 0) > 100);
   const global = academyPayload.teams.filter((team) => team.initialCandidate && !team.storyOnly && team.tier === 'T3' && (ranksByTeam.get(team.teamId) ?? 0) > 100);
   const candidates = regional.length ? regional : global;
-  const startingTeam = [...candidates].sort((left, right) => left.teamId.localeCompare(right.teamId))[Math.floor(random.next() * Math.max(1, candidates.length))];
-  if (!startingTeam) throw new Error(`No VRS 100+ starting team is configured for ${config.region}.`);
+  const startingTeam = restoredState ? null : [...candidates].sort((left, right) => left.teamId.localeCompare(right.teamId))[Math.floor(random.next() * Math.max(1, candidates.length))];
+  if (!restoredState && !startingTeam) throw new Error(`No VRS 100+ starting team is configured for ${config.region}.`);
   const startedAt = '2026-01-01T00:00:00.000Z';
-  const endsAt = new Date(startedAt); endsAt.setUTCMonth(endsAt.getUTCMonth() + (startingTeam.contractLengthMonths ?? 12));
-  const contracts = new SaveContractService([], new ConditionEvaluatorImpl(), (candidate) => ({ player: candidate, currentTeamId: candidate.currentTeamId, opponentTeamId: null, randomRoll: 0, difficultyMode: candidate.difficultyMode }), (teamId) => teamTiers.get(teamId));
-  const signed = await contracts.sign({ profile: unsignedPlayer, terms: { teamId: startingTeam.teamId, startedAt, endsAt: endsAt.toISOString(), salaryPerMonth: startingTeam.monthlySalary, buyoutAmount: startingTeam.buyoutAmount ?? 0, role: startingTeam.startingRole ?? 'STARTER', expectedPlaytimePercentage: startingTeam.expectedPlaytimePercentage ?? 75 }, occurredAt: startedAt });
-  if (!('contract' in signed) || 'reason' in signed) throw new Error(`Unable to create initial T3 contract for ${startingTeam.teamId}.`);
-  const player = signed.profile;
-  const state: CareerSaveEnvelope = {
+  const initialContracts = restoredState?.state.contracts ?? [];
+  const contracts = new SaveContractService(initialContracts, new ConditionEvaluatorImpl(), (candidate) => ({ player: candidate, currentTeamId: candidate.currentTeamId, opponentTeamId: null, randomRoll: 0, difficultyMode: candidate.difficultyMode }), (teamId) => teamTiers.get(teamId));
+  let player = restoredState?.state.player ?? unsignedPlayer;
+  if (startingTeam) {
+    const endsAt = new Date(startedAt); endsAt.setUTCMonth(endsAt.getUTCMonth() + (startingTeam.contractLengthMonths ?? 12));
+    const signed = await contracts.sign({ profile: unsignedPlayer, terms: { teamId: startingTeam.teamId, startedAt, endsAt: endsAt.toISOString(), salaryPerMonth: startingTeam.monthlySalary, buyoutAmount: startingTeam.buyoutAmount ?? 0, role: startingTeam.startingRole ?? 'STARTER', expectedPlaytimePercentage: startingTeam.expectedPlaytimePercentage ?? 75 }, occurredAt: startedAt });
+    if (!('contract' in signed) || 'reason' in signed) throw new Error(`Unable to create initial T3 contract for ${startingTeam.teamId}.`);
+    player = signed.profile;
+  }
+  const state: CareerSaveEnvelope = restoredState ?? {
     format: 'COPE_CAREER_SAVE', version: 1,
-    state: { schemaVersion: 1, savedAt: new Date().toISOString(), currentDate: startedAt, season: 2026, careerHalf: 1, player, contracts: contracts.snapshot, npcPlayers: [], worldlines: [], currentStoryEventId: 'rookie-team-entry', completedEventIds: [], seasonNarrativeEventCount: 0, pendingSystemEvents: [], scheduledTournaments: [], unsettledTournamentIds: [], pendingTournamentInterventions: [], activeVrsSnapshot: null, activeTournamentState: null },
+    state: { schemaVersion: 1, savedAt: new Date().toISOString(), currentDate: startedAt, season: 2026, careerHalf: 1, player, contracts: contracts.snapshot, npcPlayers: [], worldlines: [], currentStoryEventId: 'rookie-team-entry', completedEventIds: [], seasonNarrativeEventCount: 0, pendingSystemEvents: [], scheduledTournaments: [], unsettledTournamentIds: [], pendingTournamentInterventions: [], activeVrsSnapshot: null, activeTournamentState: null, vrsPointsByTeam: {}, vrsAppliedResultIds: [] },
   };
-  await stateRepository.save(config.gameId, state);
+  if (!restoredState) await stateRepository.save(config.gameId, state);
   const transferTargets = new TransferTargetServiceImpl(async () => {
     const response = await fetch('assets/teams/transfer-targets.json').catch(() => null);
     const configured = response && response.ok ? await response.json() as import('./hltv/transfer-targets').TransferTargetAsset : null;
@@ -361,13 +375,24 @@ export async function initCareerGame(config: BrowserCareerConfig): Promise<Brows
     return [{ season: npcEvidencePayload.season, player: { playerId: identity.playerId, nickname: identity.nickname, countryCode: identity.countryCode, teamName: identity.teamName ?? identity.teamId ?? 'Free Agent', careerPlayer: false, source: identity.source }, tournaments: [{ eventId: `npc-season-${npcEvidencePayload.season}-${entry.playerId}`, eventName, tier: 'T1' as const, maps: entry.maps, rating: entry.rating, adr: 43 + entry.rating * 31, kast: 48 + entry.rating * 19, playoffMaps: Math.max(10, Math.round(entry.maps * 0.3)), playoffRating: entry.playoffRating, top5Maps: Math.max(8, Math.round(entry.maps * 0.2)), top5Rating: entry.top5Rating, finalMaps: Math.max(3, Math.round(entry.maps * 0.08)), finalRating: entry.finalRating, title: Boolean(entry.titles?.length), honors: entry.honors.map((honor, index) => ({ ...honor, eventId: `npc-honor-${npcEvidencePayload.season}-${entry.playerId}-${index}`, eventName, tier: 'T1' as const })), majorPlayoffChoke: false }] }];
   });
   const teamNames = new Map((standingsPayload?.teams ?? []).map((team) => [team.id, team.name]));
+  const latestEnvelope = await stateRepository.load(config.gameId);
   const gateway = new BrowserGateway(player, identityMap, rankingRules, teamNames, npcSeasonEvidence, simulationRules);
+  for (const result of latestEnvelope?.state.tournamentResults ?? []) {
+    await gateway.append({ type: 'TOURNAMENT_COMPLETED', occurredAt: latestEnvelope?.state.currentDate ?? new Date().toISOString(), result });
+  }
   const tournaments = new TournamentServiceImpl({
     playerId: config.gameId,
     random,
     clock,
     matches: new MatchSimulationServiceImpl(),
-    teamRoster: (teamId) => rosterByTeam.get(teamId) ?? [],
+    teamRoster: async (teamId) => {
+      const dynamic = (await stateRepository.load(config.gameId))?.state.npcPlayers.filter((npc) => npc.currentTeamId === teamId && npc.availability !== 'RETIRED').map((npc) => ({ playerId: npc.id, role: npc.role, active: true })) ?? [];
+      const staticRoster = rosterByTeam.get(teamId) ?? [];
+      if (!dynamic.length) return staticRoster;
+      const dynamicIds = new Set(dynamic.map((slot) => slot.playerId));
+      const vacancies = Math.max(0, 5 - dynamic.length);
+      return [...dynamic, ...staticRoster.filter((slot) => !dynamicIds.has(slot.playerId)).slice(0, vacancies)];
+    },
     facts: gateway,
     playerSnapshot: async (playerId, teamId) => {
       if (playerId === player.id) {
@@ -406,27 +431,49 @@ export async function initCareerGame(config: BrowserCareerConfig): Promise<Brows
   ];
   const transferMarket = new NpcTransferMarketServiceImpl();
   const transferMarketTeamIds = [...new Set(npcPlayers.map((npc) => npc.currentTeamId).filter((teamId): teamId is string => Boolean(teamId)))];
+  const vrsRulesResponse = await fetch('assets/teams/vrs-projection-rules.json').catch(() => null);
+  if (!vrsRulesResponse?.ok) throw new Error('Unable to load required VRS projection rules.');
+  const vrsResultProjector = new VrsResultProjector(await vrsRulesResponse.json() as VrsResultProjectionRules);
+  const vrsSaveVersion = (await stateRepository.load(config.gameId))?.state.vrsProjectionRulesVersion;
+  if (vrsSaveVersion && vrsSaveVersion !== vrsResultProjector.rulesVersion) throw new Error(`VRS projection rules version mismatch: save=${vrsSaveVersion}, runtime=${vrsResultProjector.rulesVersion}.`);
   const factory = new CareerGameFactoryImpl(storyReader, {
-    progressionRules, dailyActions, tournaments, clock, random, transferTargets, npcGeneration, npcGenerationProfiles, transferMarket, transferMarketTeamIds,
+    progressionRules, dailyActions, tournaments, clock, random, transferTargets, npcGeneration, npcGenerationProfiles, transferMarket, transferMarketTeamIds, vrsResultProjector,
       teamTier: (teamId) => teamTiers.get(teamId),
       vrsSnapshot: async ({ season, half }): Promise<VrsInviteSnapshot> => {
       const response = await fetch('assets/teams/teams.json').catch(() => null);
       const payload = response && response.ok ? await response.json() as { readonly teams: readonly { readonly id: string; readonly standings: { readonly bestRank: number; readonly bestPoints: number } | null }[] } : null;
       const observedAt = clock.now();
       const latestState = (await stateRepository.load(config.gameId))?.state;
-      const playerTeamId = latestState?.player.currentTeamId ?? null;
-      const playerTeamBonus = latestState?.player.tournamentArchive.reduce((sum, record) => sum + (record.champion ? record.level === 'MAJOR' ? 220 : record.level === 'T1' ? 140 : 60 : Math.max(8, Math.round(record.rating * 12))), 0) ?? 0;
-      const baseEntries = (payload?.teams ?? []).filter((team) => team.standings).map((team) => ({ teamId: team.id, points: team.standings!.bestPoints + (team.id === playerTeamId ? playerTeamBonus : 0), source: 'VRS' as const }));
+      const adjustments = latestState?.vrsPointsByTeam ?? {};
+      const baseEntries = (payload?.teams ?? []).filter((team) => team.standings).map((team) => ({ teamId: team.id, points: Math.max(0, team.standings!.bestPoints + (adjustments[team.id] ?? 0)), source: 'VRS' as const }));
       const knownIds = new Set(baseEntries.map((entry) => entry.teamId));
-      const virtualEntries = [...new Set((latestState?.npcPlayers ?? []).map((npc) => npc.currentTeamId).filter((teamId): teamId is string => Boolean(teamId) && !knownIds.has(teamId)))].map((teamId, index) => ({ teamId, points: Math.max(80, 620 - index * 18), source: 'SIMULATION' as const }));
+      const virtualTeamIds = (latestState?.npcPlayers ?? []).map((npc) => npc.currentTeamId).filter((teamId): teamId is string => teamId !== null && !knownIds.has(teamId));
+      const virtualEntries = [...new Set(virtualTeamIds)].map((teamId, index) => ({ teamId, points: Math.max(0, 620 - index * 18 + (adjustments[teamId] ?? 0)), source: 'SIMULATION' as const }));
       const ranked = [...baseEntries, ...virtualEntries].sort((left, right) => right.points - left.points || left.teamId.localeCompare(right.teamId)).map((entry, index) => ({ ...entry, rank: index + 1, snapshotRank: index + 1, observedAt }));
-      return { id: `browser-vrs-${config.gameId}-${season}-h${half}`, season, half, frozenAt: observedAt, sourceRankingId: `local-vrs-${season}-h${half}`, rulesVersion: 'local-vrs-v1', entries: ranked };
+      return { id: `browser-vrs-${config.gameId}-${season}-h${half}`, season, half, frozenAt: observedAt, sourceRankingId: `local-vrs-${season}-h${half}`, rulesVersion: `${vrsResultProjector.rulesVersion}+snapshot-v1`, entries: ranked };
     },
   });
   const game = await factory.create(dependencies) as CareerGameImpl;
   currentGame = game as BrowserCareerGame;
   currentGateway = gateway;
   return game as BrowserCareerGame;
+}
+
+export async function initCareerGame(config: BrowserCareerConfig): Promise<BrowserCareerGame> {
+  const existing = await browserStateRepository().load(config.gameId);
+  return composeCareerGame(config, existing);
+}
+
+async function loadCareerGame(slotId: string): Promise<BrowserCareerGame> {
+  const envelope = await browserStateRepository().load(slotId);
+  if (!envelope) throw new Error(`Career save not found: ${slotId}.`);
+  const roleByPlayerRole: Readonly<Record<PlayerRole, BrowserCareerConfig['role']>> = { ENTRY_FRAGGER: 'ENTRY', AWPER: 'AWP', IGL: 'IGL', SUPPORT: 'SUPPORT', LURKER: 'LURK' };
+  return composeCareerGame({ gameId: slotId, realName: envelope.state.player.nationality, role: roleByPlayerRole[envelope.state.player.role], region: envelope.state.player.originRegion, mode: envelope.state.player.difficultyMode }, envelope);
+}
+
+async function deleteCareerGame(slotId: string): Promise<void> {
+  await browserStateRepository().delete(slotId);
+  if ((await currentGame?.getProfile())?.id === slotId) { currentGame = null; currentGateway = null; }
 }
 
 function requireGame(): BrowserCareerGame {
@@ -438,11 +485,15 @@ function requireGateway(): EngineHltvGateway {
   return currentGateway;
 }
 
-declare global { interface Window { COPEEngine: { createGame(config: BrowserCareerConfig): Promise<BrowserCareerGame>; getProfile(): Promise<PlayerProfile>; startSeason(): ReturnType<CareerGame['startSeason']>; getNextTournament(): ReturnType<CareerGame['getNextTournament']>; getVrsStatus(): ReturnType<CareerGame['getVrsStatus']>; listStandInOffers(): Promise<readonly TournamentStandInOffer[]>; respondStandInOffer(offerId: string, response: 'ACCEPT' | 'REJECT' | 'WAIT'): ReturnType<CareerGame['respondStandInOffer']>; acceptStandInOffer(offerId: string): Promise<TournamentStandInAssignment>; listTransferTargets(): Promise<readonly TransferTargetView[]>; selectTransferTarget(teamId: string): ReturnType<CareerGame['selectTransferTarget']>; advanceTournament(input?: { readonly mode?: import('./engine/game').CareerTournamentAdvanceMode }): ReturnType<CareerGame['advanceTournament']>; finishSeason(): ReturnType<CareerGame['finishSeason']>; findTop20(season: number): Promise<Top20Ranking>; findCareerEvent(window: CareerEventWindow): ReturnType<CareerGame['findCareerEvent']>; advancePeriod(period: EventPeriod, randomRoll?: number): Promise<PlayerProfile>; getAvailableEvents(period: EventPeriod, randomRoll?: number): Promise<readonly StoryEvent[]>; chooseOption(decision: { readonly eventId: string; readonly optionId: string; readonly randomRoll: number }): ReturnType<CareerGame['chooseStoryOption']>; retire(reason?: string): Promise<PlayerProfile>; generateRetirementSummary(): ReturnType<CareerGame['generateRetirementSummary']>; }; } }
+declare global { interface Window { COPEEngine: { createGame(config: BrowserCareerConfig): Promise<BrowserCareerGame>; loadGame(slotId: string): Promise<BrowserCareerGame>; listGames(): Promise<readonly string[]>; deleteGame(slotId: string): Promise<void>; getProfile(): Promise<PlayerProfile>; getTournamentSummary(): ReturnType<CareerGame['getTournamentSummary']>; startSeason(): ReturnType<CareerGame['startSeason']>; getNextTournament(): ReturnType<CareerGame['getNextTournament']>; getVrsStatus(): ReturnType<CareerGame['getVrsStatus']>; listStandInOffers(): Promise<readonly TournamentStandInOffer[]>; respondStandInOffer(offerId: string, response: 'ACCEPT' | 'REJECT' | 'WAIT'): ReturnType<CareerGame['respondStandInOffer']>; acceptStandInOffer(offerId: string): Promise<TournamentStandInAssignment>; listTransferTargets(): Promise<readonly TransferTargetView[]>; selectTransferTarget(teamId: string): ReturnType<CareerGame['selectTransferTarget']>; advanceTournament(input?: { readonly mode?: import('./engine/game').CareerTournamentAdvanceMode }): ReturnType<CareerGame['advanceTournament']>; finishSeason(): ReturnType<CareerGame['finishSeason']>; findTop20(season: number): Promise<Top20Ranking>; findCareerEvent(window: CareerEventWindow): ReturnType<CareerGame['findCareerEvent']>; advancePeriod(period: EventPeriod, randomRoll?: number): Promise<PlayerProfile>; getAvailableEvents(period: EventPeriod, randomRoll?: number): Promise<readonly StoryEvent[]>; chooseOption(decision: { readonly eventId: string; readonly optionId: string; readonly randomRoll: number }): ReturnType<CareerGame['chooseStoryOption']>; retire(reason?: string): Promise<PlayerProfile>; generateRetirementSummary(): ReturnType<CareerGame['generateRetirementSummary']>; }; } }
 
 window.COPEEngine = {
   createGame: initCareerGame,
+  loadGame: loadCareerGame,
+  listGames: () => browserStateRepository().listSlots(),
+  deleteGame: deleteCareerGame,
   getProfile: () => requireGame().getProfile(),
+  getTournamentSummary: () => requireGame().getTournamentSummary(),
   startSeason: () => requireGame().startSeason(),
   getNextTournament: () => requireGame().getNextTournament(),
   getVrsStatus: () => requireGame().getVrsStatus(),

@@ -61,6 +61,17 @@ export class SaveContractService implements PlayerContractService {
     return this.transfer(input);
   }
 
+  public async expire(input: { readonly profile: PlayerProfile; readonly contractId: string; readonly occurredAt: string }): Promise<ContractOperationResponse> {
+    const current = this.find(input.contractId);
+    if (!current || current.status !== 'ACTIVE') return this.rejection('EXPIRE', input.profile, 'NO_ACTIVE_CONTRACT');
+    if (current.playerId !== input.profile.id) return this.rejection('EXPIRE', input.profile, 'TEAM_MISMATCH');
+    if (Date.parse(input.occurredAt) < Date.parse(current.endsAt)) return { operation: 'EXPIRE', profile: input.profile, reason: 'INVALID_TERMS' };
+    const expired: PlayerContract = { ...current, status: 'EXPIRED', termination: { reason: 'EXPIRED', terminatedAt: input.occurredAt, matchedConditions: [], note: '合同到期后未续约。' } };
+    this.replace(current, expired);
+    const { currentTeamTier: _tier, freeAgencySince: _since, releaseReason: _reason, ...released } = input.profile;
+    return { operation: 'EXPIRE', profile: { ...released, currentTeamId: null, currentContractId: null, freeAgencyStatus: 'FREE_AGENT', freeAgencySince: input.occurredAt, releaseReason: 'CONTRACT_EXPIRED' }, contract: expired, previousContract: current, fee: 0 };
+  }
+
   public async terminate(input: { readonly profile: PlayerProfile; readonly effect: ForceContractTerminationEffect; readonly sourceStoryEventId: string; readonly sourceOptionId: string; readonly occurredAt: string }): Promise<ContractTerminationResult> {
     const current = this.activeFor(input.profile.id);
     if (!current) return { profile: input.profile, contract: this.find(input.profile.currentContractId ?? '') ?? this.placeholder(input.profile, input.occurredAt), terminated: false, rejectionReason: 'NO_ACTIVE_CONTRACT' };
@@ -94,7 +105,7 @@ export class SaveContractService implements PlayerContractService {
     const { freeAgencySince: _freeAgencySince, releaseReason: _releaseReason, ...signedProfile } = profile;
     return { ...signedProfile, currentTeamId: contract.teamId, ...(currentTeamTier ? { currentTeamTier } : {}), currentContractId: contract.id, freeAgencyStatus: 'SIGNED', career: { ...profile.career, teamHistory: profile.career.teamHistory.includes(contract.teamId) ? profile.career.teamHistory : [...profile.career.teamHistory, contract.teamId] } };
   }
-  private rejection(operation: 'RENEW' | 'TRANSFER', profile: PlayerProfile, reason: 'NO_ACTIVE_CONTRACT' | 'TEAM_MISMATCH'): ContractOperationResponse { return { operation, profile, reason }; }
+  private rejection(operation: 'RENEW' | 'TRANSFER' | 'EXPIRE', profile: PlayerProfile, reason: 'NO_ACTIVE_CONTRACT' | 'TEAM_MISMATCH'): ContractOperationResponse { return { operation, profile, reason }; }
   private placeholder(profile: PlayerProfile, occurredAt: string): PlayerContract { return { id: profile.currentContractId ?? `missing-${profile.id}`, playerId: profile.id, teamId: profile.currentTeamId ?? 'unknown', startedAt: occurredAt, endsAt: occurredAt, salaryPerMonth: 0, status: 'TERMINATED', buyoutAmount: 0 }; }
   private releaseReason(reason: ForceContractTerminationEffect['reason']): 'FORCED_RELEASE' | 'TEAM_REBUILD' | 'NO_ROSTER_SPACE' | 'MUTUAL_TERMINATION' { return reason === 'TEAM_DECISION' ? 'TEAM_REBUILD' : reason === 'MUTUAL_AGREEMENT' ? 'MUTUAL_TERMINATION' : 'FORCED_RELEASE'; }
 }

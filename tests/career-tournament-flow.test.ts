@@ -81,6 +81,10 @@ test('failed public qualifiers simulate and archive independent match statistics
   assert.equal(state.value.state.player.career.totalKills, performance.kills);
   assert.equal(state.value.state.player.tournamentArchive.length, 0);
   assert.equal(state.value.state.tournamentResults?.length ?? 0, 0);
+  const settlement = await game.finishSeason();
+  assert.equal(settlement?.mapsPlayed, performance.maps);
+  assert.equal(settlement?.kills, performance.kills);
+  assert.equal(settlement?.totalPrizeMoney, 0);
 });
 
 test('successful public qualifier is visible and main event starts only on the next advance', async () => {
@@ -99,9 +103,11 @@ test('successful public qualifier is visible and main event starts only on the n
   assert.equal(progress.result, null);
   assert.equal(progress.uiData.mainEventNext, true);
   assert.equal(state.value.state.tournamentCursor ?? 0, 0);
-  const qualifierPerformance = progress.uiData.qualifierPerformance as { maps: number; kills: number };
+  const qualifierPerformance = progress.uiData.qualifierPerformance as { maps: number; kills: number; clutchesWon?: number; rating: number };
   assert.equal(state.value.state.player.career.mapsPlayed, qualifierPerformance.maps);
   assert.equal(state.value.state.player.career.totalKills, qualifierPerformance.kills);
+  assert.equal(state.value.state.player.career.clutchWon, qualifierPerformance.clutchesWon ?? 0);
+  assert.equal(state.value.state.player.career.rating2, qualifierPerformance.rating);
   assert.equal(state.value.state.player.tournamentArchive.length, 0);
   assert.equal(state.value.state.qualificationResults?.length, 1);
 

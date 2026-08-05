@@ -143,6 +143,10 @@ export interface StoryEvent {
   readonly description: string;
   readonly worldlineId: string;
   readonly type: StoryEventType;
+  /** 系统事务事件不受普通剧情配额限制；仅由数据资产显式声明。 */
+  readonly system?: boolean;
+  /** 决策完成后消费当前转会报价。 */
+  readonly consumesTransferOffer?: boolean;
   /** 可在指定周期再次出现的年度事件；具体周期仍由 period 数据控制。 */
   readonly repeatable?: boolean;
   /** 赛事前/中/后；旧事件缺省时按 period 推导。 */
@@ -176,6 +180,8 @@ export interface StoryDecisionResult {
   readonly profile: PlayerProfile;
   readonly succeeded: boolean;
   readonly appliedEffects: readonly EventEffect[];
+  /** 当前事务事件是否消费了待处理转会报价。 */
+  readonly consumedTransferOffer?: boolean;
   /** 从 TOURNAMENT_INTERVENTION 效果构建并已登记的赛事修正 ID。 */
   readonly appliedTournamentInterventionIds: readonly string[];
   /** 本次事件触发并成功执行的合同终止记录 ID。 */

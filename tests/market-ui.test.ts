@@ -22,14 +22,15 @@ test('市场 UI 内容包含完整的版本化文案映射', async () => {
   ]) assert.ok(market.requirements[key]);
 });
 
-test('市场界面按 availability 分组并完整展示合同字段', async () => {
+test('市场界面仅展示队伍与队标并保留转会交互', async () => {
   const source = await readFile(appPath, 'utf8');
-  assert.match(source, /function loadMarketContent\(/);
-  assert.match(source, /function formatMarketRequirement\(/);
-  for (const key of ['RECOMMENDED', 'PERSUADABLE', 'UNREACHABLE']) assert.match(source, new RegExp(key));
-  for (const key of ['lengthMonths', 'salaryPerMonth', 'role', 'expectedPlaytimePercentage']) assert.match(source, new RegExp(`contract\\.${key}`));
-  assert.doesNotMatch(source, /\['T1',\s*'T2',\s*'T3'\]\.map\(\(tier\)/);
-  assert.doesNotMatch(source, /unmetRequirements\.join\(/);
+  assert.match(source, /loadTeamDirectory\(\)/);
+  assert.match(source, /teamAssetPath\(team\)/);
+  assert.match(source, /market-team-logo/);
+  assert.match(source, /selectTransferTarget\(/);
+  assert.doesNotMatch(source, /class="market-contract"/);
+  assert.doesNotMatch(source, /class="market-score-row"/);
+  assert.doesNotMatch(source, /class="market-detail/);
 });
 
 test('替补邀请文案包含完整字段、映射、操作和结果', async () => {

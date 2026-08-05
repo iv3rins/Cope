@@ -44,7 +44,7 @@ test('事件格式、世界线成员与链路均完整', async () => {
       assert.ok(option.outcome.failureMessages?.length);
       for (const next of [option.outcome.successNextEventId, option.outcome.failureNextEventId]) if (typeof next === 'string') assert.ok(byId.has(next), `${event.id} -> ${next}`);
     }
-    if (opportunity(event)) {
+    if (opportunity(event) && !event.consumesTransferOffer) {
       assert.ok(hasAgencyGuards(event.conditions), event.id);
       for (const option of event.options) if (option.outcome.successEffects.some((effect) => effect.type === 'TEAM_TRANSFER')) assert.ok(hasAgencyGuards(option.requirements), `${event.id}/${option.id}`);
     }
@@ -155,9 +155,13 @@ test('六个世界线 transfer-offer 均有窗口/报价 guards 并引用 CURREN
     const event = await json<StoryEvent>(join(eventDir, `${name}-transfer-offer.json`));
     const guarded = (conditions: readonly any[]) => conditions.some((item) => item.type === 'TRANSFER_WINDOW' && item.expected === true)
       && conditions.some((item) => item.type === 'TRANSFER_OFFER' && item.expected === true);
+    assert.equal(event.system, true, event.id);
+    assert.equal(event.consumesTransferOffer, true, event.id);
     assert.ok(guarded(event.conditions), event.id);
+    assert.ok(!event.conditions.some((item) => item.type === 'FREE_AGENCY' || item.type === 'ACTIVE_CONTRACT'), event.id);
     const accept = event.options.find((option) => option.id === 'accept-offer');
     assert.ok(accept && guarded(accept.requirements), event.id);
+    assert.ok(!accept.requirements.some((item) => item.type === 'FREE_AGENCY' || item.type === 'ACTIVE_CONTRACT'), event.id);
     assert.ok(accept.outcome.successEffects.some((effect) => effect.type === 'TEAM_TRANSFER' && effect.offerRef === 'CURRENT_TRANSFER_OFFER'), event.id);
   }
 });

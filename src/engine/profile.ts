@@ -90,6 +90,7 @@ export interface PlayerProfile {
   readonly isRetired: boolean;
   /** 退役时间；未退役时为空。 */
   readonly retiredAt?: string;
+  readonly retirementReason?: string;
   /** 玩家参加过的每一届赛事归档，供退役总结和历史页面使用。 */
   readonly tournamentArchive: readonly CareerTournamentRecord[];
   /** 出生地区；影响初始属性、年龄成长和地区 Flag。 */

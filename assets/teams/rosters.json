@@ -45,14 +45,14 @@
       { "playerId": "real-torzsi", "nickname": "torzsi", "role": "AWPER", "active": true },
       { "playerId": "real-saken", "nickname": "sAw", "role": "SUPPORT", "active": true }
     ] },
-    { "teamId": "tyloo", "teamName": "TYLOO", "region": "ASIA", "tier": "T1", "vrsRank": 20, "players": [
+    { "teamId": "tyloo", "teamName": "TYLOO", "region": "ASIA", "tier": "T2", "vrsRank": 22, "players": [
       { "playerId": "real-summer", "nickname": "Summer", "role": "IGL", "active": true },
       { "playerId": "real-moseyuh", "nickname": "Moseyuh", "role": "ENTRY_FRAGGER", "active": true },
       { "playerId": "real-starry", "nickname": "starry", "role": "LURKER", "active": true },
       { "playerId": "real-jiayuan", "nickname": "Jee", "role": "SUPPORT", "active": true },
       { "playerId": "real-xy", "nickname": "xiaoyu", "role": "AWPER", "active": true }
     ] },
-    { "teamId": "rareatom", "teamName": "Rare Atom", "region": "ASIA", "tier": "T2", "vrsRank": 33, "players": [
+    { "teamId": "rareatom", "teamName": "Rare Atom", "region": "ASIA", "tier": "T3", "vrsRank": 120, "players": [
       { "playerId": "real-kaze", "nickname": "kaze", "role": "AWPER", "active": true },
       { "playerId": "real-moseyuh-ra", "nickname": "Moseyuh", "role": "ENTRY_FRAGGER", "active": true },
       { "playerId": "real-zhoki", "nickname": "zhokiNg", "role": "IGL", "active": true },

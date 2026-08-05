@@ -92,6 +92,7 @@ export class StoryEngineImpl implements StoryEngine {
       profile: updatedProfile,
       succeeded,
       appliedEffects: effects.map((effect) => this.copy(effect)),
+      consumedTransferOffer: event.consumesTransferOffer === true,
       appliedTournamentInterventionIds: [],
       terminatedContractId: null,
       nextEventId: succeeded ? option.outcome.successNextEventId ?? null : option.outcome.failureNextEventId ?? null,

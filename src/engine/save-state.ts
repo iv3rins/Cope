@@ -106,6 +106,11 @@ export interface CareerGameState {
   readonly pendingTournamentInterventions: readonly TournamentIntervention[];
   /** VRS snapshot locked at season start; later ranking changes cannot rewrite invitations. */
   readonly activeVrsSnapshot: VrsInviteSnapshot | null;
+  /** Persistent result-driven VRS point adjustments, applied when the next half-season snapshot is frozen. */
+  readonly vrsPointsByTeam?: Readonly<Record<string, number>>;
+  /** Idempotency ledger for tournament results already projected into VRS points. */
+  readonly vrsAppliedResultIds?: readonly string[];
+  readonly vrsProjectionRulesVersion?: string;
 }
 
 export interface CareerSaveEnvelope {

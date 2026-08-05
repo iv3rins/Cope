@@ -49,7 +49,7 @@ export interface TournamentSimulationDependencies {
   readonly clock: GameClock;
   readonly matches: MatchSimulationService;
   readonly playerSnapshot?: (playerId: HltvPlayerId, teamId: string) => MatchPlayerSnapshot | Promise<MatchPlayerSnapshot>;
-  readonly teamRoster?: (teamId: string) => readonly TeamRosterSlot[];
+  readonly teamRoster?: (teamId: string) => readonly TeamRosterSlot[] | Promise<readonly TeamRosterSlot[]>;
   readonly facts?: TournamentFactRepository;
   readonly calendarReader?: TournamentCalendarReader;
 }
@@ -96,10 +96,18 @@ export class TournamentServiceImpl implements TournamentService {
     return progress.result;
   }
 
-  private buildResult(edition: TournamentEdition, context: TournamentSimulationContext, matchResults: readonly MatchSimulationResult[], lockedRoster: readonly TeamRosterSlot[]): TournamentResult {
-    const upset = this.decideUpset(context.baseTeamStrength, Math.max(...Object.values(context.baseOpponentStrength)), context);
+  private async teamRoster(teamId: string): Promise<readonly TeamRosterSlot[]> {
+    return await this.dependencies.teamRoster?.(teamId) ?? [];
+  }
+
+  private async buildResult(edition: TournamentEdition, context: TournamentSimulationContext, matchResults: readonly MatchSimulationResult[], lockedRoster: readonly TeamRosterSlot[]): Promise<TournamentResult> {
+    const strongestOpponent = Math.max(...matchResults.map((match) => {
+      const opponentTeamId = match.winnerTeamId === edition.teamId ? match.loserTeamId : match.winnerTeamId;
+      return context.baseOpponentStrength[opponentTeamId] ?? context.baseTeamStrength;
+    }));
+    const upset = this.decideUpset(context.baseTeamStrength, strongestOpponent, context);
     const performances = this.aggregatePerformances(matchResults);
-    const teamPlacements = this.deriveTeamPlacements(edition, matchResults, lockedRoster);
+    const teamPlacements = await this.deriveTeamPlacements(edition, matchResults, lockedRoster);
     const playerTeam = teamPlacements.find((entry) => entry.teamId === edition.teamId);
     const placement = playerTeam?.placement ?? 'GROUP_EXIT';
     const honors = this.allocateHonors(edition, teamPlacements, performances);
@@ -169,20 +177,25 @@ export class TournamentServiceImpl implements TournamentService {
     const asset = await this.dependencies.calendarReader?.() ?? null;
     if (!asset || (asset.schemaVersion !== 1 && asset.schemaVersion !== 2) || asset.editions.length === 0) return this.createFallbackCalendar(input, snapshotRank);
 
-    return asset.editions
+    const filtered = asset.editions
       .filter((candidate) => candidate.half === input.half)
       .filter((candidate) => candidate.eligibleTeamTiers?.length ? candidate.eligibleTeamTiers.includes(teamTier) : teamTier === 'T1'
         ? candidate.tier === 'T1' || candidate.tier === 'MAJOR'
         : teamTier === 'T2'
           ? candidate.tier === 'T2' || candidate.tier === 'T1' || candidate.tier === 'MAJOR'
           : candidate.tier === 'T2' || candidate.tier === 'T1')
-      .filter((candidate) => !candidate.major || (snapshotRank !== null && snapshotRank >= 1 && snapshotRank <= 32))
+      .filter((candidate) => candidate.tier !== 'MAJOR' || (snapshotRank !== null && snapshotRank >= 1 && snapshotRank <= 32));
+    const candidates = teamTier === 'T3'
+      ? [...filtered.filter((candidate) => candidate.tier === 'T2'), ...filtered.filter((candidate) => candidate.tier === 'T1').slice(0, 1)]
+      : filtered;
+
+    return candidates
       .map((candidate, index) => {
         const organizer = asset.organizers[candidate.organizerId] ?? candidate.organizerId;
         const isMajor = candidate.tier === 'MAJOR';
-        const directInviteMaxRank = candidate.directInviteMaxRank ?? (isMajor ? 32 : 12);
+        const directInviteMaxRank = isMajor ? 32 : candidate.directInviteMaxRank ?? 12;
         const direct = snapshotRank !== null && snapshotRank >= 1 && snapshotRank <= directInviteMaxRank;
-        const fallback = candidate.fallbackQualificationSource ?? (candidate.tier === 'T1' ? 'PUBLIC_QUALIFIER' : 'OPEN_ENTRY');
+        const fallback = isMajor ? 'DIRECT_VRS' : candidate.fallbackQualificationSource ?? (candidate.tier === 'T1' ? 'PUBLIC_QUALIFIER' : 'OPEN_ENTRY');
         const qualificationSource = direct ? 'DIRECT_VRS' : fallback;
         const qualificationStatus = isMajor || direct ? 'DIRECT' : qualificationSource === 'PUBLIC_QUALIFIER' ? 'QUALIFIER_PENDING' : 'QUALIFIED';
         return {
@@ -194,7 +207,7 @@ export class TournamentServiceImpl implements TournamentService {
           calendarOrder: index + 1,
           tier: candidate.tier,
           honorClass: candidate.honorClass,
-          node: teamTier === 'T1' || candidate.tier === 'T2' ? 'MAIN_EVENT' : candidate.tier === 'T1' ? 'QUALIFIER' : 'MAIN_EVENT',
+          node: qualificationSource === 'PUBLIC_QUALIFIER' ? 'QUALIFIER' : 'MAIN_EVENT',
           simulationMode: candidate.tier === 'MAJOR' ? 'SWISS' : 'FAST',
           teamId: input.teamId,
           qualificationSource,
@@ -242,7 +255,7 @@ export class TournamentServiceImpl implements TournamentService {
 
   public async lockRoster(input: { readonly edition: TournamentEdition; readonly roster: readonly TeamRosterSlot[]; readonly careerHalf: number; readonly substitutePlayerId?: HltvPlayerId | null; readonly targetRole?: import('../engine/profile').PlayerRole }): Promise<TournamentRosterLock> {
     if (input.careerHalf !== input.edition.rosterLockCareerHalf) throw new Error('Roster can only be locked in the configured career half.');
-    const base = input.roster.length ? input.roster : this.dependencies.teamRoster?.(input.edition.teamId) ?? [];
+    const base = input.roster.length ? input.roster : await this.teamRoster(input.edition.teamId);
     const substitute = input.substitutePlayerId ?? null;
     const replacedIndex = base.findIndex((candidate) => candidate.active && (!input.targetRole || candidate.role === input.targetRole));
     const fallbackIndex = base.findIndex((candidate) => candidate.active);
@@ -274,7 +287,7 @@ export class TournamentServiceImpl implements TournamentService {
       matches.push(match);
       if (match.winnerTeamId !== input.edition.teamId) break;
     }
-    const result = this.buildResult(input.edition, input.context, matches, input.roster);
+    const result = await this.buildResult(input.edition, input.context, matches, input.roster);
     return { status: 'COMPLETED', state: null, lifecycleHook: 'POST_TOURNAMENT', uiData: { mode: 'FAST', matches: matches.length }, result };
   }
 
@@ -298,7 +311,7 @@ export class TournamentServiceImpl implements TournamentService {
           matches.push(await this.simulateMatch(input.edition, input.context, input.roster, 'FINAL', matches.length));
         }
       }
-      const result = this.buildResult(input.edition, input.context, matches, input.roster);
+      const result = await this.buildResult(input.edition, input.context, matches, input.roster);
       return { status: 'COMPLETED', state: null, lifecycleHook: 'POST_TOURNAMENT', uiData: { mode: 'SWISS', wins: nextWins, losses: nextLosses, qualified: nextWins >= 3 }, result };
     }
     return {
@@ -314,10 +327,10 @@ export class TournamentServiceImpl implements TournamentService {
     const opponentTeamId = Object.keys(context.baseOpponentStrength)[index % Math.max(1, Object.keys(context.baseOpponentStrength).length)] ?? `sim-opponent-${index + 1}`;
     const teamStrengthDelta = context.interventions.filter((item) => item.type === 'TEAM_STRENGTH').reduce((sum, item) => sum + (Number.isFinite(item.delta) ? item.delta ?? 0 : 0), 0);
     const opponentStrengthDelta = context.interventions.filter((item) => item.type === 'OPPONENT_STRENGTH' && item.opponentTeamId === opponentTeamId).reduce((sum, item) => sum + (Number.isFinite(item.delta) ? item.delta ?? 0 : 0), 0);
-    const configuredPlayerRoster = this.dependencies.teamRoster?.(edition.teamId) ?? [];
+    const configuredPlayerRoster = await this.teamRoster(edition.teamId);
     const mergedPlayerRoster = [...roster, ...configuredPlayerRoster.filter((candidate) => !roster.some((slot) => slot.playerId === candidate.playerId))];
     const playerRoster = this.adjustRosterStrength(await this.completeRoster(edition.teamId, mergedPlayerRoster), context.baseTeamStrength + teamStrengthDelta);
-    const opponentRoster = this.adjustRosterStrength(await this.completeRoster(opponentTeamId, this.dependencies.teamRoster?.(opponentTeamId) ?? []), (context.baseOpponentStrength[opponentTeamId] ?? 70) + opponentStrengthDelta);
+    const opponentRoster = this.adjustRosterStrength(await this.completeRoster(opponentTeamId, await this.teamRoster(opponentTeamId)), (context.baseOpponentStrength[opponentTeamId] ?? 70) + opponentStrengthDelta);
     const players = [...playerRoster, ...opponentRoster];
     const simulated = await this.dependencies.matches.simulate({
       matchId: `${edition.id}-match-${index + 1}`,
@@ -329,7 +342,7 @@ export class TournamentServiceImpl implements TournamentService {
       players,
       mapPool: ['Mirage', 'Inferno', 'Nuke', 'Ancient', 'Dust2', 'Anubis', 'Train'],
       pressure: edition.tier === 'MAJOR' ? 90 : edition.tier === 'T1' ? 78 : edition.tier === 'T2' ? 58 : 42,
-      teamRanks: { [edition.teamId]: edition.snapshotRank, [opponentTeamId]: Math.max(1, 5 + index * 4) },
+      teamRanks: { [edition.teamId]: edition.snapshotRank, [opponentTeamId]: context.opponentRanks?.[opponentTeamId] ?? null },
       randomRoll: this.rollFromContext(context.upsetRoll, index),
     });
     const playerStrength = context.baseTeamStrength + teamStrengthDelta;
@@ -419,7 +432,7 @@ export class TournamentServiceImpl implements TournamentService {
     });
   }
 
-  private deriveTeamPlacements(edition: TournamentEdition, matches: readonly MatchSimulationResult[], lockedRoster: readonly TeamRosterSlot[]): TournamentResult['teamPlacements'] {
+  private async deriveTeamPlacements(edition: TournamentEdition, matches: readonly MatchSimulationResult[], lockedRoster: readonly TeamRosterSlot[]): Promise<TournamentResult['teamPlacements']> {
     const teams = [...new Set(matches.flatMap((match) => [match.winnerTeamId, match.loserTeamId]))];
     const placements = new Map(teams.map((teamId) => [teamId, 'GROUP_EXIT' as TournamentResult['placement']]));
     const final = [...matches].reverse().find((match) => match.stage === 'FINAL');
@@ -430,14 +443,16 @@ export class TournamentServiceImpl implements TournamentService {
       const elimination = [...matches].reverse().find((match) => match.winnerTeamId !== edition.teamId) ?? matches[matches.length - 1];
       if (elimination) placements.set(elimination.loserTeamId, elimination.stage === 'PLAYOFF' ? 'SEMIFINAL' : elimination.stage === 'SWISS' || elimination.stage === 'GROUP' ? 'GROUP_EXIT' : 'RUNNER_UP');
     }
-    return teams.map((teamId) => {
+    const result = [];
+    for (const teamId of teams) {
       const simulatedPlayers = [...new Set(matches.flatMap((match) => match.playerPerformances).filter((performance) => performance.teamId === teamId).map((performance) => performance.playerId))];
       const rosterPlayerIds = teamId === edition.teamId
-        ? [...new Set([...lockedRoster.map((slot) => slot.playerId), ...(this.dependencies.teamRoster?.(teamId) ?? []).map((slot) => slot.playerId), ...simulatedPlayers])]
+        ? [...new Set([...lockedRoster.map((slot) => slot.playerId), ...(await this.teamRoster(teamId)).map((slot) => slot.playerId), ...simulatedPlayers])]
         : simulatedPlayers;
       const placement = placements.get(teamId) ?? 'GROUP_EXIT';
-      return { teamId, placement, title: placement === 'CHAMPION', rosterPlayerIds };
-    });
+      result.push({ teamId, placement, title: placement === 'CHAMPION', rosterPlayerIds });
+    }
+    return result;
   }
 
   private allocateHonors(edition: TournamentEdition, placements: TournamentResult['teamPlacements'], performances: readonly TournamentPlayerPerformance[]): readonly TournamentHonor[] {

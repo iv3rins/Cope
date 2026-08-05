@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import test from 'node:test';
 import { tierForRank } from '../src/hltv/team';
 import { tierForRank as apiTierForRank } from '../src/api/team-tier';
@@ -13,12 +15,26 @@ const snapshot = (rank: number): VrsInviteSnapshot => ({
 
 const calendarReader = async () => ({ schemaVersion: 1 as const, organizers: { org: 'ORG' }, editions: [
   { id: 't1', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T1', tier: 'T1' as const, honorClass: 'LARGE' as const, format: 'BO3' as const, prizePool: 1 },
-  { id: 'major', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'Major', tier: 'MAJOR' as const, honorClass: 'MAJOR' as const, format: 'BO3' as const, prizePool: 1, major: true },
+  { id: 't1-second', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T1 Second', tier: 'T1' as const, honorClass: 'LARGE' as const, format: 'BO3' as const, prizePool: 1 },
+  { id: 't2', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T2', tier: 'T2' as const, honorClass: 'MEDIUM' as const, format: 'BO3' as const, prizePool: 1, eligibleTeamTiers: ['T2', 'T3'] as const, fallbackQualificationSource: 'PUBLIC_QUALIFIER' as const },
+  { id: 'major', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'Major', tier: 'MAJOR' as const, honorClass: 'MAJOR' as const, format: 'BO3' as const, prizePool: 1, directInviteMaxRank: 64, fallbackQualificationSource: 'PUBLIC_QUALIFIER' as const },
 ] });
 
 function service(matches?: MatchSimulationService) {
   return new TournamentServiceImpl({ playerId: 'career-player', random: { next: () => 0 }, clock: { now: () => '2026-01-01' }, matches: matches ?? { simulate: async () => { throw new Error('unused'); } }, calendarReader });
 }
+
+test('roster tier and VRS rank stay aligned with teams standings data', async () => {
+  const root = join(import.meta.dirname, '..', 'assets', 'teams');
+  const rosters = JSON.parse(await readFile(join(root, 'rosters.json'), 'utf8')) as { teams: readonly { teamId: string; tier: string; vrsRank: number }[] };
+  const teams = JSON.parse(await readFile(join(root, 'teams.json'), 'utf8')) as { teams: readonly { id: string; standings: { bestRank: number } | null }[] };
+  for (const roster of rosters.teams.filter((entry) => entry.teamId === 'tyloo' || entry.teamId === 'rareatom')) {
+    const rank = teams.teams.find((team) => team.id === roster.teamId)?.standings?.bestRank;
+    if (rank === undefined) continue;
+    assert.equal(roster.vrsRank, rank, roster.teamId);
+    assert.equal(roster.tier, tierForRank(rank), roster.teamId);
+  }
+});
 
 test('tierForRank has one compatible 12/32 boundary source', () => {
   for (const [rank, tier] of [[1, 'T1'], [12, 'T1'], [13, 'T2'], [32, 'T2'], [33, 'T3'], [Infinity, 'T3']] as const) {
@@ -33,10 +49,19 @@ test('ordinary T1 directly invites only top 12 while Major includes only snapsho
   const rank13 = await service().createCalendar({ season: 2026, half: 1, teamId: 'career-team', snapshot: snapshot(13) });
   assert.equal(rank13.find((event) => event.tier === 'T1')?.qualificationSource, 'PUBLIC_QUALIFIER');
   assert.equal(rank13.find((event) => event.tier === 'MAJOR')?.qualificationStatus, 'DIRECT');
+  assert.equal(rank13.find((event) => event.tier === 'MAJOR')?.qualificationSource, 'DIRECT_VRS');
   const rank32 = await service().createCalendar({ season: 2026, half: 1, teamId: 'career-team', snapshot: snapshot(32) });
   assert.ok(rank32.some((event) => event.tier === 'MAJOR'));
   const rank33 = await service().createCalendar({ season: 2026, half: 1, teamId: 'career-team', snapshot: snapshot(33) });
   assert.equal(rank33.some((event) => event.tier === 'MAJOR'), false);
+  assert.ok([...rank12, ...rank13, ...rank32].filter((event) => event.tier === 'MAJOR').every((event) => event.node === 'MAIN_EVENT' && event.qualificationSource === 'DIRECT_VRS' && event.qualificationStatus === 'DIRECT'));
+});
+
+test('T3 calendar keeps T2 events plus only one T1 qualifier and uses consistent qualifier nodes', async () => {
+  const events = await service().createCalendar({ season: 2026, half: 1, teamId: 'career-team', snapshot: snapshot(33) });
+  assert.equal(events.filter((event) => event.tier === 'T1').length, 1);
+  assert.equal(events.filter((event) => event.tier === 'T2').length, 1);
+  assert.ok(events.filter((event) => event.qualificationSource === 'PUBLIC_QUALIFIER').every((event) => event.node === 'QUALIFIER' && event.qualificationStatus === 'QUALIFIER_PENDING'));
 });
 
 test('series projection uses mapsWon as series score and keeps optional cumulative rounds', async () => {
@@ -45,10 +70,16 @@ test('series projection uses mapsWon as series score and keeps optional cumulati
     scores: [{ teamId: 'career-team', mapsWon: 2, roundsWon: 26 }, { teamId: 'opponent', mapsWon: 1, roundsWon: 21 }], mapsPlayed: ['A', 'B', 'C'],
     playerPerformances: [], teamRanks: { 'career-team': 4, opponent: 8 }, resourceConflictPenalties: {}, upset: false, randomRoll: 0,
   };
-  const simulator = service({ simulate: async () => simulated });
+  let receivedOpponentRank: number | null | undefined;
+  const simulator = service({ simulate: async (input) => {
+    receivedOpponentRank = input.teamRanks.opponent;
+    return { ...simulated, teamRanks: input.teamRanks };
+  } });
   const edition = { id: 'event', seriesId: 'series', name: 'Event', season: 2026, half: 1 as const, calendarOrder: 1, tier: 'T1' as const, honorClass: 'LARGE' as const, node: 'MAIN_EVENT' as const, simulationMode: 'FAST' as const, teamId: 'career-team', qualificationSource: 'DIRECT_VRS' as const, vrsSnapshotId: 'snapshot', snapshotRank: 4, rosterLockCareerHalf: 1, targetEditionId: null, format: 'BO3' as const };
-  const result = await simulator.simulate({ edition, context: { editionId: 'event', baseTeamStrength: 80, baseOpponentStrength: { opponent: 70 }, interventions: [], upsetRoll: 0 } });
+  const result = await simulator.simulate({ edition, context: { editionId: 'event', baseTeamStrength: 80, baseOpponentStrength: { opponent: 70 }, opponentRanks: { opponent: 27 }, interventions: [], upsetRoll: 0 } });
   assert.equal(result.seriesDetails?.[0]?.mapScores[0], '2:1（累计回合 26:21）');
+  assert.equal(receivedOpponentRank, 27);
+  assert.equal(result.matchResults[0]?.teamRanks.opponent, 27);
   assert.equal(result.matchResults[0]?.scores.find((score) => score.teamId === result.matchResults[0]?.winnerTeamId)?.mapsWon, 2);
 });
 

@@ -5,7 +5,7 @@ import type { PlayerProfile } from './profile';
 /** 选手合同是 Engine 聚合，避免将生涯人事规则泄漏到 HLTV 赛事模块。 */
 export type PlayerContractStatus = 'ACTIVE' | 'TERMINATED' | 'EXPIRED';
 export type ContractTerminationReason = 'EVENT_DECISION' | 'ATTRIBUTE_THRESHOLD' | 'TEAM_DECISION' | 'MUTUAL_AGREEMENT' | 'EXPIRED' | 'NON_RENEWAL' | 'TEAM_REBUILD' | 'NO_ROSTER_SPACE' | 'BUYOUT_FAILED' | 'FORCED_RELEASE';
-export type ContractLifecycleOperation = 'SIGN' | 'RENEW' | 'TRANSFER' | 'BUYOUT' | 'TERMINATE';
+export type ContractLifecycleOperation = 'SIGN' | 'RENEW' | 'TRANSFER' | 'BUYOUT' | 'TERMINATE' | 'EXPIRE';
 
 export interface PlayerContract {
   readonly id: string;
@@ -99,5 +99,7 @@ export interface PlayerContractService {
   transfer(input: { readonly profile: PlayerProfile; readonly currentContractId: string; readonly terms: ContractTerms; readonly occurredAt: string }): Promise<ContractOperationResponse>;
   /** 新战队支付买断费用后完成转会。 */
   buyout(input: { readonly profile: PlayerProfile; readonly currentContractId: string; readonly terms: ContractTerms; readonly occurredAt: string }): Promise<ContractOperationResponse>;
+  /** 日期推进到 endsAt 后自然到期并进入自由市场。 */
+  expire(input: { readonly profile: PlayerProfile; readonly contractId: string; readonly occurredAt: string }): Promise<ContractOperationResponse>;
   terminate(input: { readonly profile: PlayerProfile; readonly effect: ForceContractTerminationEffect; readonly sourceStoryEventId: string; readonly sourceOptionId: string; readonly occurredAt: string }): Promise<ContractTerminationResult>;
 }

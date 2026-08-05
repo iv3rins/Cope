@@ -56,6 +56,8 @@ export class StoryRepositoryImpl implements StoryEventDirectory {
       && typeof value.description === 'string'
       && typeof value.worldlineId === 'string'
       && (value.type === 'CHOICE' || value.type === 'MANDATORY')
+      && (value.system === undefined || typeof value.system === 'boolean')
+      && (value.consumesTransferOffer === undefined || typeof value.consumesTransferOffer === 'boolean')
       && typeof value.period === 'string'
       && Array.isArray(value.conditions)
       && value.conditions.every((condition) => this.isCondition(condition))

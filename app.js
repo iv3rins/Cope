@@ -6,8 +6,8 @@ const role = $('#role');
 const helpDialog = $('#helpDialog');
 const retireDialog = $('#retireDialog');
 const top20Dialog = $('#top20Dialog');
-const regionServer = { 中国: '上海 / 35ms', 欧洲: '法兰克福 / 42ms', 北美: '芝加哥 / 55ms', 独联体: '华沙 / 47ms', 南美: '圣保罗 / 68ms', 亚太: '新加坡 / 39ms' };
-const engineRegions = { 中国: 'ASIA', 欧洲: 'EUROPE', 北美: 'AMERICAS', 独联体: 'EUROPE', 南美: 'AMERICAS', 亚太: 'OCEANIA' };
+const regionServer = { 中国: '上海 / 35ms', 欧洲: '法兰克福 / 42ms', 北美: '芝加哥 / 55ms', 独联体: '华沙 / 47ms', 南美: '圣保罗 / 68ms', 亚太: '新加坡 / 39ms', 中东: '迪拜 / 48ms', 非洲: '约翰内斯堡 / 62ms' };
+const engineRegions = { 中国: 'ASIA', 欧洲: 'EUROPE', 北美: 'AMERICAS', 独联体: 'EUROPE', 南美: 'AMERICAS', 亚太: 'OCEANIA', 中东: 'MIDDLE_EAST', 非洲: 'AFRICA' };
 const roleData = {
   ENTRY: { title: '突破手 / ENTRY', description: '用首杀撕开防线，为队伍建立进攻空间。' },
   AWP: { title: '狙击手 / AWP', description: '以关键架点与首杀打开回合优势。' },
@@ -218,15 +218,22 @@ async function renderProfile(profile) {
   }
   $('#profileTeam').textContent = teamName;
   $('#dashboardOverall').textContent = Math.round(values.reduce((sum, [, value]) => sum + value, 0) / values.length);
-  $('#dashboardSeason').textContent = `${profile.age} 岁 · ${profile.tournamentArchive.length} 场赛事档案`;
-  const archive = profile.tournamentArchive || [];
-  const totalArchiveMaps = archive.reduce((sum, record) => sum + record.mapsPlayed, 0);
-  const weightedRating = totalArchiveMaps ? archive.reduce((sum, record) => sum + record.rating * record.mapsPlayed, 0) / totalArchiveMaps : 0;
+  const tournamentSummary = typeof window.COPEEngine.getTournamentSummary === 'function' ? await window.COPEEngine.getTournamentSummary() : { official: profile.tournamentArchive || [], qualifiers: [] };
+  const archive = tournamentSummary.official || [];
+  const qualifiers = tournamentSummary.qualifiers || [];
+  $('#dashboardSeason').textContent = `${profile.age} 岁 · ${archive.length + qualifiers.length} 场赛事记录`;
+  const qualifierRows = qualifiers.map((result) => {
+    const performance = result.playerPerformances.find((item) => item.playerId === profile.id);
+    return { fullName: result.eventName, placement: result.placement === 'QUALIFIED' ? '晋级正赛 · 预选赛' : '止步预选 · 预选赛', rating: performance?.rating ?? 0, mapsPlayed: performance?.maps ?? 0 };
+  });
+  const totalArchiveMaps = archive.reduce((sum, record) => sum + record.mapsPlayed, 0) + qualifierRows.reduce((sum, record) => sum + record.mapsPlayed, 0);
+  const weightedRating = totalArchiveMaps ? ([...archive, ...qualifierRows]).reduce((sum, record) => sum + record.rating * record.mapsPlayed, 0) / totalArchiveMaps : 0;
   const champions = archive.filter((record) => record.champion).length;
-  $('#tournamentSummaryCount').textContent = `${archive.length} 场`;
-  $('#tournamentSummaryContent').innerHTML = archive.length
-    ? `<div><span>总地图</span><b>${totalArchiveMaps}</b></div><div><span>平均 Rating</span><b>${weightedRating.toFixed(2)}</b></div><div><span>冠军</span><b>${champions}</b></div><details><summary>最近赛事</summary>${archive.slice(-5).reverse().map((record) => `<p><strong>${escapeHtml(record.fullName)}</strong><span>${escapeHtml(record.placement)} · ${record.rating.toFixed(2)} · ${record.mapsPlayed} 图</span></p>`).join('')}</details>`
-    : '<span>尚无正式赛事记录</span>';
+  const recentRecords = [...archive, ...qualifierRows];
+  $('#tournamentSummaryCount').textContent = `${recentRecords.length} 场`;
+  $('#tournamentSummaryContent').innerHTML = recentRecords.length
+    ? `<div><span>总地图</span><b>${totalArchiveMaps}</b></div><div><span>平均 Rating</span><b>${weightedRating.toFixed(2)}</b></div><div><span>冠军</span><b>${champions}</b></div><details><summary>最近赛事</summary>${recentRecords.slice(-5).reverse().map((record) => `<p><strong>${escapeHtml(record.fullName)}</strong><span>${escapeHtml(record.placement)} · ${record.rating.toFixed(2)} · ${record.mapsPlayed} 图</span></p>`).join('')}</details>`
+    : '<span>尚无赛事记录</span>';
   $('#dashboardGameId').textContent = profile.gameId;
   $('#dashboardRegion').textContent = `${profile.originRegion} · ${profile.role}`;
   $('#dashboardRole').textContent = profile.role;
@@ -425,6 +432,10 @@ async function renderEvent(event, resultText = '') {
     await renderTournamentCalendar(result.profile);
     setSingleFlowStage();
     $('#continueEventBtn').addEventListener('click', async () => {
+      if (event.period === 'TRANSFER_WINDOW' || event.period === 'OFFSEASON') {
+        await continueOffseason();
+        return;
+      }
       if (event.phase === 'POST_TOURNAMENT') {
         await renderCurrentPeriod();
         return;
@@ -534,7 +545,13 @@ async function startSimulation() {
   try {
     if (!window.COPEEngine) throw new Error('引擎包未加载，请先运行 npm run build:engine。');
     deterministicState = [...callsign.value.trim()].reduce((value, character) => (value * 31 + character.charCodeAt(0)) >>> 0, 2166136261);
-    await window.COPEEngine.createGame({ gameId: callsign.value.trim(), realName: lastName.value.trim() || callsign.value.trim(), role: role.value, region: engineRegions[selectedRegion()], mode: selectedCareerMode });
+    const gameId = callsign.value.trim();
+    const savedGames = typeof window.COPEEngine.listGames === 'function' ? await window.COPEEngine.listGames() : [];
+    if (savedGames.includes(gameId) && typeof window.COPEEngine.loadGame === 'function') {
+      await window.COPEEngine.loadGame(gameId);
+    } else {
+      await window.COPEEngine.createGame({ gameId, realName: lastName.value.trim() || gameId, role: role.value, region: engineRegions[selectedRegion()], mode: selectedCareerMode });
+    }
     const profile = await window.COPEEngine.getProfile();
     const setup = $('#setup-page');
     const dashboard = $('#dashboard-page');
@@ -544,6 +561,10 @@ async function startSimulation() {
     setup.classList.remove('leaving');
     dashboard.hidden = false;
     dashboard.classList.add('active');
+    if (profile.isRetired) {
+      await renderCareerArchive(profile);
+      return;
+    }
     await renderProfile(profile);
     await refreshVrsStatus();
     await renderTournamentCalendar(profile);
@@ -558,12 +579,9 @@ role.addEventListener('change', () => selectRole(role.value));
 document.querySelectorAll('.map-role').forEach((button) => button.addEventListener('click', () => selectRole(button.dataset.role)));
 document.querySelectorAll('.region').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.region').forEach((item) => item.classList.remove('selected')); button.classList.add('selected'); $('#regionButton strong').textContent = button.dataset.region; $('#regionButton .flag').textContent = button.querySelector('span').textContent; $('#serverName').textContent = regionServer[button.dataset.region]; }));
 document.querySelectorAll('.pace').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.pace').forEach((item) => item.classList.remove('selected')); button.classList.add('selected'); selectedCareerMode = button.dataset.mode === 'power' ? 'POWER_FANTASY' : 'HARDCORE'; }));
-async function retireCareer() {
+async function renderCareerArchive(player) {
   await loadTournamentAssets();
   const content = await loadCareerContent();
-  const current = await window.COPEEngine.getProfile();
-  if (current.isRetired) return;
-  const player = await window.COPEEngine.retire('玩家主动退役');
   const summary = await window.COPEEngine.generateRetirementSummary();
   $('#tournamentGrid').hidden = true;
   $('#matchFlow').hidden = true;
@@ -586,18 +604,36 @@ async function retireCareer() {
   $('#retireBtn').textContent = '已退役';
   $('#eventPeriod').textContent = 'CAREER ARCHIVE';
 }
+async function retireCareer() {
+  const current = await window.COPEEngine.getProfile();
+  const player = current.isRetired ? current : await window.COPEEngine.retire('玩家主动退役');
+  await renderCareerArchive(player);
+}
+const continueOffseason = async () => {
+  const offseasonEvent = await window.COPEEngine.findCareerEvent('OFFSEASON');
+  if (offseasonEvent) {
+    await renderEvent(offseasonEvent);
+    return;
+  }
+  await window.COPEEngine.advancePeriod('OFFSEASON', nextRoll());
+  const profile = await window.COPEEngine.getProfile();
+  if (profile.isRetired) {
+    await renderCareerArchive(profile);
+    return;
+  }
+  await renderProfile(profile);
+  await refreshVrsStatus();
+  await renderTournamentCalendar(profile);
+  await renderCurrentPeriod();
+};
+
 async function renderSeasonReport() {
   const report = await window.COPEEngine.finishSeason();
   if (!report) { renderNoEvent('当前赛季尚未完成。'); return; }
   $('#tournamentGrid').hidden = true;
-  const top20 = report.top20Ranking?.entries || [];
+  const top20 = (report.top20Ranking?.entries || []).slice(0, 20);
   const playerRank = report.top20Ranking?.careerPlayerRank;
-  const fullTop20Markup = top20.map((entry) => {
-    const honors = entry.evidence.tournaments.flatMap((event) => event.honors.filter((honor) => honor.type === 'MVP').map((honor) => `MVP · ${honor.eventName}`));
-    const titles = entry.evidence.tournaments.filter((event) => event.title).map((event) => `冠军 · ${event.eventName}`);
-    const details = [...honors, ...titles].length ? `<small>${[...honors, ...titles].map((item) => escapeHtml(item)).join(' · ')}</small>` : '<small>本年度无高级荣誉</small>';
-    return `<div class="top20-entry"><b>#${entry.rank}</b><span>${escapeHtml(entry.identity.nickname)}<small>${escapeHtml(entry.identity.countryCode)} · ${escapeHtml(entry.identity.teamName)}</small>${details}</span><strong>Rating ${entry.metrics.annualRating.toFixed(2)}<small>${entry.metrics.t1MajorMaps} 高级地图</small></strong></div>`;
-  }).join('');
+  const fullTop20Markup = top20.map((entry) => `<div class="top20-entry"><b>#${entry.rank}</b><span>${escapeHtml(entry.identity.nickname)}<small>${escapeHtml(entry.identity.countryCode)} · ${escapeHtml(entry.identity.teamName)}</small></span><strong>Rating ${entry.metrics.annualRating.toFixed(2)}<small>${entry.metrics.t1MajorMaps} 高级地图</small></strong></div>`).join('');
   const top20Markup = report.top20Published ? `<div class="top20-summary"><strong>${playerRank ? `你的年度排名 #${playerRank}` : '本年度未进入 TOP20'}</strong><span>${playerRank ? '这一年已经写进你的生涯档案。更高排名仍等待下一赛季。' : '你没有入选，但这一年的榜单与荣誉仍然值得查看。'}</span></div><div class="top20-podium">${top20.slice(0, 3).map((entry) => `<article><b>#${entry.rank}</b><strong>${escapeHtml(entry.identity.nickname)}</strong><span>${escapeHtml(entry.identity.teamName)} · ${entry.metrics.annualRating.toFixed(2)}</span></article>`).join('')}</div><button class="continue-schedule" id="openTop20Btn">查看完整年度 TOP20</button>` : '';
   $('#eventContent').innerHTML = `<div class="event-card report-card"><p class="eyebrow">${report.top20Published ? 'YEAR-END TOP20' : 'HALF SEASON REPORT'}</p><h2>${report.top20Published ? `${report.season} · 年度名单公示` : `${report.season} · 上半年`}</h2><p class="event-copy">${report.top20Published ? '年度赛事档案已封存，TOP20 名单现已公开。' : '本阶段赛事档案已结算，下一阶段赛历即将生成。'}</p>${top20Markup}<div class="result-grid"><div><span>奖金</span><b>${formatUsd(report.totalPrizeMoney)}</b></div><div><span>工资收入</span><b>${formatUsd(report.salaryIncome ?? Math.max(0, -(report.salaryExpense ?? 0)))}</b></div><div><span>地图</span><b>${report.mapsPlayed}</b></div><div><span>击杀</span><b>${formatCompactNumber(report.kills)}</b></div></div><button class="continue-schedule" id="continueYearBtn">${report.top20Published ? '开始下一年度' : '进入下半年'}</button></div>`;
   if (report.top20Published) {
@@ -606,36 +642,23 @@ async function renderSeasonReport() {
     $('#openTop20Btn')?.addEventListener('click', () => top20Dialog.showModal());
   }
   $('#continueYearBtn').addEventListener('click', async () => {
-    const transferEvent = await window.COPEEngine.findCareerEvent('TRANSFER_WINDOW');
-    if (transferEvent) { await renderEvent(transferEvent); return; }
+    const teams = await loadTeamDirectory().catch(() => new Map());
     const offers = await window.COPEEngine.listTransferTargets();
     const marketPayload = await loadMarketContent();
     const marketCopy = marketPayload?.market;
-    const availabilityOrder = ['RECOMMENDED', 'PERSUADABLE', 'UNREACHABLE'];
-    const groups = availabilityOrder.map((availability) => ({ availability, rows: offers.filter((offer) => offer.availability === availability) }));
     if (offers.length && marketCopy) {
       $('#eventPeriod').textContent = marketCopy.period;
       const offerMarkup = (offer) => {
-        const contract = offer.contract || {};
         const canSelect = offer.eligible && offer.availability !== 'UNREACHABLE';
-        const requirements = (offer.unmetRequirements || []).map((item) => formatMarketRequirement(item, marketCopy)).filter(Boolean);
-        const risks = (offer.risks || []).map((item) => formatMarketRisk(item, marketCopy)).filter(Boolean);
-        const reasons = (offer.reasons || []).slice(0, 2);
-        return `<button class="market-offer-card transfer-target availability-${escapeHtml(offer.availability)}" data-team-id="${escapeHtml(offer.teamId)}" ${canSelect ? '' : 'disabled'}><span class="market-offer-head"><strong>${escapeHtml(offer.teamName)}</strong><em>${escapeHtml(marketCopy.availability[offer.availability])}</em></span><span class="market-score-row"><b>${escapeHtml(marketCopy.labels.tier)} · ${escapeHtml(marketCopy.tiers[offer.tier])}</b><b>${escapeHtml(marketCopy.labels.fitScore)} · ${offer.fitScore}/100</b><b>${escapeHtml(marketCopy.labels.interestScore)} · ${offer.interestScore}/100</b></span><span class="market-contract"><span><small>${escapeHtml(marketCopy.labels.contractLength)}</small>${contract.lengthMonths} ${escapeHtml(marketCopy.units.months)}</span><span><small>${escapeHtml(marketCopy.labels.salaryPerMonth)}</small>${formatUsd(contract.salaryPerMonth)}</span><span><small>${escapeHtml(marketCopy.labels.role)}</small>${escapeHtml(marketCopy.roles[contract.role] || '')}</span><span><small>${escapeHtml(marketCopy.labels.expectedPlaytime)}</small>${contract.expectedPlaytimePercentage}%</span></span>${reasons.length ? `<span class="market-detail"><small>${escapeHtml(marketCopy.labels.reasons)}</small>${reasons.map((item) => `<i>${escapeHtml(item)}</i>`).join('')}</span>` : ''}${requirements.length ? `<span class="market-detail market-requirements"><small>${escapeHtml(marketCopy.labels.requirements)}</small>${requirements.map((item) => `<i>${escapeHtml(item)}</i>`).join('')}</span>` : ''}${risks.length ? `<span class="market-detail market-risks"><small>${escapeHtml(marketCopy.labels.risks)}</small>${risks.map((item) => `<i>${escapeHtml(item)}</i>`).join('')}</span>` : ''}${canSelect ? `<span class="market-eligible">${escapeHtml(marketCopy.labels.eligible)}</span>` : ''}</button>`;
+        const team = teams.get(offer.teamId);
+        return `<button class="market-offer-card transfer-target" data-team-id="${escapeHtml(offer.teamId)}" ${canSelect ? '' : 'disabled'}><span class="market-team-logo"><img src="${escapeHtml(teamAssetPath(team))}" alt="${escapeHtml(offer.teamName)} 队标"></span><strong>${escapeHtml(offer.teamName)}</strong></button>`;
       };
-      $('#eventContent').innerHTML = `<article class="single-flow-card event-card market-board"><p class="eyebrow">${escapeHtml(marketCopy.eyebrow)}</p><h2>${escapeHtml(marketCopy.title)}</h2><div class="market-groups">${groups.map((group) => `<section class="market-group availability-${group.availability}"><header><h3>${escapeHtml(marketCopy.availability[group.availability])}</h3><p>${escapeHtml(marketCopy.availabilityHints[group.availability])}</p></header><div class="market-offers">${group.rows.map(offerMarkup).join('') || `<p class="event-empty">${escapeHtml(marketCopy.emptyLabel)}</p>`}</div></section>`).join('')}</div><button class="continue-schedule" id="skipTransferBtn">${escapeHtml(marketCopy.skipLabel)}</button></article>`;
+      $('#eventContent').innerHTML = `<article class="single-flow-card event-card market-board"><p class="eyebrow">${escapeHtml(marketCopy.eyebrow)}</p><h2>${escapeHtml(marketCopy.title)}</h2><div class="market-offers">${offers.map(offerMarkup).join('')}</div><button class="continue-schedule" id="skipTransferBtn">${escapeHtml(marketCopy.skipLabel)}</button></article>`;
       document.querySelectorAll('.transfer-target:not(:disabled)').forEach((button) => button.addEventListener('click', async () => { await window.COPEEngine.selectTransferTarget(button.dataset.teamId); const event = await window.COPEEngine.findCareerEvent('TRANSFER_WINDOW'); if (event) await renderEvent(event); else renderNoEvent('报价确认事件不可用。'); }, { once: true }));
-      $('#skipTransferBtn').addEventListener('click', async () => { await window.COPEEngine.advancePeriod('OFFSEASON', nextRoll()); await renderCurrentPeriod(); }, { once: true });
+      $('#skipTransferBtn').addEventListener('click', continueOffseason, { once: true });
       return;
     }
-    const offseasonEvent = await window.COPEEngine.findCareerEvent('OFFSEASON');
-    if (offseasonEvent) { await renderEvent(offseasonEvent); return; }
-    await window.COPEEngine.advancePeriod('OFFSEASON', nextRoll());
-    const profile = await window.COPEEngine.getProfile();
-    await renderProfile(profile);
-    await refreshVrsStatus();
-    await renderTournamentCalendar(profile);
-    await renderCurrentPeriod();
+    await continueOffseason();
   });
 }
 document.querySelectorAll('.season-tab').forEach((button) => button.remove());
