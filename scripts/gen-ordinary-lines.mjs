@@ -26,14 +26,18 @@ const SLUGS = {
 };
 
 const events = [];
+// 事件按剧情阶段设置年龄窗口：16 岁开局只看到事件 1，随赛季推进逐年解锁后续剧情。
+const AGE_WINDOWS = [null, 17, 18, 19, 20, 21, 22, 24];
 const chain = (worldlineId, title, description, options, autoEffects = []) => {
   const siblings = events.filter((event) => event.worldlineId === worldlineId);
   const index = siblings.length;
   const id = `${worldlineId}-${SLUGS[worldlineId]?.[index] ?? `ev${index + 1}`}`;
   const conditions = [];
+  const ageMinimum = AGE_WINDOWS[index];
+  if (ageMinimum) conditions.push({ type: 'AGE', minimum: ageMinimum });
   const gate = GATES[worldlineId]?.[index - 1];
   if (gate && gate.length) conditions.push({ type: 'ANY', conditions: gate });
-  // 无链式顺序：剧情推进只看属性/FLAG/赛事状态（ANY 门控）。
+  // 无链式顺序：剧情推进只看属性/FLAG/赛事/年龄（ANY + AGE 门控）。
   // priority 按剧情 index 递减，保证同时达标时先解锁的剧情优先出现。
   return { id, worldlineId, title, description, period: 'NORMAL', type: 'CHOICE', priority: 100 - index, options, autoEffects, conditions };
 };
@@ -46,7 +50,7 @@ const flagCond = (flagId) => ({ type: 'FLAG', flagId, expected: true });
 const worldline = (worldlineId) => ({ type: 'WORLDLINE_CHANGE', worldlineId });
 const GATES = {
   'late-bloomer': [
-    [metricCond('FORM', 45), attrCond('GAME_SENSE', 58)],
+    [{ type: 'ALL', conditions: [{ type: 'AGE', minimum: 26 }, metricCond('FORM', 45)] }, { type: 'ALL', conditions: [{ type: 'AGE', minimum: 26 }, attrCond('GAME_SENSE', 58)] }],
     [attrCond('GAME_SENSE', 62), metricCond('TEAM_STATUS', 25)],
     [attrCond('GAME_SENSE', 66), metricCond('FORM', 52)],
     [attrCond('GAME_SENSE', 70), metricCond('FAME', 40)],
@@ -98,7 +102,7 @@ const GATES = {
 // —— late-bloomer 十载饮冰的老将 ——
 const lateBloomer = 'late-bloomer';
 events.push({
-  ...chain(lateBloomer, '不被看好的人', '你的天赋算不上顶级，出道第一年就被贴上"没有上限"的标签，没人觉得你能打出来。',
+  ...chain(lateBloomer, '不被看好的人', '职业首秀前，外界认为你的天赋上限有限。这是你第一次有机会用正式比赛改变评价。',
     [
       opt('persist', '继续坚持', '相信时间会给出答案。', 0.7,
         [stat('MORALE', 4), metric('FAME', 2)],

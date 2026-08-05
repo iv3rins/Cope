@@ -2,7 +2,7 @@
   "id": "late-bloomer-start",
   "worldlineId": "late-bloomer",
   "title": "不被看好的人",
-  "description": "你的天赋算不上顶级，出道第一年就被贴上\"没有上限\"的标签，没人觉得你能打出来。",
+  "description": "职业首秀前，外界认为你的天赋上限有限。这是你第一次有机会用正式比赛改变评价。",
   "period": "NORMAL",
   "type": "CHOICE",
   "priority": 100,

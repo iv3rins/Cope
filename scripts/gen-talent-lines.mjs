@@ -86,14 +86,18 @@ const GATES = {
 };
 
 const events = [];
+// 事件按剧情阶段设置年龄窗口：16 岁开局只看到事件 1，随赛季推进逐年解锁后续剧情。
+const AGE_WINDOWS = [null, 17, 18, 19, 20, 21, 22, 24];
 const chain = (worldlineId, title, description, options, autoEffects = []) => {
   const siblings = events.filter((event) => event.worldlineId === worldlineId);
   const index = siblings.length;
   const id = `${worldlineId}-${SLUGS[worldlineId]?.[index] ?? `ev${index + 1}`}`;
   const conditions = [];
+  const ageMinimum = AGE_WINDOWS[index];
+  if (ageMinimum) conditions.push({ type: 'AGE', minimum: ageMinimum });
   const gate = GATES[worldlineId]?.[index - 1];
   if (gate && gate.length) conditions.push({ type: 'ANY', conditions: gate });
-  // 无链式顺序：剧情推进只看属性/FLAG/赛事状态（ANY 门控）。
+  // 无链式顺序：剧情推进只看属性/FLAG/赛事/年龄（ANY + AGE 门控）。
   // priority 按剧情 index 递减，保证同时达标时先解锁的剧情优先出现。
   return { id, worldlineId, title, description, period: 'NORMAL', type: 'CHOICE', priority: 100 - index, options, autoEffects, conditions };
 };

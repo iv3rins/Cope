@@ -82,8 +82,8 @@ export const DEFAULT_BALANCE_CONFIG: BalanceConfig = {
   prodigy: { partialProbability: 0.001, almostAllProbability: 0.0005, partialAttributeCount: 2, almostAllAttributes: ['aim', 'gameSense', 'leadership', 'clutch', 'consistency'] },
   talent: {
     geniusProbability: 0.5,
-    genius: { attributes: DEFAULT_GENIUS_ATTRIBUTES, storylines: [{ id: 'prodigy', weight: 1 }, { id: 'comeback', weight: 1 }] },
-    ordinary: { attributes: DEFAULT_ORDINARY_ATTRIBUTES, storylines: [{ id: 'grinder', weight: 1 }, { id: 'journeyman', weight: 1 }, { id: 'matchfixing', weight: 1 }, { id: 'rookie', weight: 1 }] },
+    genius: { attributes: DEFAULT_GENIUS_ATTRIBUTES, storylines: [{ id: 'lone-hero', weight: 1 }, { id: 'young-guns', weight: 1 }, { id: 'silent-ace', weight: 1 }, { id: 'version-victim', weight: 1 }, { id: 'system-core', weight: 1 }, { id: 'rule-breaker', weight: 1 }] },
+    ordinary: { attributes: DEFAULT_ORDINARY_ATTRIBUTES, storylines: [{ id: 'late-bloomer', weight: 1 }, { id: 'team-battery', weight: 1 }, { id: 'cyber-cafe-hero', weight: 1 }, { id: 'region-guardian', weight: 1 }, { id: 'grind-machine', weight: 1 }] },
     maxedStartTier: ['T2', 'T1'],
     maxedStartContracts: {
       T1: { salaryPerMonth: 18000, buyoutAmount: 90000, lengthMonths: 6, role: 'SUBSTITUTE', expectedPlaytimePercentage: 35 },

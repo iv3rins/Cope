@@ -126,3 +126,19 @@ test('所有含 WORLDLINE_CHANGE 的选项其转换目标均为合法 worldline 
     }
   }
 });
+
+test('年龄窗口：16 岁即使属性全达标也看不到后续剧情，随年龄增长解锁', async () => {
+  const reader = new FileSystemStoryEventPackReader(join(root, 'assets/story/events'), readFile, readdir, join(root, 'assets/story/worldlines'));
+  const repository = new StoryRepositoryImpl(reader);
+  const engine = new StoryEngineImpl(repository, new ConditionEvaluatorImpl(), { successChancePolicy: { adjust: ({ baseChance }) => baseChance } });
+  const highAttributes = { ...sampleProfile().attributes, clutch: 80, aim: 80 };
+  const at16 = sampleProfile({ age: 16, attributes: highAttributes });
+  const at16Events = await engine.findAvailableEvents({ profile: at16, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!at16Events.some((event) => event.id === 'lone-hero-anger'), '16 岁不应看到 AGE>=17 的后续剧情');
+  const at18 = sampleProfile({ age: 18, attributes: highAttributes });
+  const at18Events = await engine.findAvailableEvents({ profile: at18, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(at18Events.some((event) => event.id === 'lone-hero-anger'), '18 岁且属性达标后剧情解锁');
+  const at24 = sampleProfile({ age: 24, attributes: highAttributes });
+  const at24Events = await engine.findAvailableEvents({ profile: at24, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(at24Events.some((event) => event.id === 'lone-hero-finale'), '24 岁后终局剧情解锁');
+});

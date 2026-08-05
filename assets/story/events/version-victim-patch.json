@@ -110,6 +110,10 @@
   ],
   "conditions": [
     {
+      "type": "AGE",
+      "minimum": 17
+    },
+    {
       "type": "ANY",
       "conditions": [
         {

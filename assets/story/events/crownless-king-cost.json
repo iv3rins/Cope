@@ -94,6 +94,10 @@
   "autoEffects": [],
   "conditions": [
     {
+      "type": "AGE",
+      "minimum": 21
+    },
+    {
       "type": "ANY",
       "conditions": [
         {
