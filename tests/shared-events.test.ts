@@ -103,3 +103,38 @@ test('FLAG 支线：health 起点事件种下 health-warning，体检事件按�
   const energeticEvents = await engine.findAvailableEvents({ profile: energetic, period: 'NORMAL', randomRoll: 0.5 });
   assert.ok(!energeticEvents.some((event) => event.id === 'health-checkup'), '精力充足时不应触发体检');
 });
+
+test('FLAG 支线：家人线起点无门槛，中期节点按 FAME 解锁', async () => {
+  const engine = await buildEngine();
+  const rookie = sampleProfile({ age: 16 });
+  const rookieEvents = await engine.findAvailableEvents({ profile: rookie, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(rookieEvents.some((event) => event.id === 'family-phone'), '16 岁新秀应看到家里电话（起点无门槛）');
+  const withFamily = sampleProfile({ age: 20, flags: [{ id: 'family', name: '家人', category: 'LIFE' }], narrativeMetrics: { FAME: 30, TEAM_STATUS: 50, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 10, FAN_REPUTATION: 10 } });
+  const mid = await engine.findAvailableEvents({ profile: withFamily, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(mid.some((event) => event.id === 'family-watch'), '有 family FLAG 且 FAME>=25 应看到妈妈的消息');
+  const lowFame = sampleProfile({ age: 20, flags: [{ id: 'family', name: '家人', category: 'LIFE' }] });
+  const lowFameEvents = await engine.findAvailableEvents({ profile: lowFame, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!lowFameEvents.some((event) => event.id === 'family-watch'), 'FAME 不足时中期节点不可见');
+});
+
+test('FLAG 支线：老板线起点用 ANY 双通道门控', async () => {
+  const engine = await buildEngine();
+  const byFame = sampleProfile({ narrativeMetrics: { FAME: 28, TEAM_STATUS: 20, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 10, FAN_REPUTATION: 10 } });
+  const fameEvents = await engine.findAvailableEvents({ profile: byFame, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(fameEvents.some((event) => event.id === 'owner-talk'), 'FAME>=25 通道应解锁老板谈话');
+  const byStatus = sampleProfile({ narrativeMetrics: { FAME: 15, TEAM_STATUS: 35, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 10, FAN_REPUTATION: 10 } });
+  const statusEvents = await engine.findAvailableEvents({ profile: byStatus, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(statusEvents.some((event) => event.id === 'owner-talk'), 'TEAM_STATUS>=30 通道应解锁老板谈话');
+  const neither = sampleProfile({ narrativeMetrics: { FAME: 15, TEAM_STATUS: 20, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 10, FAN_REPUTATION: 10 } });
+  const neitherEvents = await engine.findAvailableEvents({ profile: neither, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!neitherEvents.some((event) => event.id === 'owner-talk'), '两个通道都不满足时不可见');
+});
+
+test('FLAG 支线：mentor-legacy 收束事件需决赛周期 + 高龄', async () => {
+  const engine = await buildEngine();
+  const ready = sampleProfile({ age: 25, flags: [{ id: 'mentor-legacy', name: '引路人的嘱托', category: 'CAREER' }] });
+  const finale = await engine.findAvailableEvents({ profile: ready, period: 'FINAL_DECISIVE_MOMENT', randomRoll: 0.5 });
+  assert.ok(finale.some((event) => event.id === 'mentor-trophy'), '决赛周期应看到举杯向天');
+  const normal = await engine.findAvailableEvents({ profile: ready, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!normal.some((event) => event.id === 'mentor-trophy'), 'NORMAL 周期不应出现');
+});

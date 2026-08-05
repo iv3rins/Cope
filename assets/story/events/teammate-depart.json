@@ -1,0 +1,64 @@
+{
+  "id": "teammate-depart",
+  "worldlineId": "shared",
+  "title": "他走了",
+  "description": "和你并肩打了两年、睡你隔壁床的队友，转会去了更强的队伍。他的柜子空了。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "see-him-off",
+      "label": "送送他",
+      "description": "请他在机场吃了顿好的，祝他前程似锦。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.85, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "teammate", "flag": { "id": "teammate", "name": "老队友", "category": "SOCIAL", "metadata": { "source": "teammate-depart" } } },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -3 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "FLAG_ADD", "flagId": "teammate", "flag": { "id": "teammate", "name": "老队友", "category": "SOCIAL", "metadata": { "source": "teammate-depart" } } },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -6 }
+        ],
+        "successMessages": [
+          "他说：\"打决赛遇到，别让着我。\"你点点头。"
+        ],
+        "failureMessages": [
+          "送完他回来，你发现自己的位置离空柜子最近。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "act-normal",
+      "label": "照常训练",
+      "description": "人来人往，习惯了。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "teammate", "flag": { "id": "teammate", "name": "老队友", "category": "SOCIAL", "metadata": { "source": "teammate-depart" } } },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": 2 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": -3 }
+        ],
+        "successMessages": [
+          "你照常训练，新来的替补问你他是什么样的人。"
+        ],
+        "failureMessages": [
+          "训练赛里你下意识喊他的名字，没人应。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

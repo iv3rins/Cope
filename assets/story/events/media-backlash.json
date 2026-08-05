@@ -1,0 +1,66 @@
+{
+  "id": "media-backlash",
+  "worldlineId": "shared",
+  "title": "被剪辑的话",
+  "description": "一段三个月前的采访被翻出来，剪掉了前因后果，只留你那句狠话。标题写着：\"职业选手疑似嘲讽对手。\"评论区开火了。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "media", "expected": true },
+    { "type": "NARRATIVE_METRIC", "metric": "FAME", "minimum": 35 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "respond",
+      "label": "发长文解释",
+      "description": "把完整采访放出来，讲清楚来龙去脉。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": -5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 8 }
+        ],
+        "successMessages": [
+          "完整采访放出来后，风向转了一半。"
+        ],
+        "failureMessages": [
+          "解释被当成狡辩，评论区的火越烧越旺。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-silent",
+      "label": "不回应",
+      "description": "让他们说，比赛会替我说话。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": -3 }
+        ],
+        "successMessages": [
+          "你没说话，下一场比赛用数据回应了一切。"
+        ],
+        "failureMessages": [
+          "沉默在热搜上挂了一周。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

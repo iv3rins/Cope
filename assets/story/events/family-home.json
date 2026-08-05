@@ -1,0 +1,64 @@
+{
+  "id": "family-home",
+  "worldlineId": "shared",
+  "title": "回家",
+  "description": "休赛期你回了趟家。爸爸的电脑桌面上，是你去年那场关键比赛的截图——桌面图标都挤到了角落。",
+  "period": "OFFSEASON",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "family", "expected": true },
+    { "type": "AGE", "minimum": 22 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "stay-longer",
+      "label": "多待几天",
+      "description": "机票改签，陪他们吃几顿饭。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.85, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 8 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": -300 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 }
+        ],
+        "successMessages": [
+          "那几天妈妈顿顿做你爱吃的菜，爸爸终于开口问你比赛的事了。"
+        ],
+        "failureMessages": [
+          "你在家待了几天，父母的唠叨又开始了，但你居然有点想听。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "leave-early",
+      "label": "提前归队",
+      "description": "新赛季重要，家可以下次再回。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -4 }
+        ],
+        "successMessages": [
+          "你提前归队，训练状态满格。"
+        ],
+        "failureMessages": [
+          "飞机起飞时，你想起妈妈没说完的话。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

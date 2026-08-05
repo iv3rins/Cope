@@ -1,0 +1,72 @@
+{
+  "id": "owner-talk",
+  "worldlineId": "shared",
+  "title": "老板的谈话",
+  "description": "训练结束，老板把你叫进办公室，桌上摆着两份合同复印件：\"你是建队核心，俱乐部打算围着你重建。\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        { "type": "NARRATIVE_METRIC", "metric": "FAME", "minimum": 25 },
+        { "type": "NARRATIVE_METRIC", "metric": "TEAM_STATUS", "minimum": 30 }
+      ]
+    }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "commit",
+      "label": "表忠心",
+      "description": "\"只要俱乐部需要，我就留下。\"",
+      "requirements": [],
+      "successChance": { "baseChance": 0.85, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "owner", "flag": { "id": "owner", "name": "老板的信任", "category": "CLUB", "metadata": { "source": "owner-talk" } } },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 6 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 2 }
+        ],
+        "successMessages": [
+          "老板点点头：\"那就这么定。\""
+        ],
+        "failureMessages": [
+          "老板笑了笑，没接话，但你看得出他记住了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "bargain",
+      "label": "趁机谈条件",
+      "description": "\"当核心可以，薪水得配得上核心。\"",
+      "requirements": [],
+      "successChance": { "baseChance": 0.55, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "owner", "flag": { "id": "owner", "name": "老板的信任", "category": "CLUB", "metadata": { "source": "owner-talk" } } },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 600 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -7 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "successMessages": [
+          "老板加了薪，但从那天起，他看你的眼神多了点东西。"
+        ],
+        "failureMessages": [
+          "老板没接话，谈话到此为止。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

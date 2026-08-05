@@ -1,0 +1,66 @@
+{
+  "id": "owner-crisis",
+  "worldlineId": "shared",
+  "title": "会议室",
+  "description": "五连败后的周一，全队被叫进会议室。老板坐在长桌尽头，目光一个个扫过，最后停在你身上。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "owner", "expected": true },
+    { "type": "NARRATIVE_METRIC", "metric": "TEAM_STATUS", "maximum": 30 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "stand-up",
+      "label": "站出来担责",
+      "description": "作为核心，这锅你背。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 5 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 4 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 1 }
+        ],
+        "successMessages": [
+          "你站起来把问题一条条讲清楚。老板听完说：\"重建的事，从今天开始。\""
+        ],
+        "failureMessages": [
+          "你站起来，但没想好说什么，又坐下了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-quiet",
+      "label": "沉默",
+      "description": "这时候说话，只会变成靶子。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.55, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 3 }
+        ],
+        "successMessages": [
+          "你没说话，老板也没点名你。"
+        ],
+        "failureMessages": [
+          "散会后，老板的助手在你门口站了一会儿。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": "family-phone",
+  "worldlineId": "shared",
+  "title": "家里的电话",
+  "description": "晚上十点，妈妈的视频电话打过来，背景是家里的客厅。\"打游戏能当饭吃吗？\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "explain",
+      "label": "认真解释",
+      "description": "告诉他们这是职业，不是玩。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "family", "flag": { "id": "family", "name": "家人", "category": "LIFE", "metadata": { "source": "family-phone" } } },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -2 }
+        ],
+        "failureEffects": [
+          { "type": "FLAG_ADD", "flagId": "family", "flag": { "id": "family", "name": "家人", "category": "LIFE", "metadata": { "source": "family-phone" } } },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "successMessages": [
+          "妈妈沉默了很久：\"那你好好打，别饿着。\""
+        ],
+        "failureMessages": [
+          "话说到一半，爸爸在背景里说：\"由他去吧。\""
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "brush-off",
+      "label": "报喜不报忧",
+      "description": "\"挺好的，赚得还行，别担心。\"",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "family", "flag": { "id": "family", "name": "家人", "category": "LIFE", "metadata": { "source": "family-phone" } } },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 2 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -3 }
+        ],
+        "successMessages": [
+          "挂了电话，你才发现自己确实没吃晚饭。"
+        ],
+        "failureMessages": [
+          "你说得越轻松，电话那头越安静。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

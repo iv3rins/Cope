@@ -1,0 +1,66 @@
+{
+  "id": "teammate-reunion",
+  "worldlineId": "shared",
+  "title": "对面的人",
+  "description": "决赛入场通道，你看到了他——那个睡你隔壁床两年的老队友，如今站在对面队伍的最前面。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "teammate", "expected": true },
+    { "type": "AGE", "minimum": 20 },
+    { "type": "NARRATIVE_METRIC", "metric": "FAME", "minimum": 30 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "play-hard",
+      "label": "认真打，别让着他",
+      "description": "这是他当年要的尊重。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.62, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ],
+        "successMessages": [
+          "你赢了他。赛后他笑着说：\"你果然没让我。\""
+        ],
+        "failureMessages": [
+          "他赢了，走过来拍了拍你的肩膀：\"下次赢回来。\""
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "banter",
+      "label": "赛前跟他聊两句",
+      "description": "叙叙旧，让这场比赛少点火药味。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -3 }
+        ],
+        "successMessages": [
+          "他问：\"还住宿舍吗？\"你答：\"换了单间。\"两个人都笑了。"
+        ],
+        "failureMessages": [
+          "聊了几句，你上场时注意力有点散。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

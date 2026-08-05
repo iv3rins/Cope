@@ -1,0 +1,64 @@
+{
+  "id": "mentor-trophy",
+  "worldlineId": "shared",
+  "title": "举杯向天",
+  "description": "夺冠的瞬间，队友们抱成一团。你抱起奖杯，抬头看向场馆穹顶——他看不到了，但你答应过，要打给他们看。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "mentor-legacy", "expected": true },
+    { "type": "AGE", "minimum": 24 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "lift-to-sky",
+      "label": "把奖杯举向天空",
+      "description": "这一下，是举给他看的。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.85, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 7 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 5 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 2 }
+        ],
+        "successMessages": [
+          "直播镜头给了奖杯一个特写，解说念了句：\"他在感谢什么人。\""
+        ],
+        "failureMessages": [
+          "你举了很久，直到队友喊你回去合影。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "hold-tight",
+      "label": "紧紧抱住奖杯",
+      "description": "十年才够到的东西，先抱一会儿。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.8, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 6 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 1 }
+        ],
+        "successMessages": [
+          "你抱着奖杯睡了一觉，第二天脖子上还挂着奖牌。"
+        ],
+        "failureMessages": [
+          "你抱着奖杯看了很久，直到保安来清场。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}
