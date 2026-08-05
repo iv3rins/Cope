@@ -1,0 +1,65 @@
+{
+  "id": "lone-hero-to-crownless-king",
+  "worldlineId": "crownless-king",
+  "title": "把队标纹进心里",
+  "description": "你拒绝了所有报价，选择留守。那天晚上，你看着镜子里的自己——那个一直一个人扛着队伍的孤胆英雄，终于认了命：有些奖杯，也许这辈子都够不到。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 95,
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "lone-hero-fork" }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "accept-fate",
+      "label": "接受这个剧本",
+      "description": "既然选择留下，就把每一场都打到最好。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 6 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 },
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 1 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -4 }
+        ],
+        "successMessages": [
+          "你接受了。从此你的每个残局，都多了一分悲壮的底色。"
+        ],
+        "failureMessages": [
+          "你说服了自己，但深夜还是会梦见那座奖杯。"
+        ],
+        "successNextEventId": "crownless-king-dominance",
+        "failureNextEventId": "crownless-king-dominance"
+      }
+    },
+    {
+      "id": "quiet-anger",
+      "label": "把不甘咽下去",
+      "description": "不认命，但也不闹——用表现打他们的脸。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CONSISTENCY", "delta": 1 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 5 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 8 }
+        ],
+        "successMessages": [
+          "你把不甘变成了训练量，比谁都早到，比谁都晚走。"
+        ],
+        "failureMessages": [
+          "不甘心烧了一整晚，第二天你顶着黑眼圈上场。"
+        ],
+        "successNextEventId": "crownless-king-dominance",
+        "failureNextEventId": "crownless-king-dominance"
+      }
+    }
+  ]
+}

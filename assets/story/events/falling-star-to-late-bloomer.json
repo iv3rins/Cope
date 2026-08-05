@@ -1,0 +1,66 @@
+{
+  "id": "falling-star-to-late-bloomer",
+  "worldlineId": "late-bloomer",
+  "title": "撕掉那份合同",
+  "description": "豪门开出的续约合同摆在桌上，数字很体面——条件是让你'接受现在的角色'，当个轮换。你盯着那份合同看了很久，然后把它推了回去。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 95,
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "falling-star-return" }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "walk-away",
+      "label": "去小队伍重新开始",
+      "description": "宁可降薪，也不当谁的影子。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.65, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 6 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": -600 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": -3 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -4 }
+        ],
+        "successMessages": [
+          "你收拾行李去了那支连训练室都是租来的队伍。所有人都说你疯了。"
+        ],
+        "failureMessages": [
+          "小队伍的第一场训练赛，你被一个 16 岁的小孩对位打爆。"
+        ],
+        "successNextEventId": "late-bloomer-start",
+        "failureNextEventId": "late-bloomer-start"
+      }
+    },
+    {
+      "id": "sign-and-wait",
+      "label": "先签了，等机会",
+      "description": "体面地留下来，等他们想起你。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 400 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -6 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": -3 }
+        ],
+        "successMessages": [
+          "你签了。但替补席的凳子，你坐了整整半个赛季。"
+        ],
+        "failureMessages": [
+          "你签了合同，却发现轮换名单里连你的名字都排不上。"
+        ],
+        "successNextEventId": "late-bloomer-start",
+        "failureNextEventId": "late-bloomer-start"
+      }
+    }
+  ]
+}

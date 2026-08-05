@@ -103,8 +103,8 @@
         "failureMessages": [
           "指挥的担子比想象中重。"
         ],
-        "successNextEventId": "tactical-captain-decline",
-        "failureNextEventId": "tactical-captain-decline"
+        "successNextEventId": "version-victim-to-tactical-captain",
+        "failureNextEventId": "version-victim-to-tactical-captain"
       }
     }
   ],

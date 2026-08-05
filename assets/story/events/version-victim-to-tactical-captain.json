@@ -1,0 +1,66 @@
+{
+  "id": "version-victim-to-tactical-captain",
+  "worldlineId": "tactical-captain",
+  "title": "摘下耳机",
+  "description": "新版本上线，你的狙击枪彻底沦为玩具。训练赛结束，你摘下耳机，看着屏幕上那个变形的数据，第一次认真想：也许该换个活法了。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 95,
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "version-victim-answer" }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "take-over",
+      "label": "接过指挥棒",
+      "description": "枪会生锈，但脑子不会。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.68, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "LEADERSHIP", "delta": 1 },
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 2 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -5 }
+        ],
+        "successMessages": [
+          "你第一次以指挥的身份走进训练室。没人敢笑你——因为你的脑子真的够用。"
+        ],
+        "failureMessages": [
+          "转型第一周，你在纸上画满了叉，连队友都开始怀疑。"
+        ],
+        "successNextEventId": "tactical-captain-decline",
+        "failureNextEventId": "tactical-captain-decline"
+      }
+    },
+    {
+      "id": "last-shot",
+      "label": "再开一枪",
+      "description": "不信邪，用最后一发子弹对抗版本。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.45, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": -4 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -5 }
+        ],
+        "successMessages": [
+          "你打出了一个漂亮的名场面——但所有人都知道，这是回光返照。"
+        ],
+        "failureMessages": [
+          "那一枪之后，你听到了台下稀稀落落的叹息。"
+        ],
+        "successNextEventId": "tactical-captain-decline",
+        "failureNextEventId": "tactical-captain-decline"
+      }
+    }
+  ]
+}

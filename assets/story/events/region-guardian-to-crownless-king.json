@@ -1,0 +1,66 @@
+{
+  "id": "region-guardian-to-crownless-king",
+  "worldlineId": "crownless-king",
+  "title": "背上包离开",
+  "description": "你守了这支赛区队伍五年，把青训带成了中游强队。可每当大赛，你站在淘汰赛门口，看着那些豪门走进去，你都会想同一个问题：'我这一辈子，就守在这里了吗？'",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 95,
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "region-guardian-stay" }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "chase-trophy",
+      "label": "去追那座奖杯",
+      "description": "赛区可以没有我，但我的生涯不能没有冠军。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 600 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": -4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": -7 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -4 }
+        ],
+        "successMessages": [
+          "你走的那天，赛区的粉丝在基地门口举着横幅：'谢谢守门人。'你背着包，没敢回头。"
+        ],
+        "failureMessages": [
+          "你离开了，但机票上写着的目的地，是你自己都不敢信的那支豪门。"
+        ],
+        "successNextEventId": "crownless-king-dominance",
+        "failureNextEventId": "crownless-king-dominance"
+      }
+    },
+    {
+      "id": "stay-put",
+      "label": "留下来",
+      "description": "守门人的职责，就是把门守到底。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.75, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 6 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 2 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -4 }
+        ],
+        "successMessages": [
+          "你把包放回了宿舍。门还是要守的——但你知道，那个念头一旦冒出来，就再也压不下去了。"
+        ],
+        "failureMessages": [
+          "你留了下来，可每次看直播里的豪门比赛，你都换了台。"
+        ],
+        "successNextEventId": "crownless-king-dominance",
+        "failureNextEventId": "crownless-king-dominance"
+      }
+    }
+  ]
+}

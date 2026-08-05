@@ -138,8 +138,8 @@
         "failureMessages": [
           "留下意味着放弃更大的舞台。"
         ],
-        "successNextEventId": "region-guardian-home",
-        "failureNextEventId": "region-guardian-home"
+        "successNextEventId": "revenge-squad-to-region-guardian",
+        "failureNextEventId": "revenge-squad-to-region-guardian"
       }
     }
   ],

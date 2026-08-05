@@ -1,0 +1,65 @@
+{
+  "id": "rule-breaker-to-tactical-captain",
+  "worldlineId": "tactical-captain",
+  "title": "给疯狂立规矩",
+  "description": "教练把你叫到办公室，不是批评，而是递给你一个本子：\"你的打法我学不会，但我想让整支队伍都学会。你来当这个教的人。\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 95,
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "rule-breaker-conform" }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "systemize",
+      "label": "把疯狂变成体系",
+      "description": "反叛的尽头，是让别人也学会反叛。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.65, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "LEADERSHIP", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": 5 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": -4 }
+        ],
+        "successMessages": [
+          "你把自己那些'不科学'的玩法一条条写进战术本。队伍第一次打出了'疯'但'稳'的战术。"
+        ],
+        "failureMessages": [
+          "你把疯狂体系化之后，队友们学得四不像，反而没了那股劲。"
+        ],
+        "successNextEventId": "tactical-captain-decline",
+        "failureNextEventId": "tactical-captain-decline"
+      }
+    },
+    {
+      "id": "teach-selected",
+      "label": "只教给一个人",
+      "description": "全队都疯是灾难，一个疯子刚刚好。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": -3 }
+        ],
+        "successMessages": [
+          "你挑了个悟性最高的新人，把你那套'歪理'倾囊相授。"
+        ],
+        "failureMessages": [
+          "你看走眼了，那个新人学疯了，把自己练进了医院。"
+        ],
+        "successNextEventId": "tactical-captain-decline",
+        "failureNextEventId": "tactical-captain-decline"
+      }
+    }
+  ]
+}

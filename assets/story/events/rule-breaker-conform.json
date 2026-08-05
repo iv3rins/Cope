@@ -143,8 +143,8 @@
         "failureMessages": [
           "体系化让你浑身不自在。"
         ],
-        "successNextEventId": "tactical-captain-decline",
-        "failureNextEventId": "tactical-captain-decline"
+        "successNextEventId": "rule-breaker-to-tactical-captain",
+        "failureNextEventId": "rule-breaker-to-tactical-captain"
       }
     }
   ],

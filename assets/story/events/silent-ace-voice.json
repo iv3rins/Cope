@@ -148,8 +148,8 @@
         "failureMessages": [
           "沉默让队伍误解了你的决定。"
         ],
-        "successNextEventId": "system-core-precision",
-        "failureNextEventId": "system-core-precision"
+        "successNextEventId": "silent-ace-to-system-core",
+        "failureNextEventId": "silent-ace-to-system-core"
       }
     }
   ],

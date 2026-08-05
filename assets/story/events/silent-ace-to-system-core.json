@@ -1,0 +1,65 @@
+{
+  "id": "silent-ace-to-system-core",
+  "worldlineId": "system-core",
+  "title": "开口的那一刻",
+  "description": "训练结束后，你第一次主动坐到战术板前，开口说了一句让全队愣住的话：\"我那个残局，其实有更好的打法。\"队伍沉默了半秒，然后全都围了过来。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 95,
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "silent-ace-voice" }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "share-all",
+      "label": "把想法全倒出来",
+      "description": "既然开了口，就把这些年憋着的都说了。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "GAME_SENSE", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": 6 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 7 }
+        ],
+        "successMessages": [
+          "你说了两个小时。队友发现，这个沉默的家伙脑子里装着一整套体系。"
+        ],
+        "failureMessages": [
+          "你说了，但嘴跟不上脑子，话到一半卡住了。"
+        ],
+        "successNextEventId": "system-core-precision",
+        "failureNextEventId": "system-core-precision"
+      }
+    },
+    {
+      "id": "one-step",
+      "label": "只说那一个想法",
+      "description": "先迈一步，剩下的以后再说。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.78, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 4 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -2 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 3 }
+        ],
+        "successMessages": [
+          "你把那一个想法说完就回了座位。但所有人看你的眼神都变了。"
+        ],
+        "failureMessages": [
+          "你说完就后悔了，觉得自己话太多。"
+        ],
+        "successNextEventId": "system-core-precision",
+        "failureNextEventId": "system-core-precision"
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "revenge-squad-to-region-guardian",
+  "worldlineId": "region-guardian",
+  "title": "删掉那个文件夹",
+  "description": "你电脑里有个文件夹，装着当年背叛你的那个人的所有比赛录像——你复仇的燃料。决赛打完，你赢了，仇也报了。凌晨三点，你盯着那个文件夹，鼠标移到了删除键上。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 95,
+  "conditions": [
+    { "type": "COMPLETED_EVENT", "eventId": "revenge-squad-decision" }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "delete",
+      "label": "删了，翻篇",
+      "description": "仇恨烧完了，该干点正事了。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.72, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 5 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 4 },
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "LEADERSHIP", "delta": 1 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -3 }
+        ],
+        "successMessages": [
+          "你删了那个文件夹。那一刻，你的枪口终于可以只对准比赛了。"
+        ],
+        "failureMessages": [
+          "你点了删除，又点了撤销。最后还是留了一份备份。"
+        ],
+        "successNextEventId": "region-guardian-home",
+        "failureNextEventId": "region-guardian-home"
+      }
+    },
+    {
+      "id": "stay-angry",
+      "label": "留着，当警示",
+      "description": "仇可以不报，但这个文件夹不能删。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 7 }
+        ],
+        "successMessages": [
+          "你把文件夹留在了桌面最角落。偶尔还是会点开看一眼。"
+        ],
+        "failureMessages": [
+          "那份复仇的燃料还在烧，但你已经没有敌人了。"
+        ],
+        "successNextEventId": "region-guardian-home",
+        "failureNextEventId": "region-guardian-home"
+      }
+    }
+  ]
+}

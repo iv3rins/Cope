@@ -109,8 +109,8 @@
         "failureMessages": [
           "压抑的玩法让你失去了手感。"
         ],
-        "successNextEventId": "system-core-precision",
-        "failureNextEventId": "system-core-precision"
+        "successNextEventId": "young-guns-to-system-core",
+        "failureNextEventId": "young-guns-to-system-core"
       }
     }
   ],

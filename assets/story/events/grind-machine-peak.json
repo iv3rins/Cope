@@ -143,8 +143,8 @@
         "failureMessages": [
           "野性的代价是纪律的崩盘。"
         ],
-        "successNextEventId": "rule-breaker-style",
-        "failureNextEventId": "rule-breaker-style"
+        "successNextEventId": "grind-machine-to-rule-breaker",
+        "failureNextEventId": "grind-machine-to-rule-breaker"
       }
     }
   ],

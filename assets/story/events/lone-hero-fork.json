@@ -104,8 +104,8 @@
         "failureMessages": [
           "球队高层的不满写在脸上。"
         ],
-        "successNextEventId": "crownless-king-dominance",
-        "failureNextEventId": "crownless-king-dominance"
+        "successNextEventId": "lone-hero-to-crownless-king",
+        "failureNextEventId": "lone-hero-to-crownless-king"
       }
     }
   ],

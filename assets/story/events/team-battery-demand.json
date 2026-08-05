@@ -143,8 +143,8 @@
         "failureMessages": [
           "指挥的思考让你手忙脚乱。"
         ],
-        "successNextEventId": "tactical-captain-decline",
-        "failureNextEventId": "tactical-captain-decline"
+        "successNextEventId": "team-battery-to-tactical-captain",
+        "failureNextEventId": "team-battery-to-tactical-captain"
       }
     }
   ],

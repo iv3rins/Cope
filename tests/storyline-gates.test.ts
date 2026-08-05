@@ -90,8 +90,15 @@ test('跨线转换：选择转换选项后 worldlineId 切换并进入目标线�
   });
   assert.equal(result.succeeded, true);
   assert.equal(result.profile.worldlineId, 'late-bloomer', '选择降薪重来后应切入老将线');
-  assert.equal(result.nextEventId, 'late-bloomer-start', '下一事件应为目标线起始事件');
-  const available = await engine.findAvailableEvents({ profile: result.profile, period: 'NORMAL', randomRoll: 0.5 });
+  assert.equal(result.nextEventId, 'falling-star-to-late-bloomer', '下一事件应为转换过渡事件');
+  const transition = await engine.findAvailableEvents({ profile: result.profile, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(transition.some((event) => event.id === 'falling-star-to-late-bloomer'), '过渡事件应在转换后可触发');
+  const transitionResult = await engine.decide({
+    profile: result.profile,
+    decision: { eventId: 'falling-star-to-late-bloomer', optionId: 'walk-away', randomRoll: 0.2 },
+  });
+  assert.equal(transitionResult.nextEventId, 'late-bloomer-start', '过渡事件完成后进入目标线起始事件');
+  const available = await engine.findAvailableEvents({ profile: transitionResult.profile, period: 'NORMAL', randomRoll: 0.5 });
   assert.ok(available.some((event) => event.id === 'late-bloomer-start'), '目标线起始事件应在转换后可触发');
 });
 
