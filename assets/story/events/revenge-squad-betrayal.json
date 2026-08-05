@@ -1,8 +1,8 @@
 {
   "id": "revenge-squad-betrayal",
   "worldlineId": "revenge-squad",
-  "title": "被踢出队",
-  "description": "因战绩不佳与理念不合，你被效力多年的豪门扫地出门。",
+  "title": "被放弃的新人",
+  "description": "你被寄予厚望，却在一场青训赛后被队伍放弃——理由是\"不适合这支队伍\"。",
   "period": "NORMAL",
   "type": "CHOICE",
   "priority": 100,
@@ -59,7 +59,7 @@
     {
       "id": "calm",
       "label": "冷静处理",
-      "description": "体面告别，把恩怨留到赛场上。",
+      "description": "体面离开，把不甘收进背包。",
       "requirements": [],
       "successChance": {
         "baseChance": 0.7,

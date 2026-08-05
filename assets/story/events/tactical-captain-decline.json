@@ -1,16 +1,16 @@
 {
   "id": "tactical-captain-decline",
   "worldlineId": "tactical-captain",
-  "title": "枪法下滑",
-  "description": "你曾是狂暴突破手，但年龄让你的对枪开始输给年轻人。",
+  "title": "枪法不出众",
+  "description": "你的枪法在同龄人里算不上顶尖，对枪总是差一口气——想留下来，只能靠脑子。",
   "period": "NORMAL",
   "type": "CHOICE",
   "priority": 100,
   "options": [
     {
       "id": "deny",
-      "label": "不认老",
-      "description": "继续抢突破位，和岁月硬刚。",
+      "label": "不服气",
+      "description": "继续和更强的对手对枪，用子弹证明自己。",
       "requirements": [],
       "successChance": {
         "baseChance": 0.5,
@@ -47,10 +47,10 @@
           }
         ],
         "successMessages": [
-          "你第无数次白给，弹幕开始刷\"退役吧\"。"
+          "你又一次白给，弹幕开始刷\"退役吧\"。"
         ],
         "failureMessages": [
-          "不服老让你和替补席越来越近。"
+          "不服气让你和替补席越来越近。"
         ],
         "successNextEventId": null,
         "failureNextEventId": null

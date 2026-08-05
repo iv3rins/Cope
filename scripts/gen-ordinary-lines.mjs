@@ -98,25 +98,25 @@ const GATES = {
 // —— late-bloomer 十载饮冰的老将 ——
 const lateBloomer = 'late-bloomer';
 events.push({
-  ...chain(lateBloomer, '老将征程', '你的天赋算不上顶级，打了快十年，奖杯柜里依然空空荡荡。',
+  ...chain(lateBloomer, '不被看好的人', '你的天赋算不上顶级，出道第一年就被贴上"没有上限"的标签，没人觉得你能打出来。',
     [
       opt('persist', '继续坚持', '相信时间会给出答案。', 0.7,
         [stat('MORALE', 4), metric('FAME', 2)],
         [stat('MORALE', -4), stat('STRESS', 4)],
         ['你又一次站上了训练场。'], ['坚持的信念开始动摇。'], `${lateBloomer}-blow`),
-      opt('doubt', '心生动摇', '同龄人已经退役，你还在为一张决赛门票挣扎。', 0.6,
+      opt('doubt', '心生动摇', '身边的人一个个崭露头角，你还在为一个首发位置挣扎。', 0.6,
         [stat('STRESS', 6), metric('FAME', -2)],
         [stat('MORALE', -6)],
         ['你在深夜反复问自己值不值。'], ['退役的念头第一次出现。'], `${lateBloomer}-blow`),
     ]),
 });
 events.push({
-  ...chain(lateBloomer, '再败决赛', '你又一次倒在决赛，随后被豪门以"年龄太大"为由踢出。',
+  ...chain(lateBloomer, '再遭冷遇', '你输掉了一场关键比赛，随后被队伍以"打法不再被需要"为由放走。',
     [
-      opt('accept', '接受现实', '收拾行李，去一支需要经验的队伍。', 0.7,
+      opt('accept', '接受现实', '收拾行李，去一支愿意给机会的队伍。', 0.7,
         [stat('MORALE', 3), metric('FAME', -3), metric('TEAM_STATUS', 3)],
         [metric('FAME', -4), stat('MORALE', -3)],
-        ['你平静地离开了效力多年的俱乐部。'], ['告别比想象中更难。'], `${lateBloomer}-mentor`),
+        ['你平静地收拾好储物柜，离开了这支队伍。'], ['告别比想象中更难。'], `${lateBloomer}-mentor`),
       opt('rage', '咽不下这口气', '把愤怒化为训练动力，证明他们错了。', 0.55,
         [stat('STRESS', 8), metric('FORM', 3)],
         [stat('STRESS', 10), stat('MORALE', -3)],
@@ -306,13 +306,13 @@ events.push({
 // —— revenge-squad 被抛弃者的复仇记 ——
 const revengeSquad = 'revenge-squad';
 events.push({
-  ...chain(revengeSquad, '被踢出队', '因战绩不佳与理念不合，你被效力多年的豪门扫地出门。',
+  ...chain(revengeSquad, '被放弃的新人', '你被寄予厚望，却在一场青训赛后被队伍放弃——理由是"不适合这支队伍"。',
     [
       opt('rage', '燃起怒火', '记住这份羞辱，向所有人证明他们错了。', 0.6,
         [stat('STRESS', 8), metric('FORM', 3), stat('MORALE', -4)],
         [stat('STRESS', 10), stat('MORALE', -6)],
         ['你收拾储物柜时手在发抖。'], ['愤怒让夜里的复盘变成了折磨。'], `${revengeSquad}-assemble`),
-      opt('calm', '冷静处理', '体面告别，把恩怨留到赛场上。', 0.7,
+      opt('calm', '冷静处理', '体面离开，把不甘收进背包。', 0.7,
         [stat('MORALE', 3), metric('FAME', -3)],
         [stat('MORALE', -3)],
         ['你和每个人都握了手。'], ['礼貌之下，野心在暗涌。'], `${revengeSquad}-assemble`),
@@ -518,12 +518,12 @@ events.push({
 // —— tactical-captain 从枪头转战术的铁血队长 ——
 const tacticalCaptain = 'tactical-captain';
 events.push({
-  ...chain(tacticalCaptain, '枪法下滑', '你曾是狂暴突破手，但年龄让你的对枪开始输给年轻人。',
+  ...chain(tacticalCaptain, '枪法不出众', '你的枪法在同龄人里算不上顶尖，对枪总是差一口气——想留下来，只能靠脑子。',
     [
-      opt('deny', '不认老', '继续抢突破位，和岁月硬刚。', 0.5,
+      opt('deny', '不服气', '继续和更强的对手对枪，用子弹证明自己。', 0.5,
         [metric('FAME', 2), stat('ENERGY', -10), metric('FORM', -4)],
         [stat('ENERGY', -12), metric('FORM', -7)],
-        ['你第无数次白给，弹幕开始刷"退役吧"。'], ['不服老让你和替补席越来越近。'], `${tacticalCaptain}-switch`),
+        ['你又一次白给，弹幕开始刷"退役吧"。'], ['不服气让你和替补席越来越近。'], `${tacticalCaptain}-switch`),
       opt('accept', '承认现实', '枪不行了，就用脑子打。', 0.68,
         [stat('MORALE', 3), metric('TEAM_STATUS', 3), metric('FAME', -3)],
         [metric('FAME', -4)],
@@ -586,7 +586,7 @@ events.push({
 // —— injury-warrior 战胜伤病与衰老的老兵 ——
 const injuryWarrior = 'injury-warrior';
 events.push({
-  ...chain(injuryWarrior, '伤病爆发', '巅峰期，你的手腕突然传来撕裂般的剧痛——腱鞘炎。',
+  ...chain(injuryWarrior, '伤病爆发', '刚打出一点名堂，你的手腕突然传来撕裂般的剧痛——腱鞘炎。',
     [
       opt('surgery-now', '立即手术', '长痛不如短痛，接受手术。', 0.68,
         [stat('ENERGY', -10), stat('MORALE', 3), metric('FORM', -6)],

@@ -1,8 +1,8 @@
 {
   "id": "late-bloomer-blow",
   "worldlineId": "late-bloomer",
-  "title": "再败决赛",
-  "description": "你又一次倒在决赛，随后被豪门以\"年龄太大\"为由踢出。",
+  "title": "再遭冷遇",
+  "description": "你输掉了一场关键比赛，随后被队伍以\"打法不再被需要\"为由放走。",
   "period": "NORMAL",
   "type": "CHOICE",
   "priority": 99,
@@ -10,7 +10,7 @@
     {
       "id": "accept",
       "label": "接受现实",
-      "description": "收拾行李，去一支需要经验的队伍。",
+      "description": "收拾行李，去一支愿意给机会的队伍。",
       "requirements": [],
       "successChance": {
         "baseChance": 0.7,
@@ -47,7 +47,7 @@
           }
         ],
         "successMessages": [
-          "你平静地离开了效力多年的俱乐部。"
+          "你平静地收拾好储物柜，离开了这支队伍。"
         ],
         "failureMessages": [
           "告别比想象中更难。"

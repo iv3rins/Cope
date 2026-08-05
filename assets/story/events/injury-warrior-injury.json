@@ -2,7 +2,7 @@
   "id": "injury-warrior-injury",
   "worldlineId": "injury-warrior",
   "title": "伤病爆发",
-  "description": "巅峰期，你的手腕突然传来撕裂般的剧痛——腱鞘炎。",
+  "description": "刚打出一点名堂，你的手腕突然传来撕裂般的剧痛——腱鞘炎。",
   "period": "NORMAL",
   "type": "CHOICE",
   "priority": 100,

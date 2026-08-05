@@ -1,8 +1,8 @@
 {
   "id": "late-bloomer-start",
   "worldlineId": "late-bloomer",
-  "title": "老将征程",
-  "description": "你的天赋算不上顶级，打了快十年，奖杯柜里依然空空荡荡。",
+  "title": "不被看好的人",
+  "description": "你的天赋算不上顶级，出道第一年就被贴上\"没有上限\"的标签，没人觉得你能打出来。",
   "period": "NORMAL",
   "type": "CHOICE",
   "priority": 100,
@@ -54,7 +54,7 @@
     {
       "id": "doubt",
       "label": "心生动摇",
-      "description": "同龄人已经退役，你还在为一张决赛门票挣扎。",
+      "description": "身边的人一个个崭露头角，你还在为一个首发位置挣扎。",
       "requirements": [],
       "successChance": {
         "baseChance": 0.6,
