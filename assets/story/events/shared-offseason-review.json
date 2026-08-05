@@ -1,0 +1,87 @@
+{
+  "id": "shared-offseason-review",
+  "worldlineId": "shared",
+  "title": "赛季总结",
+  "description": "经纪人说：\"今年打得不错，明年定个目标吧。\"",
+  "period": "OFFSEASON",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "ambitious",
+      "label": "定个大的",
+      "description": "不给自己留退路。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你写下了\"进 Major\"三个字。"
+        ],
+        "failureMessages": [
+          "目标太大，反而让你焦虑。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "realistic",
+      "label": "务实一点",
+      "description": "一步步来。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -1
+          }
+        ],
+        "successMessages": [
+          "你定了几个够得着的目标。"
+        ],
+        "failureMessages": [
+          "计划赶不上变化。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

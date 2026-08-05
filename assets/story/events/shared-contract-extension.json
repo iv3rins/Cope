@@ -1,0 +1,93 @@
+{
+  "id": "shared-contract-extension",
+  "worldlineId": "shared",
+  "title": "续约谈判",
+  "description": "俱乐部主动找你谈续约，开出的条件比现在好，但也没好到哪去。",
+  "period": "TRANSFER_WINDOW",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [
+    {
+      "type": "NARRATIVE_METRIC",
+      "metric": "CLUB_FAVOR",
+      "minimum": 10
+    }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "sign",
+      "label": "签字",
+      "description": "安稳是职业选手的奢侈品。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": 500
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 1
+          }
+        ],
+        "successMessages": [
+          "你签了三年，心里踏实了。"
+        ],
+        "failureMessages": [
+          "签字笔落下的瞬间，你有点不甘心。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "wait",
+      "label": "再想想",
+      "description": "等转会窗口最后几天再说。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你拖到了窗口最后一天。"
+        ],
+        "failureMessages": [
+          "俱乐部觉得你心不在此。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

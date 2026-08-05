@@ -1,0 +1,98 @@
+{
+  "id": "shared-burnout-warning",
+  "worldlineId": "shared",
+  "title": "倦怠预警",
+  "description": "你盯着屏幕，突然不想动了——这个赛季打得太久，身体在喊停。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 45,
+  "conditions": [
+    {
+      "type": "PLAYER_STAT",
+      "stat": "STRESS",
+      "minimum": 55
+    }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "rest",
+      "label": "申请休整两天",
+      "description": "身体是革命的本钱。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "休整回来，你满血复活。"
+        ],
+        "failureMessages": [
+          "队里少人，训练赛都凑不齐。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "push",
+      "label": "咬牙硬撑",
+      "description": "赛季还没结束，我不能歇。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你撑过来了，这赛季总算没掉链子。"
+        ],
+        "failureMessages": [
+          "你的状态肉眼可见地垮了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

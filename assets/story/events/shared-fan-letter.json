@@ -1,0 +1,94 @@
+{
+  "id": "shared-fan-letter",
+  "worldlineId": "shared",
+  "title": "粉丝来信",
+  "description": "粉丝群里有人手写了一封信，说看你比赛是他每周唯一的盼头。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "reply",
+      "label": "认真回一封信",
+      "description": "不是所有人都有资格被这样喜欢。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "fan-base",
+            "flag": {
+              "id": "fan-base",
+              "name": "忠实粉丝",
+              "category": "SOCIAL",
+              "metadata": {
+                "source": "shared-fan-letter"
+              }
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你把信收进了抽屉，回了三页纸。"
+        ],
+        "failureMessages": [
+          "你回了两行字，觉得有点对不起他。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "screenshot",
+      "label": "截图发动态",
+      "description": "让更多人看到。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "那条动态的评论区都是\"好暖\"。"
+        ],
+        "failureMessages": [
+          "有人说你在作秀。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

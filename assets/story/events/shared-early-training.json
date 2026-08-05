@@ -1,0 +1,87 @@
+{
+  "id": "shared-early-training",
+  "worldlineId": "shared",
+  "title": "晨训加练",
+  "description": "天还没亮，训练室只有你一个人。要不要比队友多练一小时？",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "grind",
+      "label": "加练一小时",
+      "description": "手感是练出来的，没人会嫌枪法太准。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -7
+          }
+        ],
+        "successMessages": [
+          "你的准星比昨天更稳了。"
+        ],
+        "failureMessages": [
+          "疲惫让加练变成机械重复。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "sleep",
+      "label": "回去补觉",
+      "description": "休息也是训练的一部分。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.9,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你睡了个回笼觉，精神饱满。"
+        ],
+        "failureMessages": [
+          "闹钟响了三次你才爬起来。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

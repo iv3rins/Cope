@@ -1,0 +1,102 @@
+{
+  "id": "shared-offseason-camp",
+  "worldlineId": "shared",
+  "title": "夏训营",
+  "description": "休赛期队伍组织集训，强度拉满，很多人都请假了。",
+  "period": "OFFSEASON",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "attend",
+      "label": "全程参加",
+      "description": "休赛期是拉开差距的时候。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 1
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "集训结束，你的状态比谁都好。"
+        ],
+        "failureMessages": [
+          "高强度的两周让你差点累倒。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "skip-half",
+      "label": "只去一半",
+      "description": "给自己留点休息时间。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 0
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你带着半满的电量迎接新赛季。"
+        ],
+        "failureMessages": [
+          "新赛季前几场，你的手感生疏了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

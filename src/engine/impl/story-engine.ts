@@ -52,7 +52,7 @@ export class StoryEngineImpl implements StoryEngine {
     const context = this.createContext(input.profile, input.randomRoll, input.facts);
     const events = await this.repository.listEvents();
     return events
-      .filter((event) => event.worldlineId === input.profile.worldlineId)
+      .filter((event) => event.worldlineId === 'shared' || event.worldlineId === input.profile.worldlineId)
       .filter((event) => event.period === input.period)
       .filter((event) => !input.phase || this.eventPhase(event) === input.phase)
       .filter((event) => !event.allowedModes || event.allowedModes.includes(input.profile.difficultyMode))

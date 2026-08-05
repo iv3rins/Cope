@@ -26,13 +26,13 @@ test('16 条故事线事件格式、世界线成员与链路均完整', async ()
   const eventNames = (await readdir(eventDir)).filter((name) => name.endsWith('.json'));
   const events = await Promise.all(eventNames.map((name) => json<StoryEvent>(join(eventDir, name))));
   const byId = new Map(events.map((event) => [event.id, event]));
-  assert.ok(events.length >= 120 && events.length <= 136, `事件数量应为 16 线 × 8 个（当前 ${events.length}）`);
+  assert.ok(events.length >= 120 && events.length <= 220, `事件数量应为 16 线 × 8 个剧情事件 + 通用随机池（当前 ${events.length}）`);
   for (const [index, event] of events.entries()) {
     assert.equal(event.id, eventNames[index]!.slice(0, -5));
     assert.match(event.title, /^[\u3400-\u9fff]{2,8}$/u, `${event.id} 标题应为 2-8 个汉字`);
     assert.ok(event.options.length >= 2 && event.options.length <= 3, event.id);
     assert.ok(new Set(event.options.map((option) => option.id)).size >= 2, event.id);
-    assert.equal(event.period, 'NORMAL', `${event.id} 链式事件应使用 NORMAL 周期`);
+    if (event.worldlineId !== 'shared') assert.equal(event.period, 'NORMAL', `${event.id} 链式事件应使用 NORMAL 周期`);
     for (const option of event.options) {
       assert.ok(option.description?.trim(), event.id);
       assert.ok(option.successChance, event.id);

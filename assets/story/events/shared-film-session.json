@@ -1,0 +1,87 @@
+{
+  "id": "shared-film-session",
+  "worldlineId": "shared",
+  "title": "录像课",
+  "description": "教练把昨天的比赛录像一帧帧放给你看，问你：\"这里为什么不去架点？\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "absorb",
+      "label": "认真听完",
+      "description": "把每次失误都记进脑子里。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "你第一次看懂了自己的问题。"
+        ],
+        "failureMessages": [
+          "越看越觉得自己哪都是漏洞。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "argue",
+      "label": "为自己辩解",
+      "description": "\"当时那个情况只能那么打。\"",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "教练没再说话，但眼神凉了。"
+        ],
+        "failureMessages": [
+          "你赢了争论，输了印象。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

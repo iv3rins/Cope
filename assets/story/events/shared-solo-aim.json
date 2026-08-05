@@ -1,0 +1,92 @@
+{
+  "id": "shared-solo-aim",
+  "worldlineId": "shared",
+  "title": "深夜练枪",
+  "description": "队友都睡了，你在死斗服务器里一打就是两个小时。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "push-through",
+      "label": "练到关服",
+      "description": "肌肉记忆不会骗人。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -9
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "第二天的枪感火热。"
+        ],
+        "failureMessages": [
+          "第二天你差点睡过头。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "call-it",
+      "label": "收枪休息",
+      "description": "今天够了，明天还要打比赛。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.9,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你按点睡了，作息规律。"
+        ],
+        "failureMessages": [
+          "躺在床上还在想那把残局。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

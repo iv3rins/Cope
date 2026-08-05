@@ -1,0 +1,98 @@
+{
+  "id": "shared-transfer-rumor",
+  "worldlineId": "shared",
+  "title": "转会传闻",
+  "description": "媒体开始炒作你要转会：\"据悉豪门已递出报价。\"更衣室气氛微妙。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 45,
+  "conditions": [
+    {
+      "type": "NARRATIVE_METRIC",
+      "metric": "FAME",
+      "minimum": 15
+    }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "clarify",
+      "label": "公开澄清",
+      "description": "发一条\"我哪儿也不去\"，安大家的心。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "传闻平息了，队友看你的眼神又对了。"
+        ],
+        "failureMessages": [
+          "俱乐部觉得你是在借传闻抬价。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "silent",
+      "label": "不回应",
+      "description": "让他们猜去，猜得越久我身价越高。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你的身价在传闻里涨了一截。"
+        ],
+        "failureMessages": [
+          "队友开始怀疑你心不在焉。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

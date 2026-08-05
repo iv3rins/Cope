@@ -1,0 +1,94 @@
+{
+  "id": "shared-youth-coach",
+  "worldlineId": "shared",
+  "title": "青训教练来电",
+  "description": "当年带你入门的青训教练打来电话：\"小子，电视上看到你了。\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "talk-long",
+      "label": "聊了很久",
+      "description": "从他嘴里，你听回了最开始打 CS 的自己。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "mentor",
+            "flag": {
+              "id": "mentor",
+              "name": "引路人",
+              "category": "CAREER",
+              "metadata": {
+                "source": "shared-youth-coach"
+              }
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "挂了电话，你感觉浑身都是劲。"
+        ],
+        "failureMessages": [
+          "电话里你只说了几句\"还行\"。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "brief",
+      "label": "简单寒暄",
+      "description": "现在不是叙旧的时候。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你说了句\"教练我挺好的\"就挂了。"
+        ],
+        "failureMessages": [
+          "挂断后你有点愧疚。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

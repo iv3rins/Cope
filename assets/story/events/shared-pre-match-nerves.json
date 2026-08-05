@@ -1,0 +1,87 @@
+{
+  "id": "shared-pre-match-nerves",
+  "worldlineId": "shared",
+  "title": "赛前失眠",
+  "description": "明天就是大赛，你翻来覆去睡不着，心率一直降不下来。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "meditate",
+      "label": "冥想放松",
+      "description": "数呼吸，把注意力从比赛上移开。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "你终于在天亮前睡了一会儿。"
+        ],
+        "failureMessages": [
+          "越想放松越清醒。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "scrim-in-head",
+      "label": "脑子里打比赛",
+      "description": "把明天的地图在脑子里过一遍。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你梦见自己拿下了残局。"
+        ],
+        "failureMessages": [
+          "你在脑子里输了十次。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

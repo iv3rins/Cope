@@ -1,0 +1,92 @@
+{
+  "id": "shared-offseason-travel",
+  "worldlineId": "shared",
+  "title": "休假旅行",
+  "description": "休赛期，你终于有时间出去走走——代价是钱包和训练时长。",
+  "period": "OFFSEASON",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "travel",
+      "label": "去海边",
+      "description": "看看世界，回来打得更明白。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -500
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -800
+          }
+        ],
+        "successMessages": [
+          "海风把压力都吹走了。"
+        ],
+        "failureMessages": [
+          "钱包瘪了，心也野了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-home",
+      "label": "在家躺平",
+      "description": "省钱，也养精神。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你打了半个月单机游戏。"
+        ],
+        "failureMessages": [
+          "假期结束，你居然有点想比赛了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

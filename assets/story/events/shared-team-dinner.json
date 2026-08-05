@@ -1,0 +1,97 @@
+{
+  "id": "shared-team-dinner",
+  "worldlineId": "shared",
+  "title": "队内聚餐",
+  "description": "队友张罗着去吃烤肉，AA 下来一人一百多。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": true,
+  "priority": 50,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "join",
+      "label": "一起去",
+      "description": "吃顿饭，队内氛围能好不少。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -150
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -200
+          }
+        ],
+        "successMessages": [
+          "饭桌上你们聊到了半夜。"
+        ],
+        "failureMessages": [
+          "你吃了顿贵的，关系也没拉近多少。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "skip",
+      "label": "借口训练",
+      "description": "省点钱，也省点应酬。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": 0
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你在训练室安静地待了一晚。"
+        ],
+        "failureMessages": [
+          "队友觉得你不太合群。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}
