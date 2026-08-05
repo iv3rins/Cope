@@ -12,7 +12,7 @@ import type {
   StoryEventOption,
   StoryContextFacts,
 } from '../graph';
-import type { PlayerAttribute, PlayerAttributes, PlayerFlag, PlayerProfile } from '../profile';
+import { normalizeNarrativeMetrics, type NarrativeMetric, type NarrativeMetrics, type PlayerAttribute, type PlayerAttributes, type PlayerFlag, type PlayerProfile } from '../profile';
 import type { StoryEventDirectory } from './story-repository';
 
 const ATTRIBUTE_KEYS: Readonly<Record<PlayerAttribute, keyof PlayerAttributes>> = {
@@ -27,6 +27,8 @@ const ATTRIBUTE_KEYS: Readonly<Record<PlayerAttribute, keyof PlayerAttributes>> 
 type MutablePlayerAttributes = {
   -readonly [Key in keyof PlayerAttributes]: PlayerAttributes[Key];
 };
+
+type MutableNarrativeMetrics = { -readonly [Key in keyof NarrativeMetrics]: NarrativeMetrics[Key] };
 
 export class StoryEngineImpl implements StoryEngine {
   public readonly successChancePolicy: StorySuccessChancePolicy;
@@ -56,7 +58,8 @@ export class StoryEngineImpl implements StoryEngine {
       .filter((event) => !event.allowedModes || event.allowedModes.includes(input.profile.difficultyMode))
       .filter((event) => this.conditions.matchesAll(event.conditions, context))
       .filter((event) => event.repeatable || !input.profile.completedEventIds.includes(event.id))
-      .map((event) => this.copy(event));
+      .map((event) => ({ ...this.copy(event), options: event.options.filter((option) => (!option.allowedModes || option.allowedModes.includes(input.profile.difficultyMode)) && this.conditions.matchesAll(option.requirements, context)).map((option) => this.copy(option)) }))
+      .filter((event) => event.type === 'MANDATORY' || event.options.length > 0);
   }
 
   public async decide(input: { readonly profile: PlayerProfile; readonly decision: StoryDecision; readonly facts?: StoryContextFacts }): Promise<StoryDecisionResult> {
@@ -99,7 +102,7 @@ export class StoryEngineImpl implements StoryEngine {
   private eventPhase(event: StoryEvent): StoryEventPhase {
     if (event.phase) return event.phase;
     if (event.period === 'FINAL_DECISIVE_MOMENT') return 'IN_TOURNAMENT';
-    if (event.period === 'AFTER_TOP20' || event.period === 'OFFSEASON') return 'POST_TOURNAMENT';
+    if (event.period === 'AFTER_TOP20' || event.period === 'OFFSEASON' || event.period === 'TRANSFER_WINDOW') return 'POST_TOURNAMENT';
     return 'PRE_TOURNAMENT';
   }
 
@@ -126,6 +129,7 @@ export class StoryEngineImpl implements StoryEngine {
   private applyEffects(profile: PlayerProfile, effects: readonly EventEffect[], completedEventId: string): PlayerProfile {
     const base = this.copy(profile);
     const attributes: MutablePlayerAttributes = { ...base.attributes };
+    const narrativeMetrics: MutableNarrativeMetrics = { ...normalizeNarrativeMetrics(base.narrativeMetrics) };
     let morale = base.morale;
     let energy = base.energy;
     let balance = base.life.balance;
@@ -161,7 +165,13 @@ export class StoryEngineImpl implements StoryEngine {
             case 'RATING2': rating2 += effect.delta; break;
           }
           break;
-        case 'TEAM_TRANSFER': currentTeamId = effect.teamId; break;
+        case 'NARRATIVE_METRIC_CHANGE':
+          if (!Number.isFinite(effect.delta)) break;
+          if (effect.metric === 'MENTALITY') morale = this.clamp(morale + effect.delta, 0, 100);
+          else if (effect.metric === 'BALANCE') balance += effect.delta;
+          else narrativeMetrics[effect.metric] = this.clamp(narrativeMetrics[effect.metric] + effect.delta, 0, 100);
+          break;
+        case 'TEAM_TRANSFER': currentTeamId = effect.teamId ?? null; break;
         case 'ROLE_CHANGE': role = effect.role; break;
         case 'WORLDLINE_CHANGE': worldlineId = effect.worldlineId; break;
         case 'FLAG_ADD':
@@ -202,6 +212,7 @@ export class StoryEngineImpl implements StoryEngine {
       life: { ...base.life, balance, stress },
       career: { ...base.career, rating2, totalKills, mapsPlayed, clutchWon, careerEarnings },
       trophies: { ...base.trophies, majorChampionships, otherSTierTitles, mvpAwards, evpAwards },
+      narrativeMetrics,
       morale,
       energy,
       flags,

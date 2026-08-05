@@ -16,7 +16,7 @@ export class Top20RankingServiceImpl implements Top20RankingService {
       .map((evidence) => ({ identity: this.copy(evidence.player), evidence: this.copy(evidence), metrics: this.calculateMetrics(evidence, input.rules) }))
       .sort((left, right) => this.compareCandidates(left, right));
 
-    const remaining = [...candidates];
+    const remaining = candidates.filter((candidate) => candidate.metrics.eligible);
     const entries = [];
     for (let rank = 1; rank <= 20 && remaining.length > 0; rank += 1) {
       const thresholdIndex = remaining.findIndex((candidate) => this.qualifiesForRank(candidate, rank));
@@ -48,12 +48,19 @@ export class Top20RankingServiceImpl implements Top20RankingService {
     const top5Rating = this.weightedRating(tournaments, 'top5Maps', 'top5Rating', top5Maps);
     const finalRating = finalMaps > 0 ? this.weightedRating(tournaments, 'finalMaps', 'finalRating', finalMaps) : null;
     const adr = weighted((event) => event.adr, 0);
+    const kast = weighted((event) => event.kast, 0);
     const honorsScore = tournaments.reduce((total, event) => total + event.honors.reduce((honors, honor) => {
       const base = rules.honorBaseScore[honor.type] ?? 0;
       const multiplier = rules.honorClassMultiplier[honor.honorClass] ?? 0;
       return honors + this.finiteOr(base, 0) * this.finiteOr(multiplier, 0);
     }, 0), 0);
-    const panelScore = Math.max(0, (annualRating - 1) * 300 + (adr - 70) * 2);
+    const baseDataScore = Math.max(0, (annualRating - 1) * 1800 + (adr - 70) * 12 + (kast - 65) * 8);
+    const pressure = rules.pressureCoefficients ?? { playoffRating: 850, top5Rating: 900, finalRating: 300 };
+    const pressureScore = Math.max(0, (playoffRating - 1) * pressure.playoffRating + (top5Rating - 1) * pressure.top5Rating + ((finalRating ?? 1) - 1) * pressure.finalRating);
+    const stabilityScore = Math.min(700, t1MajorMaps * 5);
+    const teamAchievementScore = tournaments.reduce((score, event) => score + (event.title ? event.tier === 'MAJOR' ? 900 : 420 : 0), 0);
+    const weights = rules.panelWeights ?? { baseData: 0.35, honors: 0.3, pressure: 0.15, stability: 0.1, teamAchievement: 0.1 };
+    const panelScore = baseDataScore * weights.baseData + honorsScore * weights.honors + pressureScore * weights.pressure + stabilityScore * weights.stability + teamAchievementScore * weights.teamAchievement;
     const majorMvpBonus = tournaments.reduce((total, event) => total + event.honors.reduce((bonus, honor) => {
       if (honor.type !== 'MVP') return bonus;
       return bonus + (honor.honorClass === 'MAJOR' ? 3500 : honor.honorClass === 'SUPER_ELITE' ? 2200 : 0);
@@ -83,6 +90,7 @@ export class Top20RankingServiceImpl implements Top20RankingService {
       annualRating,
       overallRating: annualRating,
       adr,
+      kast,
       playoffRating,
       top5Rating,
       finalRating,

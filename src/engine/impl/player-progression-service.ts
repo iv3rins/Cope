@@ -1,4 +1,4 @@
-import type { PlayerAttribute, PlayerAttributes, PlayerFlag, PlayerProfile } from '../profile';
+import { normalizeNarrativeMetrics, type PlayerAttribute, type PlayerAttributes, type PlayerFlag, type PlayerProfile } from '../profile';
 import type { GameDifficultyMode, GameModeRule } from '../mode';
 import type {
   AgePhase,
@@ -51,6 +51,7 @@ export class PlayerProgressionServiceImpl implements PlayerProgressionService {
 
     return {
       ...profile,
+      narrativeMetrics: normalizeNarrativeMetrics(profile.narrativeMetrics),
       attributes: this.applyDeltas(profile.attributes, originRule.initialAttributeDeltas),
       life: {
         ...profile.life,
@@ -104,6 +105,7 @@ export class PlayerProgressionServiceImpl implements PlayerProgressionService {
       grantedFlags,
       profile: {
         ...profile,
+        narrativeMetrics: normalizeNarrativeMetrics(profile.narrativeMetrics),
         age,
         attributes,
         flags,

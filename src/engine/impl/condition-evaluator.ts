@@ -1,10 +1,11 @@
+import type { HltvTeamId } from '../../hltv/team';
 import type {
   ConditionContext,
   ConditionEvaluator,
   EventCondition,
   PlayerStat,
 } from '../condition';
-import type { PlayerAttribute, PlayerProfile } from '../profile';
+import type { NarrativeMetric, PlayerAttribute, PlayerProfile } from '../profile';
 
 const ATTRIBUTE_KEYS: Readonly<Record<PlayerAttribute, keyof PlayerProfile['attributes']>> = {
   AIM: 'aim',
@@ -33,9 +34,18 @@ export class ConditionEvaluatorImpl implements ConditionEvaluator {
       case 'PLAYER_STAT':
         if (condition.target && condition.target !== 'PLAYER') return false;
         return this.inRange(this.getPlayerStat(context.player, condition.stat), condition.minimum, condition.maximum);
+      case 'NARRATIVE_METRIC':
+        if (condition.target && condition.target !== 'PLAYER') return false;
+        return this.inRange(condition.metric === 'MENTALITY' ? context.player.morale : condition.metric === 'BALANCE' ? context.player.life.balance : this.getNarrativeMetric(context.player, condition.metric), condition.minimum, condition.maximum);
       case 'AGE':
         if (condition.target && condition.target !== 'PLAYER') return false;
         return this.inRange(context.player.age, condition.minimum, condition.maximum);
+      case 'PLAYER_ORIGIN_REGION':
+        if (condition.target && condition.target !== 'PLAYER') return false;
+        return condition.regions.includes(context.player.originRegion);
+      case 'PLAYER_ROLE':
+        if (condition.target && condition.target !== 'PLAYER') return false;
+        return condition.roles.includes(context.player.role);
       case 'FLAG':
         if (condition.target && condition.target !== 'PLAYER') return false;
         return context.player.flags.some((flag) => flag.id === condition.flagId) === condition.expected;
@@ -45,11 +55,21 @@ export class ConditionEvaluatorImpl implements ConditionEvaluator {
         return context.player.worldlineId === condition.worldlineId;
       case 'COMPLETED_EVENT':
         return context.player.completedEventIds.includes(condition.eventId);
-      case 'ACTIVE_CONTRACT':
-        if (context.activeContract === undefined) return false;
-        return (context.activeContract !== null) === condition.expected;
+      case 'ACTIVE_CONTRACT': {
+        const active = context.activeContract === undefined ? context.player.currentContractId !== null : context.activeContract !== null;
+        return active === condition.expected;
+      }
       case 'FREE_AGENCY':
         return (context.player.currentTeamId === null || context.player.freeAgencyStatus === 'FREE_AGENT') === condition.expected;
+      case 'TRANSFER_WINDOW':
+        return context.transferWindowOpen === condition.expected;
+      case 'TRANSFER_OFFER': {
+        const offer = context.pendingTransferOffer;
+        const expiresAt = offer ? Date.parse(offer.expiresAt) : Number.NaN;
+        const currentDate = context.currentDate ? Date.parse(context.currentDate) : Number.NaN;
+        const available = !!offer && Number.isFinite(expiresAt) && Number.isFinite(currentDate) && expiresAt > currentDate;
+        return available === condition.expected;
+      }
       case 'TEAM_VRS_RANK':
         return context.currentTeamRank !== undefined && context.currentTeamRank !== null && this.inRange(context.currentTeamRank, condition.minimum, condition.maximum);
       case 'RATING_STREAK':
@@ -73,7 +93,12 @@ export class ConditionEvaluatorImpl implements ConditionEvaluator {
     }
   }
 
-  private getTeamId(target: EventCondition['target'], context: ConditionContext): string | null {
+  private getNarrativeMetric(profile: PlayerProfile, metric: NarrativeMetric): number {
+    const value = profile.narrativeMetrics?.[metric];
+    return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 50;
+  }
+
+  private getTeamId(target: EventCondition['target'], context: ConditionContext): HltvTeamId | null {
     switch (target ?? 'CURRENT_TEAM') {
       case 'PLAYER':
       case 'CURRENT_TEAM':

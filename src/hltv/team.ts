@@ -7,6 +7,17 @@ export type HltvTeamId = string;
 export type HltvPlayerId = string;
 export type CompetitionRegion = 'EUROPE' | 'AMERICAS' | 'ASIA' | 'OCEANIA' | 'MIDDLE_EAST' | 'AFRICA';
 export type TeamTier = 'T1' | 'T2' | 'T3';
+
+/** VRS 排名分级的唯一事实源：1-12 T1、13-32 T2、33+（及无效排名）T3。 */
+export const T1_MAX_RANK = 12;
+export const T2_MAX_RANK = 32;
+
+export function tierForRank(rank: number): TeamTier {
+  if (!Number.isFinite(rank) || rank <= 0) return 'T3';
+  if (rank <= T1_MAX_RANK) return 'T1';
+  if (rank <= T2_MAX_RANK) return 'T2';
+  return 'T3';
+}
 export type RankingSource = 'HLTV' | 'VRS' | 'MANUAL' | 'SIMULATION';
 
 /** 不保存绝对 URL，资源如何映射由实现层负责。 */

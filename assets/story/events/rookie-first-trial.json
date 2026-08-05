@@ -1,118 +1,136 @@
 {
   "id": "rookie-first-trial",
-  "title": "首次试训",
-  "description": "一家青训战队给你发了试训邀请。这是你第一次走进职业队伍的试训间——五个人盯着你的准星，教练在角落记录你的一切。",
+  "title": "地区试训",
+  "description": "一名地区教练给你两天合练时间。评估会决定你进入哪一类合同谈判，但不会当场承诺席位。",
   "worldlineId": "rookie",
   "type": "CHOICE",
   "period": "NORMAL",
-  "conditions": [],
+  "priority": 10,
+  "conditions": [
+    {
+      "type": "FREE_AGENCY",
+      "expected": true
+    },
+    {
+      "type": "ACTIVE_CONTRACT",
+      "expected": false
+    }
+  ],
   "options": [
     {
-      "id": "prove-mechanics",
-      "label": "全神贯注展示枪法",
-      "requirements": [],
+      "id": "show-role",
+      "label": "按既定角色试训",
+      "description": "沟通成本较低，但教练只会看到你当前角色里的上限。",
+      "requirements": [
+        {
+          "type": "FREE_AGENCY",
+          "expected": true
+        },
+        {
+          "type": "ACTIVE_CONTRACT",
+          "expected": false
+        }
+      ],
       "successChance": {
-        "baseChance": 0.55,
+        "baseChance": 0.7,
         "modifiers": [
           {
-            "attribute": "AIM",
-            "perPoint": 0.006
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.002,
+            "minimum": 50
           }
         ]
       },
       "outcome": {
         "successEffects": [
           {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "MORALE",
-            "delta": 12
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 5
           },
           {
-            "type": "FLAG_ADD",
-            "flagId": "TRIAL_PASSED",
-            "flag": {
-              "id": "TRIAL_PASSED",
-              "name": "试训通过",
-              "category": "CAREER"
-            }
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 2
           }
         ],
         "failureEffects": [
           {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "STRESS",
-            "delta": 10
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
           },
           {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "MORALE",
-            "delta": -5
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "MENTALITY",
+            "delta": -3
           }
         ],
         "successMessages": [
-          "你的准星在关键回合稳住了。",
-          "教练点头，示意你留下参加下一轮试训。"
+          "教练把你列入地区合同候选。"
         ],
         "failureMessages": [
-          "最后一个回合没有处理好。",
-          "教练记下了你的问题，但仍给你留下了下一次机会。"
-        ],
-        "successNextEventId": "rookie-academy-offer",
-        "failureNextEventId": "rookie-academy-offer"
+          "录像被保留，但本轮评价一般。"
+        ]
       }
     },
     {
-      "id": "talk-to-coach",
-      "label": "先和教练聊聊战术理解",
-      "requirements": [],
+      "id": "show-range",
+      "label": "主动尝试副角色",
+      "description": "适配面更宽，但短时间切换位置会增加失误。",
+      "requirements": [
+        {
+          "type": "FREE_AGENCY",
+          "expected": true
+        },
+        {
+          "type": "ACTIVE_CONTRACT",
+          "expected": false
+        }
+      ],
       "successChance": {
-        "baseChance": 0.5,
+        "baseChance": 0.52,
         "modifiers": [
           {
             "attribute": "GAME_SENSE",
-            "perPoint": 0.007
+            "perPoint": 0.002,
+            "minimum": 55
           }
         ]
       },
       "outcome": {
         "successEffects": [
           {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "MORALE",
-            "delta": 8
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 4
           },
           {
-            "type": "FLAG_ADD",
-            "flagId": "COACH_NOTICED",
-            "flag": {
-              "id": "COACH_NOTICED",
-              "name": "教练注意到了你",
-              "category": "CAREER"
-            }
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
           }
         ],
         "failureEffects": [
           {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "STRESS",
-            "delta": 8
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "MENTALITY",
+            "delta": -4
           }
         ],
         "successMessages": [
-          "你和教练聊清了战术理解。",
-          "对方决定把你列入重点观察名单。"
+          "教练认可你的适配范围。"
         ],
         "failureMessages": [
-          "你的回答没有完全打消教练的疑虑。",
-          "但这次谈话至少让你知道了下一步该补什么。"
-        ],
-        "successNextEventId": "rookie-academy-offer",
-        "failureNextEventId": "rookie-academy-offer"
+          "位置切换影响了两天的数据。"
+        ]
       }
     }
   ],
-  "autoEffects": [],
-  "phase": "PRE_TOURNAMENT",
-  "weight": 1,
-  "priority": 50
+  "autoEffects": []
 }

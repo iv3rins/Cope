@@ -1,3 +1,0 @@
-{
-  "id":"performance-no-renewal","title":"合同到期未续约","description":"合同期满，俱乐部决定把预算投入新人，不再为你保留名额。","worldlineId":"rookie","type":"CHOICE","period":"OFFSEASON","conditions":[{"type":"ACTIVE_CONTRACT","expected":true},{"type":"RATING_STREAK","minimum":2}],"options":[{"id":"enter-market","label":"接受合同到期，进入自由市场","requirements":[],"successChance":{"baseChance":1,"modifiers":[]},"outcome":{"successEffects":[{"type":"FORCE_CONTRACT_TERMINATION","requirements":[{"type":"ACTIVE_CONTRACT","expected":true}],"reason":"TEAM_DECISION","note":"合同到期后俱乐部不续约"}],"failureEffects":[],"successMessages":["原合同标记为 EXPIRED，俱乐部不再承担后续薪资，你进入自由市场。"],"failureMessages":[] ,"successNextEventId":"free-agent-first-day"}}],"autoEffects":[],"phase":"POST_TOURNAMENT","weight":1,"priority":100
-}

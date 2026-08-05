@@ -1,5 +1,5 @@
-import type { HltvTeamId } from '../hltv/team';
-import type { PlayerAttribute, PlayerProfile } from './profile';
+import type { CompetitionRegion, HltvTeamId } from '../hltv/team';
+import type { NarrativeMetric, PlayerAttribute, PlayerProfile, PlayerRole } from './profile';
 import type { PlayerContract } from './contract';
 import type { GameDifficultyMode } from './mode';
 
@@ -26,10 +26,27 @@ export interface PlayerStatCondition extends ConditionBase {
   readonly maximum?: number;
 }
 
+export interface NarrativeMetricCondition extends ConditionBase {
+  readonly type: 'NARRATIVE_METRIC';
+  readonly metric: NarrativeMetric | 'MENTALITY' | 'BALANCE';
+  readonly minimum?: number;
+  readonly maximum?: number;
+}
+
 export interface AgeCondition extends ConditionBase {
   readonly type: 'AGE';
   readonly minimum?: number;
   readonly maximum?: number;
+}
+
+export interface PlayerOriginRegionCondition extends ConditionBase {
+  readonly type: 'PLAYER_ORIGIN_REGION';
+  readonly regions: readonly CompetitionRegion[];
+}
+
+export interface PlayerRoleCondition extends ConditionBase {
+  readonly type: 'PLAYER_ROLE';
+  readonly roles: readonly PlayerRole[];
 }
 
 export interface FlagCondition extends ConditionBase {
@@ -60,6 +77,16 @@ export interface ContractCondition extends ConditionBase {
 
 export interface FreeAgencyCondition extends ConditionBase {
   readonly type: 'FREE_AGENCY';
+  readonly expected: boolean;
+}
+
+export interface TransferWindowCondition extends ConditionBase {
+  readonly type: 'TRANSFER_WINDOW';
+  readonly expected: boolean;
+}
+
+export interface TransferOfferCondition extends ConditionBase {
+  readonly type: 'TRANSFER_OFFER';
   readonly expected: boolean;
 }
 
@@ -105,7 +132,7 @@ export interface CompositeCondition extends ConditionBase {
   readonly conditions: readonly EventCondition[];
 }
 
-export type EventCondition = AttributeCondition | PlayerStatCondition | AgeCondition | FlagCondition | TeamCondition | WorldlineCondition | CompletedEventCondition | ContractCondition | FreeAgencyCondition | TeamVrsRankCondition | RatingStreakCondition | AdvancedMapsCondition | Top20RankCondition | GameModeCondition | RandomCondition | CompositeCondition;
+export type EventCondition = AttributeCondition | PlayerStatCondition | NarrativeMetricCondition | AgeCondition | PlayerOriginRegionCondition | PlayerRoleCondition | FlagCondition | TeamCondition | WorldlineCondition | CompletedEventCondition | ContractCondition | FreeAgencyCondition | TransferWindowCondition | TransferOfferCondition | TeamVrsRankCondition | RatingStreakCondition | AdvancedMapsCondition | Top20RankCondition | GameModeCondition | RandomCondition | CompositeCondition;
 
 /** 条件求值所需的完整上下文，未提供的目标必须返回不可满足而非静默读取玩家。 */
 export interface ConditionContext {
@@ -115,10 +142,13 @@ export interface ConditionContext {
   readonly randomRoll: number;
   /** 冗余保存模式便于条件求值器处理配置和测试上下文。 */
   readonly difficultyMode: GameDifficultyMode;
+  /** 生涯内当前时间，用于报价等时效条件；缺失时按不可验证处理。 */
+  readonly currentDate?: string;
   /** Optional domain facts are supplied by the composition root; absent means unknown. */
   readonly activeContract?: PlayerContract | null;
   readonly currentTeamRank?: number | null;
   readonly transferWindowOpen?: boolean;
+  readonly pendingTransferOffer?: import('../hltv/transfer-targets').TransferOffer | null;
   readonly lowRatingStreak?: number;
   readonly advancedMapsPlayed?: number;
 }

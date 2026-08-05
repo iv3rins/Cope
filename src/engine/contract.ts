@@ -17,6 +17,10 @@ export interface PlayerContract {
   readonly status: PlayerContractStatus;
   /** 买断金额；没有买断条款时为 0。 */
   readonly buyoutAmount: number;
+  /** Squad role promised by the accepted offer. Optional for legacy saves. */
+  readonly role?: 'STARTER' | 'SUBSTITUTE';
+  /** Expected share of competitive maps. Optional for legacy saves. */
+  readonly expectedPlaytimePercentage?: number;
   readonly termination?: ContractTermination;
 }
 
@@ -56,6 +60,8 @@ export interface ContractTerms {
   readonly endsAt: string;
   readonly salaryPerMonth: number;
   readonly buyoutAmount: number;
+  readonly role?: 'STARTER' | 'SUBSTITUTE';
+  readonly expectedPlaytimePercentage?: number;
 }
 
 export interface ContractOperationResult {
@@ -69,7 +75,7 @@ export interface ContractOperationResult {
 export interface ContractOperationRejection {
   readonly operation: ContractLifecycleOperation;
   readonly profile: PlayerProfile;
-  readonly reason: 'ALREADY_SIGNED' | 'NO_ACTIVE_CONTRACT' | 'TEAM_MISMATCH' | 'INSUFFICIENT_FUNDS' | 'BUYOUT_NOT_ALLOWED' | 'INVALID_TERMS';
+  readonly reason: 'ALREADY_SIGNED' | 'NO_ACTIVE_CONTRACT' | 'TEAM_MISMATCH' | 'INSUFFICIENT_FUNDS' | 'BUYOUT_NOT_ALLOWED' | 'INVALID_TERMS' | 'FIRST_CONTRACT_REQUIRES_T3';
 }
 
 export type ContractOperationResponse = ContractOperationResult | ContractOperationRejection;
@@ -83,6 +89,8 @@ export interface PlayerContractRepository {
 
 /** 合同服务只处理合同状态与选手离队状态，不负责 UI 弹窗或转会市场匹配。 */
 export interface PlayerContractService {
+  /** Current immutable contract view used by the save aggregate after an operation. */
+  readonly snapshot: readonly PlayerContract[];
   /** 首次签约；已有 ACTIVE 合同时必须拒绝。 */
   sign(input: { readonly profile: PlayerProfile; readonly terms: ContractTerms; readonly occurredAt: string }): Promise<ContractOperationResponse>;
   /** 在原合同基础上延长或更新薪资。 */

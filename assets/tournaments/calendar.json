@@ -13,8 +13,9 @@
     {"id":"iem-chengdu","half":1,"organizerId":"esl","city":"成都","nameTemplate":"IEM 成都 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":250000,"major":false},
     {"id":"iem-dallas","half":1,"organizerId":"esl","city":"达拉斯","nameTemplate":"IEM 达拉斯 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":250000,"major":false},
     {"id":"major-h1","half":1,"organizerId":"pgl","city":"Major 主办城市","nameTemplate":"Major {year}","tier":"MAJOR","honorClass":"MAJOR","format":"BO3","prizePool":1250000,"major":true},
-    {"id":"cct-intercontinental-h1","half":1,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 洲际决赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false},
-    {"id":"cct-global-h1","half":1,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 全球总决赛 {year}","tier":"T2","honorClass":"ELITE","format":"BO3","prizePool":200000,"major":false},
+    {"id":"cct-intercontinental-h1","half":1,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 洲际决赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false,"eligibleTeamTiers":["T2","T3"],"directInviteMaxRank":64,"fallbackQualificationSource":"OPEN_ENTRY"},
+    {"id":"cct-global-h1","half":1,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 全球总决赛 {year}","tier":"T2","honorClass":"ELITE","format":"BO3","prizePool":200000,"major":false,"eligibleTeamTiers":["T2","T3"],"directInviteMaxRank":48,"fallbackQualificationSource":"PUBLIC_QUALIFIER"},
+    {"id":"regional-development-h1","half":1,"organizerId":"cct","city":"线上赛区","nameTemplate":"地区发展联赛 {year}","tier":"T2","honorClass":"MEDIUM","format":"BO3","prizePool":50000,"major":false,"eligibleTeamTiers":["T2","T3"],"directInviteMaxRank":96,"fallbackQualificationSource":"OPEN_ENTRY"},
     {"id":"blast-bounty-s2","half":2,"organizerId":"blast","city":"线上赛区","nameTemplate":"BLAST 赏金赛 S2 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":500000,"major":false},
     {"id":"ewc","half":2,"organizerId":"ewc","city":"利雅得","nameTemplate":"EWC 电竞世界杯 {year}","tier":"T1","honorClass":"SUPER_ELITE","format":"BO3","prizePool":1000000,"major":false},
     {"id":"epl-s26","half":2,"organizerId":"esl","city":"马耳他","nameTemplate":"EPL S26 {year}","tier":"T1","honorClass":"ELITE","format":"BO3","prizePool":400000,"major":false},
@@ -24,8 +25,9 @@
     {"id":"blast-open-porto","half":2,"organizerId":"blast","city":"波多","nameTemplate":"BLAST 波多公开赛 {year}","tier":"T1","honorClass":"LARGE","format":"BO3","prizePool":400000,"major":false},
     {"id":"iem-cologne","half":2,"organizerId":"esl","city":"科隆","nameTemplate":"IEM 科隆 {year}","tier":"T1","honorClass":"SUPER_ELITE","format":"BO3","prizePool":1000000,"major":false},
     {"id":"major-h2","half":2,"organizerId":"pgl","city":"Major 主办城市","nameTemplate":"Major {year}","tier":"MAJOR","honorClass":"MAJOR","format":"BO3","prizePool":1250000,"major":true},
-    {"id":"galaxy-war","half":2,"organizerId":"galaxy","city":"线上赛区","nameTemplate":"Galaxy 战争赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false},
-    {"id":"cct-fall-finals","half":2,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 秋季决赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false},
-    {"id":"cct-finals","half":2,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 总决赛 {year}","tier":"T2","honorClass":"ELITE","format":"BO3","prizePool":200000,"major":false}
+    {"id":"galaxy-war","half":2,"organizerId":"galaxy","city":"线上赛区","nameTemplate":"Galaxy 战争赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false,"eligibleTeamTiers":["T2","T3"],"directInviteMaxRank":64,"fallbackQualificationSource":"OPEN_ENTRY"},
+    {"id":"cct-fall-finals","half":2,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 秋季决赛 {year}","tier":"T2","honorClass":"LARGE","format":"BO3","prizePool":100000,"major":false,"eligibleTeamTiers":["T2","T3"],"directInviteMaxRank":64,"fallbackQualificationSource":"PUBLIC_QUALIFIER"},
+    {"id":"cct-finals","half":2,"organizerId":"cct","city":"线上赛区","nameTemplate":"CCT 总决赛 {year}","tier":"T2","honorClass":"ELITE","format":"BO3","prizePool":200000,"major":false,"eligibleTeamTiers":["T2","T3"],"directInviteMaxRank":48,"fallbackQualificationSource":"PUBLIC_QUALIFIER"},
+    {"id":"regional-development-h2","half":2,"organizerId":"cct","city":"线上赛区","nameTemplate":"地区挑战联赛 {year}","tier":"T2","honorClass":"MEDIUM","format":"BO3","prizePool":50000,"major":false,"eligibleTeamTiers":["T2","T3"],"directInviteMaxRank":96,"fallbackQualificationSource":"OPEN_ENTRY"}
   ]
 }

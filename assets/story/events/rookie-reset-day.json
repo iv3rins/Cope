@@ -1,0 +1,108 @@
+{
+  "id": "rookie-reset-day",
+  "title": "新秀调整日",
+  "description": "连续试训和排位耗尽了精力，你需要在下一场考察前安排一次恢复。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "phase": "POST_TOURNAMENT",
+  "weight": 1,
+  "priority": 80,
+  "repeatable": true,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "rookie"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 30
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 70
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "skip-scrim",
+      "label": "请假睡足一天",
+      "description": "精力恢复得更快，但会错过一次展示机会。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 26
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "你睡过了训练时段，身体缓了过来，但教练少看了一组样本。"
+        ],
+        "failureMessages": [
+          "休息安排没有落实。"
+        ]
+      }
+    },
+    {
+      "id": "book-recovery",
+      "label": "自费预约理疗",
+      "description": "用有限的生活费换取更全面的身心恢复。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -16
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -300
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "理疗师处理了紧绷的肩颈，你带着轻松一些的身体离开。"
+        ],
+        "failureMessages": [
+          "理疗预约没有完成。"
+        ]
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,3 +1,4 @@
+import type { MatchSimulationResult } from './match';
 import type { HltvPlayerId, HltvTeamId, TeamRosterSlot, VrsInviteSnapshot } from './team';
 
 /** HLTV 赛事与资格赛接口。该模块不关心生涯事件、UI 或存档。 */
@@ -12,6 +13,9 @@ export type HonorType = 'MVP' | 'EVP' | 'VP';
 export type HonorClass = 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR';
 /** 赛事中期由剧情事件触发的影响类别。 */
 export type TournamentInterventionType = 'TEAM_STRENGTH' | 'OPPONENT_STRENGTH' | 'UPSET_CHANCE' | 'FORCE_UPSET';
+export type TournamentSimulationMode = 'FAST' | 'SWISS';
+export type TournamentProgressStatus = 'ONGOING' | 'COMPLETED' | 'QUALIFIER_EXIT';
+export type TournamentLifecycleHook = 'PRE_TOURNAMENT' | 'IN_TOURNAMENT' | 'POST_TOURNAMENT';
 
 /** 长期赛事配置，例如 IEM Cologne。 */
 export interface TournamentSeries {
@@ -40,6 +44,8 @@ export interface TournamentEdition {
   readonly tier: TournamentTier;
   readonly honorClass: HonorClass;
   readonly node: TournamentNode;
+  /** Major uses interactive Swiss progression; other events use an automatically advanced Fast lifecycle. */
+  readonly simulationMode?: TournamentSimulationMode;
   readonly teamId: HltvTeamId;
   readonly qualificationSource: QualificationSource;
   readonly vrsSnapshotId: string | null;
@@ -59,6 +65,35 @@ export interface QualificationDecision {
   readonly chance?: number;
   readonly roll?: number;
   readonly reasons: Readonly<Record<string, number | string | boolean>>;
+}
+
+export interface TournamentStandInOffer {
+  readonly offerId: string;
+  readonly edition: TournamentEdition;
+  readonly teamId: HltvTeamId;
+  readonly teamName: string;
+  readonly tier?: import('./team').TeamTier;
+  readonly reason?: string;
+  readonly appearanceFee: number;
+  readonly perMapBonus: number;
+  readonly prizeSharePercentage: number;
+  readonly status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
+  readonly createdAt: string;
+  readonly targetRole: import('../engine/profile').PlayerRole;
+  readonly expectedPlaytimePercentage: number;
+  readonly risk: import('./transfer-targets').TransferRisk;
+  readonly expiresAt: string;
+}
+
+export interface TournamentStandInAssignment {
+  readonly offerId: string;
+  readonly editionId: TournamentId;
+  readonly teamId: HltvTeamId;
+  readonly playerId: HltvPlayerId;
+  readonly appearanceFee: number;
+  readonly perMapBonus: number;
+  readonly prizeSharePercentage: number;
+  readonly targetRole?: import('../engine/profile').PlayerRole;
 }
 
 /** 锁阵结果是某届赛事的唯一代表阵容。 */
@@ -123,8 +158,41 @@ export interface TournamentSeriesDetail {
   readonly mapScores: readonly string[];
 }
 
+/** Tournament-level honor ownership. A player performance may reference one of these honors, but ownership is decided once per tournament. */
+export interface TournamentHonor {
+  readonly playerId: HltvPlayerId;
+  readonly type: HonorType;
+  readonly honorClass: HonorClass;
+}
+
+/** Canonical team outcome settled once for the tournament and inherited by every locked roster member. */
+export interface TournamentTeamPlacement {
+  readonly teamId: HltvTeamId;
+  readonly placement: TournamentPlacement;
+  readonly title: boolean;
+  readonly rosterPlayerIds: readonly HltvPlayerId[];
+}
+
+/** Serializable state owned and interpreted exclusively by TournamentService. */
+export interface TournamentProgressState {
+  readonly tournamentId: TournamentId;
+  readonly mode: TournamentSimulationMode;
+  readonly revision: number;
+  readonly payload: Readonly<Record<string, unknown>>;
+}
+
+/** A mode-neutral response to one tournament lifecycle advance. */
+export interface TournamentAdvanceResult {
+  readonly status: TournamentProgressStatus;
+  readonly state: TournamentProgressState | null;
+  readonly lifecycleHook: TournamentLifecycleHook | null;
+  readonly uiData: Readonly<Record<string, unknown>>;
+  readonly result: TournamentResult | null;
+}
+
 export interface TournamentPlayerPerformance {
   readonly playerId: HltvPlayerId;
+  readonly teamId: HltvTeamId;
   readonly maps: number;
   /** 来自 MatchPlayerPerformance，供 TOP20 和荣誉结算使用。 */
   readonly kills: number;
@@ -150,7 +218,11 @@ export interface TournamentPlayerPerformance {
 export interface TournamentResult {
   readonly editionId: TournamentId;
   readonly city?: string;
+  /** Legacy alias for the team's prize; new consumers should use teamPrizeMoney. */
   readonly prizeMoney?: number;
+  readonly teamPrizeMoney?: number;
+  /** Career-layer personal payout after roster share or stand-in terms. */
+  readonly playerPrizeIncome?: number;
   readonly seriesDetails?: readonly TournamentSeriesDetail[];
   readonly seriesId: string;
   readonly season: number;
@@ -166,7 +238,13 @@ export interface TournamentResult {
   readonly upset: UpsetDecision;
   /** 已被赛事结果消费的剧情修正，禁止遗漏以保证回放一致。 */
   readonly consumedInterventions: readonly TournamentIntervention[];
+  /** Both Fast and Swiss modes emit the same match-level facts. */
+  readonly matchResults: readonly MatchSimulationResult[];
+  /** Single source of truth for every participating team's placement and title. */
+  readonly teamPlacements: readonly TournamentTeamPlacement[];
+  /** All participating roster members are projected from the same tournament result. */
   readonly playerPerformances: readonly TournamentPlayerPerformance[];
+  readonly honors: readonly TournamentHonor[];
 }
 
 /** 赛事模块对外发布的事实，禁止使用无类型 payload。 */
@@ -201,12 +279,16 @@ export interface TournamentCompletedFact {
 export interface TournamentService {
   createCalendar(input: { readonly season: number; readonly half: 1 | 2; readonly teamId: HltvTeamId; readonly snapshot: VrsInviteSnapshot }): Promise<readonly TournamentEdition[]>;
   decideQualification(input: { readonly edition: TournamentEdition; readonly snapshot: VrsInviteSnapshot; readonly roll: number }): Promise<QualificationDecision>;
-  lockRoster(input: { readonly edition: TournamentEdition; readonly roster: readonly TeamRosterSlot[]; readonly careerHalf: number }): Promise<TournamentRosterLock>;
+  lockRoster(input: { readonly edition: TournamentEdition; readonly roster: readonly TeamRosterSlot[]; readonly careerHalf: number; readonly substitutePlayerId?: HltvPlayerId | null; readonly targetRole?: import('../engine/profile').PlayerRole }): Promise<TournamentRosterLock>;
   /** 登记剧情带来的赛事中期修正；同一 id 重复登记必须幂等。 */
   applyIntervention(intervention: TournamentIntervention): Promise<TournamentInterventionAppliedFact>;
   /** 读取当前尚未消费的赛事修正，供赛程页展示及模拟器组装上下文。 */
   findPendingInterventions(editionId: TournamentId): Promise<readonly TournamentIntervention[]>;
-  /** 模拟器必须显式消费 context.interventions，并在结果中回填 upset 与 consumedInterventions。 */
+  /** Starts a mode-neutral tournament lifecycle. The returned state is opaque to callers and safe to persist. */
+  start(input: { readonly edition: TournamentEdition; readonly context: TournamentSimulationContext; readonly roster: readonly TeamRosterSlot[] }): Promise<TournamentAdvanceResult>;
+  /** Advances one lifecycle node. Fast mode advances automatically through its internal matches; Swiss mode advances one Swiss round. */
+  advance(input: { readonly edition: TournamentEdition; readonly context: TournamentSimulationContext; readonly roster: readonly TeamRosterSlot[]; readonly state: TournamentProgressState }): Promise<TournamentAdvanceResult>;
+  /** Backwards-compatible full simulation for non-interactive callers. */
   simulate(input: { readonly edition: TournamentEdition; readonly context: TournamentSimulationContext }): Promise<TournamentResult>;
   settle(input: { readonly edition: TournamentEdition; readonly result: TournamentResult }): Promise<TournamentCompletedFact>;
 }

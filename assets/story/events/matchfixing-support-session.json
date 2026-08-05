@@ -1,0 +1,108 @@
+{
+  "id": "matchfixing-support-session",
+  "title": "调查疏压会",
+  "description": "调查材料和外界议论反复侵入训练，你需要主动处理持续积累的疲惫与压力。",
+  "worldlineId": "matchfixing",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "phase": "POST_TOURNAMENT",
+  "weight": 1,
+  "priority": 80,
+  "repeatable": true,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "matchfixing"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 30
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 70
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "legal-counsel",
+      "label": "预约法律咨询",
+      "description": "厘清调查进度能显著减压，但专业咨询费用不低。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -24
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -600
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "律师逐条解释了程序，你第一次知道接下来该面对什么。"
+        ],
+        "failureMessages": [
+          "咨询没有按计划进行。"
+        ]
+      }
+    },
+    {
+      "id": "step-away",
+      "label": "暂离社交媒体",
+      "description": "隔绝议论并恢复精力，但公众讨论会失去你的直接回应。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 20
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "你关闭提醒，把注意力拉回作息和训练本身。"
+        ],
+        "failureMessages": [
+          "外界消息仍不断打断休息。"
+        ]
+      }
+    }
+  ],
+  "autoEffects": []
+}

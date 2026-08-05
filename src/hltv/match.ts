@@ -52,23 +52,29 @@ export interface MatchScore {
 export interface MatchSimulationInput {
   readonly matchId: string;
   readonly tournamentId: TournamentId;
+  readonly stage: 'GROUP' | 'SWISS' | 'PLAYOFF' | 'FINAL';
   readonly format: MatchFormat;
   readonly left: MatchTeamLineup;
   readonly right: MatchTeamLineup;
   readonly players: readonly MatchPlayerSnapshot[];
   readonly mapPool: readonly string[];
   readonly pressure: number;
+  readonly teamRanks: Readonly<Record<HltvTeamId, number | null>>;
   /** [0, 1) 的回放随机数；实现应按固定顺序消费。 */
   readonly randomRoll: number;
 }
 
 export interface MatchSimulationResult {
   readonly matchId: string;
+  readonly stage: MatchSimulationInput['stage'];
   readonly winnerTeamId: HltvTeamId;
   readonly loserTeamId: HltvTeamId;
   readonly scores: readonly MatchScore[];
   readonly mapsPlayed: readonly string[];
   readonly playerPerformances: readonly MatchPlayerPerformance[];
+  readonly teamRanks: Readonly<Record<HltvTeamId, number | null>>;
+  /** Auditable role/resource penalties applied during simulation. */
+  readonly resourceConflictPenalties: Readonly<Record<HltvPlayerId, number>>;
   readonly upset: boolean;
   readonly randomRoll: number;
 }

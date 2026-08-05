@@ -59,6 +59,27 @@ export interface PlayerFlag {
 }
 
 /** 可序列化的选手生涯快照。 */
+export type NarrativeMetric = 'FAME' | 'TEAM_STATUS' | 'TEAM_RELATIONSHIP' | 'FORM' | 'CLUB_FAVOR' | 'FAN_REPUTATION';
+
+/** 产品剧情指标；MENTALITY 复用 morale，BALANCE 复用 life.balance，避免重复持久化状态。 */
+export type NarrativeMetrics = Readonly<Record<NarrativeMetric, number>>;
+export const DEFAULT_NARRATIVE_METRIC = 50;
+export const NARRATIVE_METRICS: readonly NarrativeMetric[] = ['FAME', 'TEAM_STATUS', 'TEAM_RELATIONSHIP', 'FORM', 'CLUB_FAVOR', 'FAN_REPUTATION'];
+
+export function getNarrativeMetric(profile: Pick<PlayerProfile, 'narrativeMetrics'>, metric: NarrativeMetric): number {
+  const value = profile.narrativeMetrics?.[metric];
+  return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : DEFAULT_NARRATIVE_METRIC;
+}
+
+export function normalizeNarrativeMetrics(value: Partial<NarrativeMetrics> | null | undefined): NarrativeMetrics {
+  return Object.fromEntries(NARRATIVE_METRICS.map((metric) => {
+    const metricValue = value?.[metric];
+    return [metric, typeof metricValue === 'number' && Number.isFinite(metricValue)
+      ? Math.max(0, Math.min(100, metricValue))
+      : DEFAULT_NARRATIVE_METRIC];
+  })) as NarrativeMetrics;
+}
+
 export interface PlayerProfile {
   readonly id: HltvPlayerId;
   readonly gameId: string;
@@ -89,6 +110,8 @@ export interface PlayerProfile {
   readonly life: PlayerLifeState;
   readonly career: PlayerCareerStats;
   readonly trophies: PlayerTrophies;
+  /** 新版剧情聚合指标；旧存档缺失时按中性值 50 读取。MENTALITY=morale，BALANCE=life.balance。 */
+  readonly narrativeMetrics?: NarrativeMetrics;
   readonly morale: number;
   readonly energy: number;
   readonly worldlineId: string;

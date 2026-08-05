@@ -3,7 +3,7 @@ import type { CareerEventWindow, EventPeriod, StoryDecision, StoryDecisionResult
 import type { PlayerProfile } from './profile';
 import type { AgeProgressionResult, PlayerProgressionService } from './progression';
 import type { CareerGameState, CareerGameStateRepository } from './save-state';
-import type { TournamentEdition, TournamentResult } from '../hltv/tournament';
+import type { TournamentAdvanceResult, TournamentEdition, TournamentStandInAssignment, TournamentStandInOffer } from '../hltv/tournament';
 import type { TransferOffer, TransferTargetView } from '../hltv/transfer-targets';
 import type { RankingSource } from '../hltv/team';
 import type { DailyActionService } from './daily-action';
@@ -11,6 +11,8 @@ import type { EconomyTickService } from './economy';
 import type { EventTriggerService } from './event-trigger';
 import type { RetirementSummary, RetirementSummaryService, RetirementService } from './retirement';
 import type { GameDifficultyMode } from './mode';
+
+export type CareerTournamentAdvanceMode = 'NEXT_NODE' | 'UNTIL_DECISION_OR_COMPLETE';
 
 /** 生涯游戏的顶层应用接口，UI/命令行/测试均通过它驱动引擎。 */
 export interface CareerGame {
@@ -23,10 +25,13 @@ export interface CareerGame {
   listTransferTargets(): Promise<readonly TransferTargetView[]>;
   /** Selects one real-team invitation; selection only writes pending offer context. */
   selectTransferTarget(teamId: string): Promise<TransferOffer>;
+  listStandInOffers(): Promise<readonly TournamentStandInOffer[]>;
+  respondStandInOffer(offerId: string, response: 'ACCEPT' | 'REJECT' | 'WAIT'): Promise<TournamentStandInAssignment | TournamentStandInOffer | null>;
+  acceptStandInOffer(offerId: string): Promise<TournamentStandInAssignment>;
   /** 返回当前冻结 VRS 中玩家队伍的模拟/真实排名。 */
   getVrsStatus(): Promise<{ readonly rank: number | null; readonly points: number | null; readonly source: RankingSource | null }>;
-  /** 按赛历游标推进下一场赛事；随机数由引擎注入的 RandomSource 消费。 */
-  advanceTournament(): Promise<TournamentResult | null>;
+  /** 按赛历游标推进赛事；快速模式复用同一结算路径并在决策/资格赛结果/完赛时停止。 */
+  advanceTournament(input?: { readonly mode?: CareerTournamentAdvanceMode }): Promise<TournamentAdvanceResult>;
   /** 查询当前窗口的事件；事件存在时持久化为 EVENT phase。 */
   findCareerEvent(window: CareerEventWindow): Promise<StoryEvent | null>;
   finishSeason(): Promise<import('./save-state').HalfSeasonSettlement | null>;

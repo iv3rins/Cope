@@ -1,6 +1,6 @@
 ﻿import type { DailyActionDefinition, DailyActionRepository } from './engine/daily-action';
 import type { EconomyTickService, EconomyTickResult } from './engine/economy';
-import type { EventTriggerService, TriggeredEvent } from './engine/event-trigger';
+import type { EventTriggerService } from './engine/event-trigger';
 import type { CareerGame, CareerGameDependencies, CareerGameFactory } from './engine/game';
 import type { EngineHltvGateway, EngineHltvGatewayFactory } from './engine/hltv-gateway';
 import type { CareerEventWindow, EventPeriod, StoryEvent, StorySuccessChancePolicy, Worldline } from './engine/graph';
@@ -8,35 +8,30 @@ import type { GameDifficultyMode, GameModeRule } from './engine/mode';
 import type { PlayerProfile, PlayerRole } from './engine/profile';
 import type { AgePhase, AgeProgressionRule, PlayerProgressionRuleRepository, RegionOriginRule } from './engine/progression';
 import type { CareerSaveEnvelope } from './engine/save-state';
+import type { NpcGenerationProfile, NpcPlayerProfile } from './engine/npc';
 import type { HltvModule } from './hltv/hltv-module';
+import { tierForRank } from './hltv/team';
 import type { CompetitionRegion, HltvPlayerId, VrsInviteSnapshot } from './hltv/team';
-import type { TournamentIntervention, TournamentInterventionAppliedFact, TournamentCompletedFact, TournamentResult } from './hltv/tournament';
-import type { Top20IdentityRecord, Top20Ranking, Top20SeasonEvidence } from './hltv/top20';
+import type { TournamentFact, TournamentFactRepository, TournamentIntervention, TournamentInterventionAppliedFact, TournamentCompletedFact, TournamentResult, TournamentStandInAssignment, TournamentStandInOffer } from './hltv/tournament';
+import type { Top20EvidenceRepository, Top20IdentityRecord, Top20Ranking, Top20SeasonEvidence } from './hltv/top20';
 import type { TransferTargetView } from './hltv/transfer-targets';
 import { TransferTargetServiceImpl } from './hltv/transfer-target-service-impl';
+import { NpcGenerationServiceImpl } from './hltv/npc-generation-service-impl';
+import { NpcTransferMarketServiceImpl } from './engine/impl/npc-transfer-market-service';
 import { Top20RankingServiceImpl } from './hltv/top20-ranking-service-impl';
 import { DailyActionServiceImpl } from './engine/impl/daily-action-service';
 import { RetirementServiceImpl } from './engine/impl/retirement-service';
+import { MatchSimulationServiceImpl } from './hltv/match-simulation-service-impl';
 import { TournamentServiceImpl } from './hltv/tournament-service-impl';
 import { ConditionEvaluatorImpl } from './engine/impl/condition-evaluator';
+import { SaveContractService } from './engine/impl/contract-service';
+import { AssetEventTriggerRuleRepository, EventTriggerServiceImpl } from './engine/impl/event-trigger-service';
 import { CareerGameImpl, CareerGameRuntimeServices } from './engine/impl/career-game';
 import { InMemoryStateRepository } from './engine/impl/in-memory-state-repository';
 import { PlayerProgressionServiceImpl } from './engine/impl/player-progression-service';
 import { RetirementSummaryServiceImpl } from './engine/impl/retirement-summary-service';
 import { StoryEngineImpl } from './engine/impl/story-engine';
 import { StoryEventPackReader, StoryRepositoryImpl } from './engine/impl/story-repository';
-
-interface Top20SimulationRules {
-  readonly honorPool: { readonly mvp: number; readonly evp: number; readonly vp: number };
-  readonly virtualGeneration: { readonly baseProbability: number; readonly prodigyProbability: number; readonly prodigyPotential: number; readonly risingPotential: number; readonly baselinePotential: number; readonly annualDebutWindow: number };
-  readonly realPlayerDecay: { readonly peakThroughAge: number; readonly gradualDeclineEndAge: number; readonly gradualDeclinePerYear: number; readonly veteranBaseMultiplier: number; readonly veteranDeclinePerYear: number; readonly careerGraceYears: number; readonly careerDeclinePerYear: number; readonly careerDeclineCap: number; readonly minimumMultiplier: number };
-}
-
-const DEFAULT_TOP20_SIMULATION_RULES: Top20SimulationRules = {
-  honorPool: { mvp: 4, evp: 12, vp: 28 },
-  virtualGeneration: { baseProbability: 0.55, prodigyProbability: 0.9, prodigyPotential: 0.99, risingPotential: 0.9, baselinePotential: 0.78, annualDebutWindow: 4 },
-  realPlayerDecay: { peakThroughAge: 27, gradualDeclineEndAge: 30, gradualDeclinePerYear: 0.035, veteranBaseMultiplier: 0.895, veteranDeclinePerYear: 0.045, careerGraceYears: 4, careerDeclinePerYear: 0.012, careerDeclineCap: 0.12, minimumMultiplier: 0.55 },
-};
 
 export interface BrowserCareerConfig {
   readonly gameId: string;
@@ -100,160 +95,90 @@ class BrowserRandomSource {
   public next(): number { this.state = (1664525 * this.state + 1013904223) >>> 0; return this.state / 0x100000000; }
 }
 
-class BrowserGateway implements EngineHltvGateway {
+type BrowserTop20SimulationRules = {
+  readonly realPlayerDecay: {
+    readonly careerDeclinePerYear: number;
+    readonly careerDeclineCap: number;
+    readonly minimumMultiplier: number;
+  };
+};
+
+class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top20EvidenceRepository {
   private readonly interventions = new Map<string, TournamentIntervention>();
-  private readonly evidence = new Map<number, Top20SeasonEvidence>();
+  private readonly evidence = new Map<number, Map<string, Top20SeasonEvidence>>();
+  private readonly completedTournamentIds = new Set<string>();
   private readonly top20 = new Top20RankingServiceImpl();
-  private readonly npcRankings = new Map<number, readonly Top20IdentityRecord[]>();
+  public constructor(
+    private readonly careerPlayer: PlayerProfile,
+    private readonly identities: ReadonlyMap<string, Top20IdentityRecord>,
+    private readonly rankingRules: import('./hltv/top20').Top20Rules,
+    private readonly teamNames: ReadonlyMap<string, string> = new Map(),
+    initialEvidence: readonly Top20SeasonEvidence[] = [],
+    private readonly simulationRules?: BrowserTop20SimulationRules,
+  ) {
+    for (const entry of initialEvidence) {
+      const seasonEvidence = this.evidence.get(entry.season) ?? new Map<string, Top20SeasonEvidence>();
+      seasonEvidence.set(entry.player.playerId, JSON.parse(JSON.stringify(entry)) as Top20SeasonEvidence);
+      this.evidence.set(entry.season, seasonEvidence);
+    }
+  }
   public async freezeVrsSnapshot(input: { readonly season: number; readonly half: 1 | 2 }): Promise<string> { return `browser-vrs-${input.season}-h${input.half}`; }
   public async applyTournamentIntervention(intervention: TournamentIntervention): Promise<TournamentInterventionAppliedFact> { this.interventions.set(intervention.id, { ...intervention }); return { type: 'TOURNAMENT_INTERVENTION_APPLIED', occurredAt: intervention.occurredAt, intervention: { ...intervention } }; }
-  public async settleTournament(_fact: TournamentCompletedFact): Promise<void> {}
-  public async recordTop20Evidence(input: { readonly result: TournamentResult; readonly player: PlayerProfile }): Promise<void> {
-    if (input.result.tier !== 'T1' && input.result.tier !== 'MAJOR') return;
-    const performance = input.result.playerPerformances.find((candidate) => candidate.playerId === input.player.id);
-    if (!performance) return;
-    const existing = this.evidence.get(input.result.season) ?? { season: input.result.season, player: { playerId: input.player.id, nickname: input.player.gameId, countryCode: input.player.originRegion, teamName: input.player.currentTeamId ?? '自由选手', careerPlayer: true, source: 'CAREER' as const }, tournaments: [] };
-    const tournament = { eventId: input.result.editionId, eventName: input.result.eventName, tier: input.result.tier, maps: performance.maps, rating: performance.rating, adr: 70 + (performance.rating - 1) * 52, playoffMaps: performance.playoffMaps, playoffRating: performance.playoffRating, top5Maps: performance.top5Maps, top5Rating: performance.top5Rating, finalMaps: performance.finalMaps, finalRating: performance.finalRating, title: input.result.title, honors: performance.honor ? [{ type: performance.honor, honorClass: input.result.honorClass, eventId: input.result.editionId, eventName: input.result.eventName, tier: input.result.tier }] : [], majorPlayoffChoke: input.result.tier === 'MAJOR' && performance.playoffRating < 0.9 };
-    this.evidence.set(input.result.season, { ...existing, tournaments: [...existing.tournaments.filter((candidate) => candidate.eventId !== tournament.eventId), tournament] });
+  public async settleTournament(fact: TournamentCompletedFact): Promise<void> { await this.append(fact); }
+  public async hasCompleted(editionId: string): Promise<boolean> { return this.completedTournamentIds.has(editionId); }
+  public async append(fact: TournamentFact): Promise<void> {
+    if (fact.type !== 'TOURNAMENT_COMPLETED' || this.completedTournamentIds.has(fact.result.editionId)) return;
+    this.completedTournamentIds.add(fact.result.editionId);
+    this.projectTournamentEvidence(fact.result);
+  }
+  public async findSeasonEvidence(season: number): Promise<readonly Top20SeasonEvidence[]> {
+    this.seedSeasonEvidence(season);
+    return [...(this.evidence.get(season)?.values() ?? [])].map((entry) => JSON.parse(JSON.stringify(entry)) as Top20SeasonEvidence);
+  }
+  private seedSeasonEvidence(season: number): void {
+    const baselineSeason = Math.min(...this.evidence.keys());
+    const baseline = this.evidence.get(baselineSeason);
+    if (!baseline || !Number.isFinite(baselineSeason) || season === baselineSeason) return;
+    const years = Math.max(0, season - baselineSeason);
+    const decay = this.simulationRules?.realPlayerDecay;
+    const multiplier = Math.max(decay?.minimumMultiplier ?? 0.55, 1 - Math.min(decay?.careerDeclineCap ?? 0.12, years * (decay?.careerDeclinePerYear ?? 0.012)));
+    const projected = new Map<string, Top20SeasonEvidence>(this.evidence.get(season) ?? []);
+    for (const entry of baseline.values()) {
+      if (entry.player.careerPlayer) continue;
+      const tournaments = entry.tournaments.map((event) => ({ ...event, eventId: `${event.eventId}-${season}`, eventName: event.eventName.replace(String(baselineSeason), String(season)), rating: Math.max(0.8, event.rating * multiplier), playoffRating: Math.max(0.8, event.playoffRating * multiplier), top5Rating: Math.max(0.8, event.top5Rating * multiplier), finalRating: event.finalRating === null ? null : Math.max(0.8, event.finalRating * multiplier), honors: event.honors.map((honor) => ({ ...honor, eventId: `${honor.eventId}-${season}`, eventName: honor.eventName.replace(String(baselineSeason), String(season)) })) }));
+      if (!projected.has(entry.player.playerId)) projected.set(entry.player.playerId, { ...entry, season, tournaments });
+    }
+    this.evidence.set(season, projected);
+  }
+  private projectTournamentEvidence(result: TournamentResult): void {
+    if (result.tier !== 'T1' && result.tier !== 'MAJOR') return;
+    const seasonEvidence = this.evidence.get(result.season) ?? new Map<string, Top20SeasonEvidence>();
+    for (const performance of result.playerPerformances) {
+      const identity = this.identities.get(performance.playerId);
+      const placement = result.teamPlacements.find((entry) => entry.teamId === performance.teamId);
+      const player = performance.playerId === this.careerPlayer.id
+        ? { playerId: this.careerPlayer.id, nickname: this.careerPlayer.gameId, countryCode: this.careerPlayer.originRegion, teamName: this.teamNames.get(performance.teamId) ?? identity?.teamName ?? performance.teamId, careerPlayer: true, source: 'CAREER' as const }
+        : { playerId: performance.playerId, nickname: identity?.nickname ?? performance.playerId, countryCode: identity?.countryCode ?? 'UNKNOWN', teamName: identity?.teamName ?? performance.teamId, careerPlayer: false, source: identity?.source ?? 'VIRTUAL' as const };
+      const existing = seasonEvidence.get(performance.playerId) ?? { season: result.season, player, tournaments: [] };
+      const tournament = { eventId: result.editionId, eventName: result.eventName, tier: result.tier, maps: performance.maps, rating: performance.rating, adr: performance.adr ?? 0, kast: performance.kast ?? 0, playoffMaps: performance.playoffMaps, playoffRating: performance.playoffRating, top5Maps: performance.top5Maps, top5Rating: performance.top5Rating, finalMaps: performance.finalMaps, finalRating: performance.finalRating, title: placement?.title ?? false, honors: result.honors.filter((honor) => honor.playerId === performance.playerId).map((honor) => ({ type: honor.type, honorClass: honor.honorClass, eventId: result.editionId, eventName: result.eventName, tier: result.tier })), majorPlayoffChoke: result.tier === 'MAJOR' && performance.playoffMaps > 0 && performance.playoffRating < 0.9 };
+      seasonEvidence.set(performance.playerId, { ...existing, player, tournaments: [...existing.tournaments.filter((candidate) => candidate.eventId !== tournament.eventId), tournament] });
+    }
+    this.evidence.set(result.season, seasonEvidence);
   }
   public async findTop20(season: number): Promise<Top20Ranking> {
-    const evidence = this.evidence.get(season);
-    const npc = await this.loadNpcRanking(season);
-    const npcEvidence = await this.loadNpcEvidence(season, npc);
-    return this.top20.calculate({ season, rules: { version: 'browser-reference-aps-v2', minimumT1MajorMaps: 40, honorBaseScore: { MVP: 800, EVP: 320, VP: 96 }, honorClassMultiplier: { NONE: 0.25, MEDIUM: 0.7, LARGE: 1, ELITE: 1.1, SUPER_ELITE: 1.3, MAJOR: 1.5 } }, evidence: evidence ? [...npcEvidence, evidence] : npcEvidence });
-  }
-
-  private async loadNpcEvidence(season: number, identities: readonly Top20IdentityRecord[]): Promise<readonly Top20SeasonEvidence[]> {
-    const baselineSeason = season === 2026;
-    const response = baselineSeason ? await fetch('assets/top20/npc-season-evidence.json').catch(() => null) : null;
-    const payload = response && response.ok ? await response.json() as { readonly season: number; readonly players: readonly { readonly playerId: string; readonly maps: number; readonly rating: number; readonly playoffRating: number; readonly top5Rating: number; readonly finalRating: number | null; readonly titles?: readonly string[]; readonly honors: readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[] }[] } : null;
-    const historicalResponse = baselineSeason ? await fetch('assets/top20/historical-baseline.json').catch(() => null) : null;
-    const historical = historicalResponse && historicalResponse.ok ? await historicalResponse.json() as { readonly seasons: Readonly<Record<string, readonly string[]>> } : null;
-    const historicalNames = new Set(Object.values(historical?.seasons ?? {}).flat());
-    const standingsResponse = baselineSeason ? await fetch('assets/teams/teams.json').catch(() => null) : null;
-    const standings = standingsResponse && standingsResponse.ok ? await standingsResponse.json() as { readonly teams: readonly { readonly id: string; readonly standings: { readonly bestRank: number } | null }[] } : null;
-    const rulesResponse = await fetch('assets/top20/simulation-rules.json').catch(() => null);
-    const simulationRules = rulesResponse && rulesResponse.ok ? await rulesResponse.json() as Top20SimulationRules : DEFAULT_TOP20_SIMULATION_RULES;
-    const ranks = new Map((standings?.teams ?? []).filter((team) => team.standings).map((team) => [team.id, team.standings!.bestRank]));
-    const evidenceByPlayer = new Map((payload?.season === season ? payload.players : []).map((entry) => [entry.playerId, entry]));
-    const annualHonors = this.allocateHonorPool(identities, season, evidenceByPlayer, simulationRules);
-    return identities.map((entry, index) => {
-      const source = evidenceByPlayer.get(entry.playerId);
-      const tier = entry.teamTier ?? (entry.source === 'REAL' ? 'T1' : 'T2');
-      const placement = entry.placement ?? index + 1;
-      const age = this.simulatedAge(entry, season);
-      const careerYears = Math.max(0, season - (entry.careerStartYear ?? (entry.source === 'REAL' ? 2018 : season - 1)));
-      const isVeteran = entry.source === 'REAL' && careerYears >= 5;
-      const isProdigy = entry.source === 'VIRTUAL' && careerYears <= 1;
-      const ageDecay = entry.source === 'REAL' ? this.realPlayerDecay(age, careerYears, simulationRules.realPlayerDecay) : 1;
-      const seasonDrift = ((season + placement) % 7 - 3) * 0.004;
-      const baseMaps = source?.maps ?? (tier === 'T1' ? Math.max(72, 112 - Math.min(40, placement * 2)) : tier === 'T2' ? 32 : 16);
-      const maps = Math.max(12, Math.round(baseMaps * ageDecay * (isProdigy ? 0.78 : 1)));
-      const historicalContinuity = historicalNames.has(entry.nickname) ? 0.01 : 0;
-      const vrsRank = entry.teamId ? ranks.get(entry.teamId) ?? 100 : 100;
-      const newcomerVrsBonus = entry.source === 'VIRTUAL' ? Math.max(0, (36 - Math.min(36, vrsRank)) / 36) * 0.03 : 0;
-      const potential = entry.potential ?? (entry.source === 'VIRTUAL' ? simulationRules.virtualGeneration.baselinePotential : 0.7);
-      const prodigyBoost = isProdigy ? Math.max(0, potential - 0.75) * 0.22 : 0;
-      const rating = Math.min(1.35, ((source?.rating ?? (tier === 'T1' ? 1.08 - Math.min(0.08, placement * 0.002) : tier === 'T2' ? 1.01 : 0.98)) * ageDecay) + historicalContinuity + newcomerVrsBonus + seasonDrift + prodigyBoost);
-      const advancedTier = tier === 'T1' ? 'T1' : 'T2';
-      const eventName = source?.titles?.[0] ?? this.referenceEventName(entry, season, advancedTier);
-      const eventId = `${entry.playerId}-${season}-${this.slugEventName(eventName)}`;
-      return {
-        season,
-        player: { playerId: entry.playerId, nickname: entry.nickname, countryCode: entry.countryCode, teamName: entry.teamName ?? '未注明队伍', ...(entry.teamId ? { teamId: entry.teamId } : {}), ...(entry.teamTier ? { teamTier: entry.teamTier } : {}), careerPlayer: false, source: entry.source },
-        tournaments: [{
-          eventId, eventName, tier: advancedTier, maps, rating, adr: 70 + (rating - 1) * 52,
-          playoffMaps: source ? Math.round(maps * 0.35) : Math.round(maps * 0.2), playoffRating: source?.playoffRating ?? rating,
-          top5Maps: source ? Math.round(maps * 0.3) : Math.round(maps * 0.15), top5Rating: source?.top5Rating ?? rating,
-          finalMaps: source ? Math.max(1, Math.round(maps * 0.08)) : 0, finalRating: source?.finalRating ?? null,
-          title: false,
-          honors: (source?.honors ?? annualHonors.get(entry.playerId) ?? []).map((honor) => ({ ...honor, eventId, eventName, tier: advancedTier })),
-          majorPlayoffChoke: false,
-          ...(source?.titles?.length && source.titles[0] ? { title: true, eventName: source.titles[0] } : {}),
-        }],
-      };
-    });
-  }
-  private referenceEventName(entry: Top20IdentityRecord, season: number, tier: 'T1' | 'T2'): string {
-    if (tier !== 'T1') return `T2 国际挑战赛 ${season}`;
-    if (entry.placement === 1) return `IEM 科隆 ${season}`;
-    if (entry.placement && entry.placement <= 5) return `IEM 卡托维兹 ${season}`;
-    if (entry.placement && entry.placement <= 10) return `EPL S26 ${season}`;
-    return `BLAST 赏金赛 S2 ${season}`;
-  }
-
-  private slugEventName(value: string): string {
-    return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'event';
-  }
-
-  private allocateHonorPool(
-    identities: readonly Top20IdentityRecord[],
-    season: number,
-    evidenceByPlayer: ReadonlyMap<string, { readonly honors: readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[] }>,
-    simulationRules: Top20SimulationRules,
-  ): ReadonlyMap<string, readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[]> {
-    const ranked = identities.map((entry, index) => ({ entry, index, score: this.honorCompetitionScore(entry, season, index, simulationRules) })).sort((left, right) => right.score - left.score || left.entry.playerId.localeCompare(right.entry.playerId));
-    const pool = simulationRules.honorPool;
-    const result = new Map<string, { type: 'MVP' | 'EVP' | 'VP'; honorClass: 'NONE' | 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE' | 'MAJOR' }[]>();
-    const assign = (type: 'MVP' | 'EVP' | 'VP', count: number, classFor: (index: number) => 'MEDIUM' | 'LARGE' | 'ELITE' | 'SUPER_ELITE') => {
-      ranked.slice(0, count).forEach((candidate, index) => { const honors = result.get(candidate.entry.playerId) ?? []; honors.push({ type, honorClass: classFor(index) }); result.set(candidate.entry.playerId, honors); });
-    };
-    assign('MVP', pool.mvp, (index) => index === 0 ? 'SUPER_ELITE' : index < 2 ? 'ELITE' : 'LARGE');
-    assign('EVP', pool.evp, (index) => index < 3 ? 'SUPER_ELITE' : index < 7 ? 'ELITE' : 'LARGE');
-    assign('VP', pool.vp, (index) => index < 10 ? 'ELITE' : 'MEDIUM');
-    // Imported season files provide the first-year statistical baseline only.
-    // Honor ownership always comes from this fixed annual pool so the ecosystem
-    // remains comparable across seasons.
-    return result;
-  }
-
-  private honorCompetitionScore(entry: Top20IdentityRecord, season: number, index: number, simulationRules: Top20SimulationRules): number {
-    const age = this.simulatedAge(entry, season);
-    const ageFactor = entry.source === 'REAL' ? this.realPlayerDecay(age, Math.max(0, season - (entry.careerStartYear ?? 2018)), simulationRules.realPlayerDecay) : 1;
-    const potential = entry.potential ?? (entry.source === 'VIRTUAL' ? simulationRules.virtualGeneration.baselinePotential : 0.7);
-    const prodigyFactor = entry.source === 'VIRTUAL' && season - (entry.careerStartYear ?? season) <= 1 ? potential * 0.35 : 0;
-    return ageFactor * (1.4 - index * 0.025) + prodigyFactor + ((season + index) % 5) * 0.01;
-  }
-
-  private simulatedAge(entry: Top20IdentityRecord, season: number): number {
-    return Math.max(16, season - (entry.birthYear ?? (entry.source === 'REAL' ? 1999 : season - 18)));
-  }
-
-  private realPlayerDecay(age: number, careerYears: number, rules: Top20SimulationRules['realPlayerDecay']): number {
-    const ageDecay = age <= rules.peakThroughAge ? 1 : age <= rules.gradualDeclineEndAge ? 1 - (age - rules.peakThroughAge) * rules.gradualDeclinePerYear : rules.veteranBaseMultiplier - Math.min(0.25, (age - rules.gradualDeclineEndAge) * rules.veteranDeclinePerYear);
-    const careerDecay = careerYears <= rules.careerGraceYears ? 1 : 1 - Math.min(rules.careerDeclineCap, (careerYears - rules.careerGraceYears) * rules.careerDeclinePerYear);
-    return Math.max(rules.minimumMultiplier, ageDecay * careerDecay);
-  }
-
-  private async loadNpcRanking(season: number): Promise<readonly Top20IdentityRecord[]> {
-    const cached = this.npcRankings.get(season);
-    if (cached) return cached;
-    const realResponse = await fetch('assets/top20/real-players.json').catch(() => null);
-    const real = realResponse && realResponse.ok ? (await realResponse.json() as { readonly players: readonly Top20IdentityRecord[] }).players : [];
-    const virtualResponse = await fetch('assets/top20/virtual-players.json').catch(() => null);
-    const virtual = virtualResponse && virtualResponse.ok ? (await virtualResponse.json() as { readonly players: readonly Top20IdentityRecord[] }).players : [];
-    const realEntries = real.map((entry) => ({ ...entry, source: 'REAL' as const, careerStartYear: entry.careerStartYear ?? 2018 }));
-    const rotation = virtual.length ? ((season % virtual.length) + virtual.length) % virtual.length : 0;
-    const rulesResponse = await fetch('assets/top20/simulation-rules.json').catch(() => null);
-    const simulationRules = rulesResponse && rulesResponse.ok ? await rulesResponse.json() as Top20SimulationRules : DEFAULT_TOP20_SIMULATION_RULES;
-    const virtualEntries = virtual
-      .map((entry, index) => ({
-        ...entry,
-        source: 'VIRTUAL' as const,
-        placement: index + 1,
-        careerStartYear: 2026 + Math.floor(index / 4),
-        potential: index === 4 ? simulationRules.virtualGeneration.prodigyPotential : index < 8 ? simulationRules.virtualGeneration.risingPotential : simulationRules.virtualGeneration.baselinePotential,
-      }))
-      .filter((entry) => entry.careerStartYear <= season && (entry.careerStartYear === 2026 || this.annualGenerationRoll(season, entry.placement!) < (entry.potential! >= 0.95 ? simulationRules.virtualGeneration.prodigyProbability : simulationRules.virtualGeneration.baseProbability)))
-      .sort((left, right) => ((left.placement! + rotation) % Math.max(1, virtual.length)) - ((right.placement! + rotation) % Math.max(1, virtual.length)));
-    const value = [...realEntries, ...virtualEntries].map((entry, index) => ({ ...entry, placement: entry.placement ?? index + 1 }));
-    this.npcRankings.set(season, value);
-    return value;
-  }
-  private annualGenerationRoll(season: number, placement: number): number {
-    let value = (season * 1103515245 + placement * 12345) >>> 0;
-    value = (value ^ (value >>> 16)) >>> 0;
-    return value / 0x100000000;
+    const evidence = await this.findSeasonEvidence(season);
+    const byPlayer = new Map<string, Top20SeasonEvidence>();
+    for (const entry of evidence) {
+      const existing = byPlayer.get(entry.player.playerId);
+      if (!existing) {
+        byPlayer.set(entry.player.playerId, entry);
+        continue;
+      }
+      const tournaments = [...existing.tournaments, ...entry.tournaments].filter((event, index, all) => all.findIndex((candidate) => candidate.eventId === event.eventId) === index);
+      const player = entry.player.careerPlayer ? entry.player : existing.player;
+      byPlayer.set(entry.player.playerId, { season, player, tournaments });
+    }
+    return this.top20.calculate({ season, rules: this.rankingRules, evidence: [...byPlayer.values()] });
   }
 
   public async synchronizeCareerHonors(profile: PlayerProfile, ranking: Top20Ranking): Promise<PlayerProfile> {
@@ -342,15 +267,10 @@ class BrowserEconomyService implements EconomyTickService {
   }
 }
 
-class BrowserEventTriggerService implements EventTriggerService {
-  public async evaluate(_input: { readonly player: PlayerProfile; readonly fact: Parameters<EventTriggerService['evaluate']>[0]['fact'] }): Promise<readonly TriggeredEvent[]> { return []; }
-  public async markTriggered(_triggerId: string, _playerId: string): Promise<void> {}
-}
-
 function createBaseProfile(config: BrowserCareerConfig): PlayerProfile {
   return {
     id: config.gameId as HltvPlayerId, gameId: config.gameId, nationality: config.realName, difficultyMode: config.mode, isRetired: false,
-    tournamentArchive: [], originRegion: config.region, age: 18, currentTeamId: null, currentContractId: null, role: ROLE_MAP[config.role],
+    tournamentArchive: [], originRegion: config.region, age: 16, currentTeamId: null, currentContractId: null, role: ROLE_MAP[config.role],
     attributes: { ...ROLE_ATTRIBUTES[config.role] },
     life: { balance: 500, currentJob: 'NONE', incomePerWeek: 0, expensePerWeek: 0, stress: 12 },
     career: { totalKills: 0, rating2: 1, headshotPercentage: 0, mapsPlayed: 0, clutchWon: 0, careerEarnings: 0, teamHistory: [] },
@@ -360,27 +280,44 @@ function createBaseProfile(config: BrowserCareerConfig): PlayerProfile {
 }
 
 let currentGame: BrowserCareerGame | null = null;
+let currentGateway: EngineHltvGateway | null = null;
 
 export async function initCareerGame(config: BrowserCareerConfig): Promise<BrowserCareerGame> {
   if (!config.gameId.trim()) throw new Error('Game ID is required.');
   const stateRepository = InMemoryStateRepository.getInstance();
   await stateRepository.delete(config.gameId);
   const progression = new PlayerProgressionServiceImpl(progressionRules);
-  const player = await progression.createProfile({ profile: createBaseProfile(config), difficultyMode: config.mode, originRule: ORIGIN_RULES[config.region], modeRule: MODE_RULES[config.mode] });
-  const state: CareerSaveEnvelope = {
-    format: 'COPE_CAREER_SAVE', version: 1,
-    state: { schemaVersion: 1, savedAt: new Date().toISOString(), currentDate: '2026-01-01T00:00:00.000Z', season: 2026, careerHalf: 1, player, contracts: [], npcPlayers: [], worldlines: [], currentStoryEventId: 'rookie-first-trial', completedEventIds: [], scheduledTournaments: [], unsettledTournamentIds: [], pendingTournamentInterventions: [], activeVrsSnapshot: null },
-  };
-  await stateRepository.save(config.gameId, state);
+  const unsignedPlayer = await progression.createProfile({ profile: createBaseProfile(config), difficultyMode: config.mode, originRule: ORIGIN_RULES[config.region], modeRule: MODE_RULES[config.mode] });
   const clock = new BrowserClock();
   const random = new BrowserRandomSource(config.gameId);
   const dailyActions = new DailyActionServiceImpl(new BrowserDailyActionRepository());
   const rosterResponse = await fetch('assets/teams/rosters.json').catch(() => null);
-  const rosterPayload = rosterResponse && rosterResponse.ok ? await rosterResponse.json() as { readonly teams: readonly { readonly teamId: string; readonly tier: import('./hltv/team').TeamTier }[] } : null;
+  const rosterPayload = rosterResponse && rosterResponse.ok ? await rosterResponse.json() as import('./hltv/team-assets-repository').TeamRosterAsset : null;
   const standingsResponse = await fetch('assets/teams/teams.json').catch(() => null);
   const standingsPayload = standingsResponse && standingsResponse.ok ? await standingsResponse.json() as { readonly teams: readonly { readonly id: string; readonly name: string; readonly standings: { readonly bestRank: number; readonly bestPoints: number } | null }[] } : null;
-  const teamTiers = new Map((standingsPayload?.teams ?? []).filter((team) => team.standings).map((team) => [team.id, team.standings!.bestRank <= 32 ? 'T1' as const : team.standings!.bestRank <= 120 ? 'T2' as const : 'T3' as const]));
-  for (const team of rosterPayload?.teams ?? []) teamTiers.set(team.teamId, team.tier);
+  const rosterRegions = new Map((rosterPayload?.teams ?? []).map((team) => [team.teamId, team.region]));
+  const teamTiers = new Map((standingsPayload?.teams ?? []).filter((team) => team.standings).map((team) => [team.id, tierForRank(team.standings!.bestRank)]));
+  // 排名分级优先；仅无排名队伍使用 roster 的静态 tier 作为兼容回退。
+  for (const team of rosterPayload?.teams ?? []) if (!teamTiers.has(team.teamId)) teamTiers.set(team.teamId, team.tier);
+  const academyResponse = await fetch('assets/academy/academy-teams.json').catch(() => null);
+  const academyPayload = academyResponse && academyResponse.ok ? await academyResponse.json() as { readonly teams: readonly { readonly teamId: string; readonly name: string; readonly region: CompetitionRegion; readonly tier: 'T3'; readonly monthlySalary: number; readonly contractLengthMonths?: number; readonly buyoutAmount?: number; readonly expectedPlaytimePercentage?: number; readonly startingRole?: 'STARTER' | 'SUBSTITUTE'; readonly initialCandidate?: boolean; readonly storyOnly?: boolean }[] } : { teams: [] };
+  const ranksByTeam = new Map((standingsPayload?.teams ?? []).filter((team) => team.standings).map((team) => [team.id, team.standings!.bestRank]));
+  const regional = academyPayload.teams.filter((team) => team.initialCandidate && !team.storyOnly && team.region === config.region && team.tier === 'T3' && (ranksByTeam.get(team.teamId) ?? 0) > 100);
+  const global = academyPayload.teams.filter((team) => team.initialCandidate && !team.storyOnly && team.tier === 'T3' && (ranksByTeam.get(team.teamId) ?? 0) > 100);
+  const candidates = regional.length ? regional : global;
+  const startingTeam = [...candidates].sort((left, right) => left.teamId.localeCompare(right.teamId))[Math.floor(random.next() * Math.max(1, candidates.length))];
+  if (!startingTeam) throw new Error(`No VRS 100+ starting team is configured for ${config.region}.`);
+  const startedAt = '2026-01-01T00:00:00.000Z';
+  const endsAt = new Date(startedAt); endsAt.setUTCMonth(endsAt.getUTCMonth() + (startingTeam.contractLengthMonths ?? 12));
+  const contracts = new SaveContractService([], new ConditionEvaluatorImpl(), (candidate) => ({ player: candidate, currentTeamId: candidate.currentTeamId, opponentTeamId: null, randomRoll: 0, difficultyMode: candidate.difficultyMode }), (teamId) => teamTiers.get(teamId));
+  const signed = await contracts.sign({ profile: unsignedPlayer, terms: { teamId: startingTeam.teamId, startedAt, endsAt: endsAt.toISOString(), salaryPerMonth: startingTeam.monthlySalary, buyoutAmount: startingTeam.buyoutAmount ?? 0, role: startingTeam.startingRole ?? 'STARTER', expectedPlaytimePercentage: startingTeam.expectedPlaytimePercentage ?? 75 }, occurredAt: startedAt });
+  if (!('contract' in signed) || 'reason' in signed) throw new Error(`Unable to create initial T3 contract for ${startingTeam.teamId}.`);
+  const player = signed.profile;
+  const state: CareerSaveEnvelope = {
+    format: 'COPE_CAREER_SAVE', version: 1,
+    state: { schemaVersion: 1, savedAt: new Date().toISOString(), currentDate: startedAt, season: 2026, careerHalf: 1, player, contracts: contracts.snapshot, npcPlayers: [], worldlines: [], currentStoryEventId: 'rookie-team-entry', completedEventIds: [], seasonNarrativeEventCount: 0, pendingSystemEvents: [], scheduledTournaments: [], unsettledTournamentIds: [], pendingTournamentInterventions: [], activeVrsSnapshot: null, activeTournamentState: null },
+  };
+  await stateRepository.save(config.gameId, state);
   const transferTargets = new TransferTargetServiceImpl(async () => {
     const response = await fetch('assets/teams/transfer-targets.json').catch(() => null);
     const configured = response && response.ok ? await response.json() as import('./hltv/transfer-targets').TransferTargetAsset : null;
@@ -388,39 +325,107 @@ export async function initCareerGame(config: BrowserCareerConfig): Promise<Brows
     const generated = (standingsPayload?.teams ?? []).flatMap((team) => {
       const rank = team.standings?.bestRank;
       if (!rank || configuredIds.has(team.id)) return [];
+      const region = rosterRegions.get(team.id);
+      // Unknown geography is not fabricated; configuration assets may explicitly cover such teams.
+      if (!region) return [];
       const tier = teamTiers.get(team.id) ?? 'T3';
-      const salaryPerMonth = tier === 'T1' ? 1200 : tier === 'T2' ? 650 : 350;
-      return [{ teamId: team.id, teamName: team.name, region: 'EUROPE' as const, tier, minimumRank: 1, maximumRank: tier === 'T1' ? 32 : tier === 'T2' ? 120 : 345, requiredAttributes: tier === 'T1' ? { aim: 70, consistency: 65 } : tier === 'T2' ? { aim: 55, consistency: 50 } : { aim: 45 }, salaryPerMonth, buyoutAmount: tier === 'T1' ? 5000 : tier === 'T2' ? 1200 : 300, reason: `真实 VRS #${rank} 队伍，根据当前赛区排名产生邀约。`, roleOffer: tier === 'T1' ? 'SUBSTITUTE' as const : 'STARTER' as const }];
+      const salaryPerMonth = tier === 'T1' ? 18000 : tier === 'T2' ? 3500 : 900;
+      const bounds = tier === 'T1' ? { minimumRank: 1, maximumRank: 12 } : tier === 'T2' ? { minimumRank: 13, maximumRank: 32 } : { minimumRank: 33, maximumRank: 345 };
+      return [{ teamId: team.id, teamName: team.name, region, tier, ...bounds, requiredAttributes: tier === 'T1' ? { aim: 70, consistency: 65 } : tier === 'T2' ? { aim: 55, consistency: 50 } : { aim: 45 }, minimumRecentRating: tier === 'T1' ? 1.08 : tier === 'T2' ? 0.98 : 0.9, minimumCareerMaps: tier === 'T1' ? 100 : tier === 'T2' ? 35 : 0, minimumT1MajorMaps: tier === 'T1' ? 30 : 0, preferredRegions: [region], salaryPerMonth, buyoutAmount: tier === 'T1' ? 120000 : tier === 'T2' ? 18000 : 3000, reason: `VRS #${rank} 队伍正在评估当前窗口的阵容人选。`, roleOffer: tier === 'T1' ? 'SUBSTITUTE' as const : 'STARTER' as const, contractLengthMonths: tier === 'T1' ? 6 : 12, risk: tier === 'T1' ? 'HIGH' : 'MEDIUM', expectedPlaytimePercentage: tier === 'T1' ? 35 : 85 }];
     });
     return { schemaVersion: 2, targets: [...(configured?.targets ?? []), ...generated] };
   });
+  const rosterByTeam = new Map((rosterPayload?.teams ?? []).map((team) => [team.teamId, team.players.map((candidate) => ({ playerId: candidate.playerId, role: candidate.role, active: candidate.active }))]));
+  const identityMap = new Map<string, Top20IdentityRecord>((rosterPayload?.teams ?? []).flatMap((team) => team.players.map((candidate) => [candidate.playerId, { playerId: candidate.playerId, nickname: candidate.nickname, countryCode: team.region, teamName: team.teamName, teamId: team.teamId, teamTier: team.tier, source: 'REAL' as const }] as const)));
+  const rankingRulesResponse = await fetch('assets/top20/ranking-rules.json').catch(() => null);
+  if (!rankingRulesResponse?.ok) throw new Error('Unable to load required TOP20 ranking rules.');
+  const rankingRules = await rankingRulesResponse.json() as import('./hltv/top20').Top20Rules;
+  const simulationRulesResponse = await fetch('assets/top20/simulation-rules.json').catch(() => null);
+  const simulationRules = simulationRulesResponse && simulationRulesResponse.ok ? await simulationRulesResponse.json() as BrowserTop20SimulationRules : undefined;
+  const realPlayersResponse = await fetch('assets/top20/real-players.json').catch(() => null);
+  const realPlayersPayload = realPlayersResponse && realPlayersResponse.ok ? await realPlayersResponse.json() as { readonly players: readonly Top20IdentityRecord[] } : { players: [] };
+  for (const identity of realPlayersPayload.players) identityMap.set(identity.playerId, identity);
+  const virtualPlayersResponse = await fetch('assets/top20/virtual-players.json').catch(() => null);
+  const virtualPlayersPayload = virtualPlayersResponse && virtualPlayersResponse.ok ? await virtualPlayersResponse.json() as { readonly players: readonly Top20IdentityRecord[] } : { players: [] };
+  for (const identity of virtualPlayersPayload.players) identityMap.set(identity.playerId, { ...identity, source: 'VIRTUAL' });
+  const realRosterTeamIds = new Set(rosterByTeam.keys());
+  const npcPlayers: readonly NpcPlayerProfile[] = virtualPlayersPayload.players.filter((identity) => !identity.teamId || !realRosterTeamIds.has(identity.teamId)).map((identity, index) => ({ id: identity.playerId, nickname: identity.nickname, countryCode: identity.countryCode, originRegion: identity.countryCode === 'China' ? 'ASIA' as const : identity.countryCode === 'Brazil' || identity.countryCode === 'United States' || identity.countryCode === 'Canada' ? 'AMERICAS' as const : identity.countryCode === 'Australia' ? 'OCEANIA' as const : 'EUROPE' as const, age: 18 + index % 10, role: (['AWPER', 'ENTRY_FRAGGER', 'IGL', 'SUPPORT', 'LURKER'] as const)[index % 5]!, attributes: { aim: 62 + index % 18, gameSense: 60 + index % 16, leadership: 48 + index % 20, clutch: 58 + index % 17, consistency: 60 + index % 15, teamConflict: 12 + index % 15 }, career: { totalKills: 0, rating2: 1, headshotPercentage: 50, mapsPlayed: 0, clutchWon: 0, careerEarnings: 0, teamHistory: identity.teamId ? [identity.teamId] : [] }, flags: [], currentTeamId: identity.teamId ?? null, availability: identity.teamId ? 'SIGNED' as const : 'AVAILABLE' as const, origin: 'GENERATED_ACADEMY' as const, generationSeed: index + 1 }));
+  const currentEnvelope = await stateRepository.load(config.gameId);
+  if (currentEnvelope && currentEnvelope.state.npcPlayers.length === 0) await stateRepository.save(config.gameId, { ...currentEnvelope, state: { ...currentEnvelope.state, npcPlayers } });
+  const npcEvidenceResponse = await fetch('assets/top20/npc-season-evidence.json').catch(() => null);
+  const npcEvidencePayload = npcEvidenceResponse && npcEvidenceResponse.ok ? await npcEvidenceResponse.json() as { readonly season: number; readonly players: readonly { readonly playerId: string; readonly maps: number; readonly titles?: readonly string[]; readonly rating: number; readonly playoffRating: number; readonly top5Rating: number; readonly finalRating: number; readonly honors: readonly { readonly type: 'MVP' | 'EVP' | 'VP'; readonly honorClass: import('./hltv/tournament').HonorClass }[] }[] } : { season: 2026, players: [] };
+  const npcSeasonEvidence: readonly Top20SeasonEvidence[] = npcEvidencePayload.players.flatMap((entry) => {
+    const identity = identityMap.get(entry.playerId);
+    if (!identity) return [];
+    const eventName = entry.titles?.[0] ?? `${npcEvidencePayload.season} 年度赛事样本`;
+    return [{ season: npcEvidencePayload.season, player: { playerId: identity.playerId, nickname: identity.nickname, countryCode: identity.countryCode, teamName: identity.teamName ?? identity.teamId ?? 'Free Agent', careerPlayer: false, source: identity.source }, tournaments: [{ eventId: `npc-season-${npcEvidencePayload.season}-${entry.playerId}`, eventName, tier: 'T1' as const, maps: entry.maps, rating: entry.rating, adr: 43 + entry.rating * 31, kast: 48 + entry.rating * 19, playoffMaps: Math.max(10, Math.round(entry.maps * 0.3)), playoffRating: entry.playoffRating, top5Maps: Math.max(8, Math.round(entry.maps * 0.2)), top5Rating: entry.top5Rating, finalMaps: Math.max(3, Math.round(entry.maps * 0.08)), finalRating: entry.finalRating, title: Boolean(entry.titles?.length), honors: entry.honors.map((honor, index) => ({ ...honor, eventId: `npc-honor-${npcEvidencePayload.season}-${entry.playerId}-${index}`, eventName, tier: 'T1' as const })), majorPlayoffChoke: false }] }];
+  });
+  const teamNames = new Map((standingsPayload?.teams ?? []).map((team) => [team.id, team.name]));
+  const gateway = new BrowserGateway(player, identityMap, rankingRules, teamNames, npcSeasonEvidence, simulationRules);
   const tournaments = new TournamentServiceImpl({
     playerId: config.gameId,
     random,
     clock,
+    matches: new MatchSimulationServiceImpl(),
+    teamRoster: (teamId) => rosterByTeam.get(teamId) ?? [],
+    facts: gateway,
+    playerSnapshot: async (playerId, teamId) => {
+      if (playerId === player.id) {
+        const latest = (await stateRepository.load(config.gameId))?.state.player ?? player;
+        return { playerId, teamId, nickname: latest.gameId, role: latest.role, ...latest.attributes, morale: latest.morale, energy: latest.energy, age: latest.age };
+      }
+      const rosterSlot = rosterByTeam.get(teamId)?.find((candidate) => candidate.playerId === playerId);
+      const npc = (await stateRepository.load(config.gameId))?.state.npcPlayers.find((candidate) => candidate.id === playerId);
+      const role = npc?.role ?? (rosterSlot?.role === 'IGL' || rosterSlot?.role === 'AWPER' || rosterSlot?.role === 'ENTRY_FRAGGER' || rosterSlot?.role === 'SUPPORT' || rosterSlot?.role === 'LURKER' ? rosterSlot.role : 'SUPPORT');
+      return npc
+        ? { playerId, teamId, nickname: npc.nickname, role, ...npc.attributes, morale: 65, energy: 70, age: npc.age }
+        : { playerId, teamId, nickname: identityMap.get(playerId)?.nickname ?? playerId, role, aim: 68, gameSense: 66, leadership: role === 'IGL' ? 78 : 58, clutch: 64, consistency: 66, teamConflict: 20, morale: 65, energy: 70, age: 23 };
+    },
     calendarReader: async () => {
       const response = await fetch('assets/tournaments/calendar.json').catch(() => null);
       if (!response || !response.ok) return null;
       return await response.json() as import('./hltv/tournament-service-impl').TournamentCalendarAsset;
     },
   });
+  const storyReader = new BrowserStoryEventPackReader();
+  const storyRepository = new StoryRepositoryImpl(storyReader);
+  const triggerRules = new AssetEventTriggerRuleRepository(async () => {
+    const response = await fetch('assets/story/trigger-rules.json').catch(() => null);
+    if (!response || !response.ok) return null;
+    return response.json() as Promise<import('./engine/impl/event-trigger-service').EventTriggerRuleAsset>;
+  }, storyRepository);
+  const triggers: EventTriggerService = new EventTriggerServiceImpl(triggerRules, new ConditionEvaluatorImpl());
   const dependencies: CareerGameDependencies = {
-    playerId: config.gameId, difficultyMode: config.mode, hltv: new BrowserGateway(), progression,
-    dailyActions, economy: new BrowserEconomyService(), triggers: new BrowserEventTriggerService(), retirement: new RetirementServiceImpl(), retirementSummary: new RetirementSummaryServiceImpl(), stateRepository,
+    playerId: config.gameId, difficultyMode: config.mode, hltv: gateway, progression,
+    dailyActions, economy: new BrowserEconomyService(), triggers, retirement: new RetirementServiceImpl(), retirementSummary: new RetirementSummaryServiceImpl(), stateRepository,
   };
-  const factory = new CareerGameFactoryImpl(new BrowserStoryEventPackReader(), {
-    progressionRules, dailyActions, tournaments, clock, random, transferTargets,
+  const npcGeneration = new NpcGenerationServiceImpl([], 0x9e3779b9);
+  const npcGenerationProfiles: readonly NpcGenerationProfile[] = [
+    { origin: 'GENERATED_ACADEMY', countryPool: ['Denmark', 'Sweden', 'Poland', 'China', 'Brazil', 'United States'], region: 'EUROPE', ageRange: [16, 20], roleWeights: { AWPER: 1, ENTRY_FRAGGER: 1, IGL: 1, SUPPORT: 1, LURKER: 1 }, attributeRange: { aim: [58, 78], gameSense: [56, 76], consistency: [55, 75] }, talentLevel: 'ACADEMY' },
+    { origin: 'GENERATED_PUG_STAR', countryPool: ['China', 'Brazil', 'Australia', 'United States'], region: 'ASIA', ageRange: [17, 22], roleWeights: { AWPER: 1, ENTRY_FRAGGER: 2, SUPPORT: 1, LURKER: 1 }, attributeRange: { aim: [62, 82], clutch: [58, 78] }, talentLevel: 'REGIONAL_STAR' },
+  ];
+  const transferMarket = new NpcTransferMarketServiceImpl();
+  const transferMarketTeamIds = [...new Set(npcPlayers.map((npc) => npc.currentTeamId).filter((teamId): teamId is string => Boolean(teamId)))];
+  const factory = new CareerGameFactoryImpl(storyReader, {
+    progressionRules, dailyActions, tournaments, clock, random, transferTargets, npcGeneration, npcGenerationProfiles, transferMarket, transferMarketTeamIds,
       teamTier: (teamId) => teamTiers.get(teamId),
       vrsSnapshot: async ({ season, half }): Promise<VrsInviteSnapshot> => {
       const response = await fetch('assets/teams/teams.json').catch(() => null);
       const payload = response && response.ok ? await response.json() as { readonly teams: readonly { readonly id: string; readonly standings: { readonly bestRank: number; readonly bestPoints: number } | null }[] } : null;
       const observedAt = clock.now();
-      const realEntries = (payload?.teams ?? []).filter((team) => team.standings).map((team) => ({ teamId: team.id, rank: team.standings!.bestRank, points: team.standings!.bestPoints, source: 'VRS' as const, observedAt, snapshotRank: team.standings!.bestRank }));
-      return { id: `browser-vrs-${config.gameId}-${season}-h${half}`, season, half, frozenAt: observedAt, sourceRankingId: 'standings_global_2026_07_06', rulesVersion: 'vrs-major-top32-v1', entries: realEntries.sort((left, right) => left.rank - right.rank) };
+      const latestState = (await stateRepository.load(config.gameId))?.state;
+      const playerTeamId = latestState?.player.currentTeamId ?? null;
+      const playerTeamBonus = latestState?.player.tournamentArchive.reduce((sum, record) => sum + (record.champion ? record.level === 'MAJOR' ? 220 : record.level === 'T1' ? 140 : 60 : Math.max(8, Math.round(record.rating * 12))), 0) ?? 0;
+      const baseEntries = (payload?.teams ?? []).filter((team) => team.standings).map((team) => ({ teamId: team.id, points: team.standings!.bestPoints + (team.id === playerTeamId ? playerTeamBonus : 0), source: 'VRS' as const }));
+      const knownIds = new Set(baseEntries.map((entry) => entry.teamId));
+      const virtualEntries = [...new Set((latestState?.npcPlayers ?? []).map((npc) => npc.currentTeamId).filter((teamId): teamId is string => Boolean(teamId) && !knownIds.has(teamId)))].map((teamId, index) => ({ teamId, points: Math.max(80, 620 - index * 18), source: 'SIMULATION' as const }));
+      const ranked = [...baseEntries, ...virtualEntries].sort((left, right) => right.points - left.points || left.teamId.localeCompare(right.teamId)).map((entry, index) => ({ ...entry, rank: index + 1, snapshotRank: index + 1, observedAt }));
+      return { id: `browser-vrs-${config.gameId}-${season}-h${half}`, season, half, frozenAt: observedAt, sourceRankingId: `local-vrs-${season}-h${half}`, rulesVersion: 'local-vrs-v1', entries: ranked };
     },
   });
   const game = await factory.create(dependencies) as CareerGameImpl;
   currentGame = game as BrowserCareerGame;
+  currentGateway = gateway;
   return game as BrowserCareerGame;
 }
 
@@ -428,8 +433,12 @@ function requireGame(): BrowserCareerGame {
   if (!currentGame) throw new Error('Create a career before using the engine.');
   return currentGame;
 }
+function requireGateway(): EngineHltvGateway {
+  if (!currentGateway) throw new Error('Create a career before using HLTV data.');
+  return currentGateway;
+}
 
-declare global { interface Window { COPEEngine: { createGame(config: BrowserCareerConfig): Promise<BrowserCareerGame>; getProfile(): Promise<PlayerProfile>; startSeason(): ReturnType<CareerGame['startSeason']>; getNextTournament(): ReturnType<CareerGame['getNextTournament']>; getVrsStatus(): ReturnType<CareerGame['getVrsStatus']>; listTransferTargets(): Promise<readonly TransferTargetView[]>; selectTransferTarget(teamId: string): ReturnType<CareerGame['selectTransferTarget']>; advanceTournament(): ReturnType<CareerGame['advanceTournament']>; finishSeason(): ReturnType<CareerGame['finishSeason']>; findCareerEvent(window: CareerEventWindow): ReturnType<CareerGame['findCareerEvent']>; advancePeriod(period: EventPeriod, randomRoll?: number): Promise<PlayerProfile>; getAvailableEvents(period: EventPeriod, randomRoll?: number): Promise<readonly StoryEvent[]>; chooseOption(decision: { readonly eventId: string; readonly optionId: string; readonly randomRoll: number }): ReturnType<CareerGame['chooseStoryOption']>; retire(reason?: string): Promise<PlayerProfile>; generateRetirementSummary(): ReturnType<CareerGame['generateRetirementSummary']>; }; } }
+declare global { interface Window { COPEEngine: { createGame(config: BrowserCareerConfig): Promise<BrowserCareerGame>; getProfile(): Promise<PlayerProfile>; startSeason(): ReturnType<CareerGame['startSeason']>; getNextTournament(): ReturnType<CareerGame['getNextTournament']>; getVrsStatus(): ReturnType<CareerGame['getVrsStatus']>; listStandInOffers(): Promise<readonly TournamentStandInOffer[]>; respondStandInOffer(offerId: string, response: 'ACCEPT' | 'REJECT' | 'WAIT'): ReturnType<CareerGame['respondStandInOffer']>; acceptStandInOffer(offerId: string): Promise<TournamentStandInAssignment>; listTransferTargets(): Promise<readonly TransferTargetView[]>; selectTransferTarget(teamId: string): ReturnType<CareerGame['selectTransferTarget']>; advanceTournament(input?: { readonly mode?: import('./engine/game').CareerTournamentAdvanceMode }): ReturnType<CareerGame['advanceTournament']>; finishSeason(): ReturnType<CareerGame['finishSeason']>; findTop20(season: number): Promise<Top20Ranking>; findCareerEvent(window: CareerEventWindow): ReturnType<CareerGame['findCareerEvent']>; advancePeriod(period: EventPeriod, randomRoll?: number): Promise<PlayerProfile>; getAvailableEvents(period: EventPeriod, randomRoll?: number): Promise<readonly StoryEvent[]>; chooseOption(decision: { readonly eventId: string; readonly optionId: string; readonly randomRoll: number }): ReturnType<CareerGame['chooseStoryOption']>; retire(reason?: string): Promise<PlayerProfile>; generateRetirementSummary(): ReturnType<CareerGame['generateRetirementSummary']>; }; } }
 
 window.COPEEngine = {
   createGame: initCareerGame,
@@ -437,10 +446,14 @@ window.COPEEngine = {
   startSeason: () => requireGame().startSeason(),
   getNextTournament: () => requireGame().getNextTournament(),
   getVrsStatus: () => requireGame().getVrsStatus(),
+  listStandInOffers: () => requireGame().listStandInOffers(),
+  respondStandInOffer: (offerId, response) => requireGame().respondStandInOffer(offerId, response),
+  acceptStandInOffer: (offerId) => requireGame().acceptStandInOffer(offerId),
   listTransferTargets: () => requireGame().listTransferTargets(),
   selectTransferTarget: (teamId) => requireGame().selectTransferTarget(teamId),
-  advanceTournament: () => requireGame().advanceTournament(),
+  advanceTournament: (input) => requireGame().advanceTournament(input),
   finishSeason: () => requireGame().finishSeason(),
+  findTop20: (season) => requireGateway().findTop20(season),
   findCareerEvent: (window) => requireGame().findCareerEvent(window),
   advancePeriod: (period, randomRoll = 0.5) => requireGame().advancePeriod({ period, randomRoll }),
   getAvailableEvents: (period, randomRoll = 0.5) => requireGame().findAvailableStoryEvents({ period, randomRoll }),

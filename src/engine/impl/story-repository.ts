@@ -55,9 +55,65 @@ export class StoryRepositoryImpl implements StoryEventDirectory {
       && typeof value.title === 'string'
       && typeof value.description === 'string'
       && typeof value.worldlineId === 'string'
+      && (value.type === 'CHOICE' || value.type === 'MANDATORY')
+      && typeof value.period === 'string'
       && Array.isArray(value.conditions)
+      && value.conditions.every((condition) => this.isCondition(condition))
       && Array.isArray(value.options)
-      && Array.isArray(value.autoEffects);
+      && value.options.every((option) => this.isOption(option))
+      && Array.isArray(value.autoEffects)
+      && value.autoEffects.every((effect) => this.isEffect(effect));
+  }
+
+  private isOption(value: unknown): boolean {
+    if (!this.isRecord(value) || typeof value.id !== 'string' || typeof value.label !== 'string' || (value.description !== undefined && typeof value.description !== 'string') || !Array.isArray(value.requirements) || !value.requirements.every((item) => this.isCondition(item)) || !this.isRecord(value.outcome)) return false;
+    const outcome = value.outcome;
+    return Array.isArray(outcome.successEffects) && outcome.successEffects.every((item) => this.isEffect(item))
+      && Array.isArray(outcome.failureEffects) && outcome.failureEffects.every((item) => this.isEffect(item));
+  }
+
+  private isCondition(value: unknown): boolean {
+    if (!this.isRecord(value) || typeof value.type !== 'string') return false;
+    if (value.negate !== undefined && typeof value.negate !== 'boolean') return false;
+    if (value.target !== undefined && !['PLAYER', 'CURRENT_TEAM', 'OPPONENT_TEAM'].includes(String(value.target))) return false;
+    if (value.type === 'ALL' || value.type === 'ANY' || value.type === 'NONE') return Array.isArray(value.conditions) && value.conditions.every((item) => this.isCondition(item));
+    if (value.type === 'ATTRIBUTE') return ['AIM', 'GAME_SENSE', 'LEADERSHIP', 'CLUTCH', 'CONSISTENCY', 'TEAM_CONFLICT'].includes(String(value.attribute)) && this.validRange(value);
+    if (value.type === 'PLAYER_STAT') return ['MORALE', 'ENERGY', 'BALANCE', 'STRESS', 'RATING2'].includes(String(value.stat)) && this.validRange(value);
+    if (value.type === 'NARRATIVE_METRIC') return this.isNarrativeMetric(String(value.metric)) && this.validRange(value);
+    if (value.type === 'PLAYER_ORIGIN_REGION') return Array.isArray(value.regions) && value.regions.length > 0 && value.regions.every((region) => ['EUROPE', 'AMERICAS', 'ASIA', 'OCEANIA', 'MIDDLE_EAST', 'AFRICA'].includes(String(region)));
+    if (value.type === 'PLAYER_ROLE') return Array.isArray(value.roles) && value.roles.length > 0 && value.roles.every((role) => ['IGL', 'AWPER', 'ENTRY_FRAGGER', 'SUPPORT', 'LURKER'].includes(String(role)));
+    if (value.type === 'AGE') return this.validRange(value);
+    if (value.type === 'FLAG') return typeof value.flagId === 'string' && typeof value.expected === 'boolean';
+    if (value.type === 'TEAM') return typeof value.teamId === 'string' && value.teamId.length > 0;
+    if (value.type === 'WORLDLINE') return typeof value.worldlineId === 'string' && value.worldlineId.length > 0;
+    if (value.type === 'COMPLETED_EVENT') return typeof value.eventId === 'string' && value.eventId.length > 0;
+    if (value.type === 'ACTIVE_CONTRACT' || value.type === 'FREE_AGENCY' || value.type === 'TRANSFER_WINDOW' || value.type === 'TRANSFER_OFFER') return typeof value.expected === 'boolean';
+    if (value.type === 'TEAM_VRS_RANK' || value.type === 'RATING_STREAK' || value.type === 'ADVANCED_MAPS' || value.type === 'TOP20_RANK') return this.validRange(value);
+    if (value.type === 'GAME_MODE') return Array.isArray(value.modes) && value.modes.length > 0 && value.modes.every((mode) => mode === 'HARDCORE' || mode === 'POWER_FANTASY');
+    if (value.type === 'RANDOM') return typeof value.chance === 'number' && Number.isFinite(value.chance) && value.chance >= 0 && value.chance <= 1;
+    return false;
+  }
+
+  private validRange(value: Record<string, unknown>): boolean {
+    const minimum = value.minimum;
+    const maximum = value.maximum;
+    if (minimum !== undefined && (typeof minimum !== 'number' || !Number.isFinite(minimum))) return false;
+    if (maximum !== undefined && (typeof maximum !== 'number' || !Number.isFinite(maximum))) return false;
+    return minimum === undefined || maximum === undefined || minimum <= maximum;
+  }
+
+  private isEffect(value: unknown): boolean {
+    if (!this.isRecord(value) || typeof value.type !== 'string') return false;
+    if (value.type === 'ATTRIBUTE_CHANGE') return ['AIM', 'GAME_SENSE', 'LEADERSHIP', 'CLUTCH', 'CONSISTENCY', 'TEAM_CONFLICT'].includes(String(value.attribute)) && Number.isFinite(value.delta);
+    if (value.type === 'PLAYER_STAT_CHANGE') return ['MORALE', 'ENERGY', 'BALANCE', 'STRESS', 'RATING2'].includes(String(value.stat)) && Number.isFinite(value.delta);
+    if (value.type === 'NARRATIVE_METRIC_CHANGE') return this.isNarrativeMetric(String(value.metric)) && Number.isFinite(value.delta);
+    if (value.type === 'FORCE_CONTRACT_TERMINATION') return Array.isArray(value.requirements) && value.requirements.every((item) => this.isCondition(item)) && typeof value.reason === 'string' && typeof value.note === 'string';
+    const known = ['TEAM_TRANSFER', 'ROLE_CHANGE', 'WORLDLINE_CHANGE', 'FLAG_ADD', 'FLAG_REMOVE', 'TROPHY_CHANGE', 'CAREER_STAT_CHANGE', 'ADVANCE_STORY', 'TOURNAMENT_INTERVENTION'];
+    return known.includes(value.type);
+  }
+
+  private isNarrativeMetric(value: string): boolean {
+    return ['FAME', 'TEAM_STATUS', 'TEAM_RELATIONSHIP', 'FORM', 'MENTALITY', 'BALANCE', 'CLUB_FAVOR', 'FAN_REPUTATION'].includes(value);
   }
 
   private isWorldline(value: unknown): value is Worldline {
@@ -66,7 +122,8 @@ export class StoryRepositoryImpl implements StoryEventDirectory {
       && value.id.length > 0
       && typeof value.name === 'string'
       && typeof value.startEventId === 'string'
-      && Array.isArray(value.eventIds);
+      && Array.isArray(value.eventIds)
+      && value.eventIds.every((eventId) => typeof eventId === 'string');
   }
 
   private isRecord(value: unknown): value is Record<string, unknown> {

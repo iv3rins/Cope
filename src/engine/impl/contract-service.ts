@@ -19,7 +19,7 @@ export class SaveContractService implements PlayerContractService {
     contracts: readonly PlayerContract[],
     private readonly conditions: ConditionEvaluator,
     private readonly context: (profile: PlayerProfile) => ConditionContext,
-    private readonly teamTier?: (teamId: string) => TeamTier | undefined,
+    private readonly teamTier: (teamId: string) => TeamTier | undefined,
   ) {
     this.currentContracts = [...contracts];
   }
@@ -30,6 +30,8 @@ export class SaveContractService implements PlayerContractService {
   public async sign(input: { readonly profile: PlayerProfile; readonly terms: ContractTerms; readonly occurredAt: string }): Promise<ContractOperationResponse> {
     const active = this.activeFor(input.profile.id);
     if (active) return { operation: 'SIGN', profile: input.profile, contract: active, previousContract: active, fee: 0, reason: 'ALREADY_SIGNED' };
+    const isFirstContract = input.profile.career.teamHistory.length === 0 && input.profile.currentContractId === null && !this.currentContracts.some((contract) => contract.playerId === input.profile.id);
+    if (isFirstContract && this.teamTier(input.terms.teamId) !== 'T3') return { operation: 'SIGN', profile: input.profile, reason: 'FIRST_CONTRACT_REQUIRES_T3' };
     const contract = this.createContract(input.profile.id, input.terms, input.occurredAt);
     this.replace(null, contract);
     return { operation: 'SIGN', profile: this.withContract(input.profile, contract), contract, previousContract: null, fee: 0 };
@@ -77,7 +79,8 @@ export class SaveContractService implements PlayerContractService {
       },
     };
     this.replace(current, contract);
-    return { profile: { ...input.profile, currentTeamId: null, currentTeamTier: undefined, currentContractId: null, freeAgencyStatus: 'FREE_AGENT', freeAgencySince: input.occurredAt, releaseReason: this.releaseReason(input.effect.reason) }, contract, terminated: true };
+    const { currentTeamTier: _currentTeamTier, ...releasedProfile } = input.profile;
+    return { profile: { ...releasedProfile, currentTeamId: null, currentContractId: null, freeAgencyStatus: 'FREE_AGENT', freeAgencySince: input.occurredAt, releaseReason: this.releaseReason(input.effect.reason) }, contract, terminated: true };
   }
 
   private activeFor(playerId: string): PlayerContract | null { return this.currentContracts.find((contract) => contract.playerId === playerId && contract.status === 'ACTIVE') ?? null; }
@@ -85,10 +88,11 @@ export class SaveContractService implements PlayerContractService {
   private replace(previous: PlayerContract | null, next: PlayerContract): void {
     this.currentContracts = [...this.currentContracts.filter((contract) => contract.id !== previous?.id && contract.id !== next.id), next];
   }
-  private createContract(playerId: string, terms: ContractTerms, occurredAt: string): PlayerContract { return { id: `contract-${playerId}-${Date.parse(occurredAt)}`, playerId, teamId: terms.teamId, startedAt: terms.startedAt, endsAt: terms.endsAt, salaryPerMonth: terms.salaryPerMonth, status: 'ACTIVE', buyoutAmount: terms.buyoutAmount }; }
+  private createContract(playerId: string, terms: ContractTerms, occurredAt: string): PlayerContract { return { id: `contract-${playerId}-${Date.parse(occurredAt)}`, playerId, teamId: terms.teamId, startedAt: terms.startedAt, endsAt: terms.endsAt, salaryPerMonth: terms.salaryPerMonth, status: 'ACTIVE', buyoutAmount: terms.buyoutAmount, ...(terms.role ? { role: terms.role } : {}), ...(terms.expectedPlaytimePercentage !== undefined ? { expectedPlaytimePercentage: terms.expectedPlaytimePercentage } : {}) }; }
   private withContract(profile: PlayerProfile, contract: PlayerContract): PlayerProfile {
     const currentTeamTier = this.teamTier?.(contract.teamId);
-    return { ...profile, currentTeamId: contract.teamId, ...(currentTeamTier ? { currentTeamTier } : {}), currentContractId: contract.id, freeAgencyStatus: 'SIGNED', freeAgencySince: undefined, releaseReason: undefined };
+    const { freeAgencySince: _freeAgencySince, releaseReason: _releaseReason, ...signedProfile } = profile;
+    return { ...signedProfile, currentTeamId: contract.teamId, ...(currentTeamTier ? { currentTeamTier } : {}), currentContractId: contract.id, freeAgencyStatus: 'SIGNED', career: { ...profile.career, teamHistory: profile.career.teamHistory.includes(contract.teamId) ? profile.career.teamHistory : [...profile.career.teamHistory, contract.teamId] } };
   }
   private rejection(operation: 'RENEW' | 'TRANSFER', profile: PlayerProfile, reason: 'NO_ACTIVE_CONTRACT' | 'TEAM_MISMATCH'): ContractOperationResponse { return { operation, profile, reason }; }
   private placeholder(profile: PlayerProfile, occurredAt: string): PlayerContract { return { id: profile.currentContractId ?? `missing-${profile.id}`, playerId: profile.id, teamId: profile.currentTeamId ?? 'unknown', startedAt: occurredAt, endsAt: occurredAt, salaryPerMonth: 0, status: 'TERMINATED', buyoutAmount: 0 }; }

@@ -1,0 +1,108 @@
+{
+  "id": "grinder-recovery-break",
+  "title": "磨炼喘息夜",
+  "description": "兼职和夜间训练把你拖到极限，明天的联赛前只剩一个晚上可以调整。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "phase": "POST_TOURNAMENT",
+  "weight": 1,
+  "priority": 80,
+  "repeatable": true,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "grinder"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 30
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 70
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "drop-shift",
+      "label": "退掉一班兼职",
+      "description": "换来完整睡眠，但本周收入会减少。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 28
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -250
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "你关掉闹钟睡到自然醒，钱包更薄，手却不再发沉。"
+        ],
+        "failureMessages": [
+          "换班申请没有成功。"
+        ]
+      }
+    },
+    {
+      "id": "skip-practice",
+      "label": "缺席晚间训练",
+      "description": "不损失兼职收入并缓解压力，但队伍磨合会受影响。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -16
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "你提前下线喘了口气，队友却得临时调整训练安排。"
+        ],
+        "failureMessages": [
+          "休息计划被临时训练打断。"
+        ]
+      }
+    }
+  ],
+  "autoEffects": []
+}

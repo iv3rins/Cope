@@ -6,12 +6,15 @@
   "scripts": {
     "build:engine": "esbuild src/browser-entry.ts --bundle --outfile=public/engine.bundle.js --format=iife --target=es2020",
     "build": "npm run build:engine",
+    "test": "node --import tsx --test tests/*.test.ts",
     "dev": "npm run build:engine && node scripts/static-server.mjs",
+    "prestart": "npm run build:engine",
     "start": "node scripts/static-server.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.15.30",
     "esbuild": "^0.25.9",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.2"
   }
 }

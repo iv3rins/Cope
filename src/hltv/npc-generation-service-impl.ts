@@ -19,7 +19,19 @@ export class NpcGenerationServiceImpl implements NpcGenerationService {
     return { season: input.season, generated, retiredNpcIds: [] };
   }
 
-  public async retireExpired(input: { readonly season: number; readonly minimumAge: number }): Promise<readonly HltvPlayerId[]> { return []; }
+  public async advanceSeason(input: { readonly season: number; readonly players: readonly NpcPlayerProfile[] }): Promise<NpcGenerationResult> {
+    const progressed = input.players.map((player) => {
+      if (player.availability === 'RETIRED') return player;
+      const age = player.age + 1;
+      const delta = age <= 20 ? 1 : age <= 25 ? 0 : age <= 29 ? -1 : -2;
+      const adjust = (value: number) => Math.max(0, Math.min(100, value + delta));
+      const retired = age >= 34 || (age >= 31 && player.attributes.consistency < 48);
+      return { ...player, age, attributes: { ...player.attributes, aim: adjust(player.attributes.aim), gameSense: adjust(player.attributes.gameSense), clutch: adjust(player.attributes.clutch), consistency: adjust(player.attributes.consistency) }, availability: retired ? 'RETIRED' as const : player.availability };
+    });
+    return { season: input.season, generated: [], retiredNpcIds: progressed.filter((player) => player.availability === 'RETIRED' && input.players.find((before) => before.id === player.id)?.availability !== 'RETIRED').map((player) => player.id), progressed };
+  }
+
+  public async retireExpired(input: { readonly season: number; readonly minimumAge: number }): Promise<readonly HltvPlayerId[]> { void input; return []; }
 
   private baselinePlayer(identity: NpcBaselineIdentity, season: number, index: number): NpcPlayerProfile {
     const rating = Math.max(72, 101 - identity.rank);

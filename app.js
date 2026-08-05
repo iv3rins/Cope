@@ -4,6 +4,8 @@ const callsign = $('#callsign');
 const lastName = $('#lastName');
 const role = $('#role');
 const helpDialog = $('#helpDialog');
+const retireDialog = $('#retireDialog');
+const top20Dialog = $('#top20Dialog');
 const regionServer = { 中国: '上海 / 35ms', 欧洲: '法兰克福 / 42ms', 北美: '芝加哥 / 55ms', 独联体: '华沙 / 47ms', 南美: '圣保罗 / 68ms', 亚太: '新加坡 / 39ms' };
 const engineRegions = { 中国: 'ASIA', 欧洲: 'EUROPE', 北美: 'AMERICAS', 独联体: 'EUROPE', 南美: 'AMERICAS', 亚太: 'OCEANIA' };
 const roleData = {
@@ -17,23 +19,147 @@ const attributeLabels = { aim: '枪法', gameSense: '意识', leadership: '指�
 let selectedCareerMode = 'HARDCORE';
 let activeEventId = null;
 let deterministicState = 2166136261;
-let eventFeedback = null;
-let activeSeasonHalf = 'FIRST_HALF';
 let teamDirectory = null;
+let careerContent = null;
+let marketContentPromise = null;
+const playbackModeNode = $('#playbackMode');
+let tournamentPlaybackMode = localStorage.getItem('cope:tournament-playback') === 'FAST' ? 'FAST' : 'DETAIL';
+if (playbackModeNode) {
+  playbackModeNode.value = tournamentPlaybackMode;
+  playbackModeNode.addEventListener('change', () => {
+    tournamentPlaybackMode = playbackModeNode.value === 'FAST' ? 'FAST' : 'DETAIL';
+    localStorage.setItem('cope:tournament-playback', tournamentPlaybackMode);
+  });
+}
 
+async function loadMarketContent() {
+  if (marketContentPromise) return marketContentPromise;
+  marketContentPromise = (async () => {
+    try {
+      const response = await fetch('assets/career/market-ui.json');
+      if (!response.ok) return null;
+      const result = await response.json();
+      const copy = result?.market;
+      const coreKeys = ['RECOMMENDED', 'PERSUADABLE', 'UNREACHABLE'];
+      const valid = result?.schemaVersion === 1
+        && typeof copy?.title === 'string'
+        && typeof copy?.skipLabel === 'string'
+        && coreKeys.every((key) => typeof copy?.availability?.[key] === 'string')
+        && ['T1', 'T2', 'T3'].every((key) => typeof copy?.tiers?.[key] === 'string')
+        && ['STARTER', 'SUBSTITUTE'].every((key) => typeof copy?.roles?.[key] === 'string')
+        && ['LOW', 'MEDIUM', 'HIGH'].every((key) => typeof copy?.riskLevels?.[key] === 'string')
+        && typeof copy?.requirements?.unknownRequirement === 'string'
+        && typeof copy?.standIn?.period === 'string'
+        && typeof copy?.standIn?.eyebrowTemplate === 'string'
+        && typeof copy?.standIn?.titleTemplate === 'string'
+        && ['accept', 'reject', 'wait'].every((key) => typeof copy?.standIn?.buttons?.[key] === 'string')
+        && ['LOW', 'MEDIUM', 'HIGH'].every((key) => typeof copy?.standIn?.riskLevels?.[key] === 'string');
+      return valid ? result : null;
+    } catch (error) {
+      console.warn('market-ui unavailable', error);
+      return null;
+    }
+  })();
+  return marketContentPromise;
+}
+
+function fillMarketTemplate(template, values) {
+  return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, String(value)), template);
+}
+
+function formatMarketRequirement(requirement, copy) {
+  const rules = copy?.requirements || {};
+  const unknown = rules.unknownRequirement || '';
+  const token = String(requirement || '');
+  let match = token.match(/^(aim|gameSense|leadership|clutch|consistency|teamConflict):(\d+(?:\.\d+)?)$/);
+  if (match) return fillMarketTemplate(rules.attributeMinimum || unknown, { attribute: copy?.attributes?.[match[1]] || '', value: match[2] });
+  match = token.match(/^role:([A-Z|_]+)$/);
+  if (match) return fillMarketTemplate(rules.roleOneOf || unknown, { roles: match[1].split('|').map((key) => copy?.roles?.[key] || '').filter(Boolean).join(' / ') });
+  match = token.match(/^age>=(\d+)$/);
+  if (match) return fillMarketTemplate(rules.minimumAge || unknown, { value: match[1] });
+  match = token.match(/^age<=(\d+)$/);
+  if (match) return fillMarketTemplate(rules.maximumAge || unknown, { value: match[1] });
+  match = token.match(/^teamConflict<=(\d+(?:\.\d+)?)$/);
+  if (match) return fillMarketTemplate(rules.maximumTeamConflict || unknown, { value: match[1] });
+  if (token === 'free-agent-only') return rules.freeAgentOnly || unknown;
+  match = token.match(/^current-tier!=(T[123])$/);
+  if (match) return fillMarketTemplate(rules.currentTierExcluded || unknown, { tier: copy?.tiers?.[match[1]] || '' });
+  match = token.match(/^recentRating>=(\d+(?:\.\d+)?)$/);
+  if (match) return fillMarketTemplate(rules.minimumRecentRating || unknown, { value: match[1] });
+  match = token.match(/^careerMaps>=(\d+)$/);
+  if (match) return fillMarketTemplate(rules.minimumCareerMaps || unknown, { value: match[1] });
+  match = token.match(/^t1MajorMaps>=(\d+)$/);
+  if (match) return fillMarketTemplate(rules.minimumT1MajorMaps || unknown, { value: match[1] });
+  const exactRules = {
+    't3-to-t1-substitute-only': 't3ToT1SubstituteOnly',
+    't3-to-t2-contract-required': 't3ToT2ContractRequired',
+    't2-to-t1-substitute-only': 't2ToT1SubstituteOnly',
+    'transfer-window-required': 'transferWindowRequired',
+    'invalid-roll': 'invalidRoll',
+  };
+  return rules[exactRules[token]] || unknown;
+}
+
+function formatMarketRisk(risk, copy) {
+  return String(risk || '').replace(/\b(LOW|MEDIUM|HIGH)\b/g, (level) => copy?.riskLevels?.[level] || '');
+}
+
+async function loadCareerContent() {
+  if (careerContent) return careerContent;
+  const response = await fetch('assets/career/summary-ui.json');
+  if (!response.ok) throw new Error('生涯总结文案加载失败');
+  const result = await response.json();
+  const archive = result.archive;
+  const requiredStrings = [
+    archive?.eyebrow, archive?.restartLabel,
+    archive?.headlines?.majorChampion, archive?.headlines?.topPlayer, archive?.headlines?.tierOneChampion, archive?.headlines?.journeyman,
+    archive?.sections?.trophies, archive?.sections?.topHistory, archive?.sections?.mvp, archive?.sections?.statistics,
+    archive?.labels?.retiredAge, archive?.labels?.careerGrade, archive?.labels?.majorChampionships, archive?.labels?.bestTop, archive?.labels?.mvp, archive?.labels?.peakRating, archive?.labels?.totalMaps, archive?.labels?.totalKills, archive?.labels?.careerRating, archive?.labels?.careerEarnings,
+    archive?.itemLabels?.majorMvp, archive?.itemLabels?.eventMvp, archive?.itemLabels?.annualTop, archive?.itemLabels?.worldRank,
+    archive?.empty?.trophies, archive?.empty?.topHistory, archive?.empty?.mvp,
+  ];
+  if (result.schemaVersion !== 1 || requiredStrings.some((value) => typeof value !== 'string' || value.length === 0)) throw new Error('生涯总结文案格式无效');
+  careerContent = result;
+  return careerContent;
+}
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]);
+}
+function formatCompactNumber(value) {
+  const amount = Math.round(Number(value) || 0);
+  if (Math.abs(amount) < 1000) return String(amount);
+  const scaled = amount / 1000;
+  return `${scaled.toFixed(Math.abs(scaled) >= 10 ? 0 : 1).replace(/\.0$/, '')}k`;
+}
+function formatUsd(value) { return `$${formatCompactNumber(value)}`; }
+function setCompactValue(selector, value, formatter = formatCompactNumber) {
+  const node = $(selector);
+  if (!node) return;
+  node.textContent = formatter(value);
+  node.title = String(Math.round(Number(value) || 0));
+}
+
+function careerStage(profile) {
+  if (!profile.currentTeamId) return profile.freeAgencyStatus === 'FREE_AGENT' ? '自由市场选手' : '地区新人';
+  if (profile.currentTeamTier === 'T1') return 'Tier 1 职业选手';
+  if (profile.currentTeamTier === 'T2') return 'Tier 2 职业选手';
+  return '职业赛场新秀';
+}
+function careerGoals(profile) {
+  const majorEntries = profile.tournamentArchive.filter((record) => record.level === 'MAJOR');
+  const bestTop = profile.trophies.top20Records.length ? Math.min(...profile.trophies.top20Records.map((record) => record.rank)) : null;
+  return {
+    stage: careerStage(profile),
+    major: profile.trophies.majorChampionships > 0 ? `${profile.trophies.majorChampionships} 次 Major 冠军` : majorEntries.length ? `${majorEntries.length} 次 Major 征程` : profile.currentTeamId ? '冲击 Major 资格' : '先获得职业合同',
+    top: bestTop ? `生涯最佳 TOP #${bestTop}` : '等待首次年度上榜',
+  };
+}
 function selectedRegion() { return document.querySelector('.region.selected')?.dataset.region || '中国'; }
 function nextRoll() { deterministicState = (1664525 * deterministicState + 1013904223) >>> 0; return deterministicState / 0x100000000; }
 function isAdverseAttributeDelta(attribute, delta) {
   if (!Number.isFinite(delta) || delta === 0) return false;
   // TEAM_CONFLICT is an adverse attribute: increasing it worsens the profile.
   return attribute === 'TEAM_CONFLICT' ? delta > 0 : delta < 0;
-}
-async function loadEventFeedback() {
-  if (eventFeedback) return eventFeedback;
-  const response = await fetch('assets/story/event-feedback.json');
-  if (!response.ok) throw new Error('事件反馈文案加载失败');
-  eventFeedback = await response.json();
-  return eventFeedback;
 }
 function selectRole(key) {
   const data = roleData[key];
@@ -93,17 +219,25 @@ async function renderProfile(profile) {
   $('#profileTeam').textContent = teamName;
   $('#dashboardOverall').textContent = Math.round(values.reduce((sum, [, value]) => sum + value, 0) / values.length);
   $('#dashboardSeason').textContent = `${profile.age} 岁 · ${profile.tournamentArchive.length} 场赛事档案`;
+  const archive = profile.tournamentArchive || [];
+  const totalArchiveMaps = archive.reduce((sum, record) => sum + record.mapsPlayed, 0);
+  const weightedRating = totalArchiveMaps ? archive.reduce((sum, record) => sum + record.rating * record.mapsPlayed, 0) / totalArchiveMaps : 0;
+  const champions = archive.filter((record) => record.champion).length;
+  $('#tournamentSummaryCount').textContent = `${archive.length} 场`;
+  $('#tournamentSummaryContent').innerHTML = archive.length
+    ? `<div><span>总地图</span><b>${totalArchiveMaps}</b></div><div><span>平均 Rating</span><b>${weightedRating.toFixed(2)}</b></div><div><span>冠军</span><b>${champions}</b></div><details><summary>最近赛事</summary>${archive.slice(-5).reverse().map((record) => `<p><strong>${escapeHtml(record.fullName)}</strong><span>${escapeHtml(record.placement)} · ${record.rating.toFixed(2)} · ${record.mapsPlayed} 图</span></p>`).join('')}</details>`
+    : '<span>尚无正式赛事记录</span>';
   $('#dashboardGameId').textContent = profile.gameId;
   $('#dashboardRegion').textContent = `${profile.originRegion} · ${profile.role}`;
   $('#dashboardRole').textContent = profile.role;
   $('#dashboardTeam').textContent = teamName;
   $('#dashboardAge').textContent = profile.age;
-  $('#dashboardBalance').textContent = Math.round(profile.life.balance);
+  setCompactValue('#dashboardBalance', profile.life.balance, formatUsd);
   $('#dashboardMaps').textContent = profile.career.mapsPlayed;
-  $('#dashboardKills').textContent = profile.career.totalKills;
+  setCompactValue('#dashboardKills', profile.career.totalKills);
   $('#sideTeamName').textContent = profile.currentTeamId ? teamName : '自由球员';
   $('#sideTeamStatus').textContent = profile.currentTeamId ? '当前合同队伍' : (profile.freeAgencyStatus === 'FREE_AGENT' ? '正在寻找新队伍' : '等待首次签约');
-  $('#teamRank').textContent = profile.currentTeamId ? 'VRS 状态待刷新' : '未排名';
+  $('#teamRank').textContent = profile.currentTeamId ? ($('#teamRank').textContent || 'VRS 未初始化') : '未排名';
   const contractStatus = $('#contractStatus');
   const freeAgencyStatus = $('#freeAgencyStatus');
   const releaseReason = $('#releaseReason');
@@ -113,11 +247,16 @@ async function renderProfile(profile) {
     releaseReason.hidden = !profile.releaseReason;
     releaseReason.textContent = profile.releaseReason ? `离队原因：${profile.releaseReason}` : '';
   }
+  const goals = careerGoals(profile);
+  $('#careerStage').textContent = goals.stage;
+  $('#majorGoal').textContent = goals.major;
+  $('#topGoal').textContent = goals.top;
   const retireButton = $('#retireBtn');
   if (retireButton) {
-    retireButton.disabled = !profile.currentTeamId || profile.isRetired;
-    retireButton.title = profile.currentTeamId ? '结束当前职业生涯' : '签约后才能结束职业生涯';
+    retireButton.disabled = profile.isRetired;
+    retireButton.title = profile.isRetired ? '生涯已经封存' : '封存当前职业生涯并生成总结';
   }
+
 }
 async function refreshVrsStatus() {
   const status = await window.COPEEngine.getVrsStatus().catch(() => null);
@@ -138,10 +277,6 @@ function flowProgress(completed, total) {
 }
 async function renderTournamentCalendar(profile) {
   setSingleFlowStage();
-  if (!profile.currentTeamId) {
-    $('#scheduleProgress').innerHTML = '<span>赛季进度</span><b>等待队伍签约</b><i aria-hidden="true"><em style="width:0%"></em></i>';
-    return null;
-  }
   const calendar = await window.COPEEngine.startSeason();
   const next = await window.COPEEngine.getNextTournament();
   const completed = next ? Math.max(0, calendar.findIndex((item) => item.id === next.id)) : calendar.length;
@@ -156,63 +291,103 @@ async function renderTournamentCalendar(profile) {
 async function simulateTournament(event, profile) {
   await loadTournamentAssets();
   setSingleFlowStage();
-  const calendar = profile.currentTeamId ? await window.COPEEngine.startSeason() : [];
+  const calendar = await window.COPEEngine.startSeason();
   const next = await window.COPEEngine.getNextTournament();
   const completed = next ? Math.max(0, calendar.findIndex((item) => item.id === next.id)) : calendar.length;
-  $('#eventPeriod').textContent = 'TOURNAMENT';
-  $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage"><p class="eyebrow">当前赛事 · 正式赛事 · ${event.tier}</p><div class="tournament-hero"><div><h2>${event.name}</h2><p class="event-copy">${event.city || '线上赛'} · ${event.format || 'BO3'} · 自动结算赛事表现、奖金与荣誉。</p></div>${tournamentAssetPath(event.seriesId) ? `<img class="tournament-mark tournament-trophy" src="${tournamentAssetPath(event.seriesId)}" alt="${event.name}赛事奖杯" />` : ''}</div><div class="tournament-run" id="singleTournamentRun"><strong>赛事模拟进行中</strong><span>预计自动结算 · 赛事档案将写入职业生涯</span><i><em></em></i></div></article>`;
-  let simulationStarted = false;
-  const runSimulation = async () => {
-    if (simulationStarted) return;
-    simulationStarted = true;
+  const trophy = tournamentAssetPath(event.seriesId);
+  $('#eventPeriod').textContent = event.simulationMode === 'SWISS' ? 'MAJOR SWISS' : 'TOURNAMENT';
+  const qualificationCopy = event.tier === 'MAJOR'
+    ? `Major 资格：VRS 快照前 32（当前 #${event.snapshotRank ?? '未排名'}，${event.snapshotRank >= 1 && event.snapshotRank <= 32 ? '符合资格' : '无资格'}）`
+    : event.qualificationSource === 'PUBLIC_QUALIFIER' ? '参赛资格：需通过公开预选赛' : '参赛资格：VRS 直接邀请';
+  const renderRunning = (ui = {}) => {
+    const swiss = ui.mode === 'SWISS';
+    const qualifier = ui.qualifier === true;
+    const situation = ui.eliminationMatch ? '生死局' : ui.advancementMatch ? '晋级局' : `第 ${ui.round || 1} 轮`;
+    $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage"><p class="eyebrow">${qualifier ? 'PUBLIC QUALIFIER' : swiss ? 'MAJOR SWISS' : 'FAST MODE'} · ${escapeHtml(event.tier)}</p><div class="tournament-hero"><div><h2>${escapeHtml(event.name)}</h2><p class="event-copy">${escapeHtml(qualificationCopy)} · ${escapeHtml(event.city || '线上赛')} · ${escapeHtml(event.format || 'BO3')} · ${qualifier ? '资格赛比赛过程与结果可见；地图与击杀计入生涯累计，但不计年度 TOP20。' : swiss ? `${situation}，3 胜晋级 / 3 败淘汰。` : '自动推进组赛、淘汰赛与决赛。'}</p>${swiss ? `<div class="swiss-score"><span>胜场 <b>${ui.wins || 0}</b></span><span>负场 <b>${ui.losses || 0}</b></span><strong>${situation}</strong></div>` : ''}</div>${trophy ? `<img class="tournament-mark tournament-trophy" src="${escapeHtml(trophy)}" alt="${escapeHtml(event.name)}赛事奖杯" />` : ''}</div><div class="tournament-run" id="singleTournamentRun"><strong>${qualifier ? '公开预选赛进行中' : swiss ? '等待推进下一轮' : '赛事模拟进行中'}</strong><span>${qualifier ? '晋级后下一步进入正赛；失败则跳过正赛' : swiss ? '每轮结果由统一比赛模拟器生成' : '比赛明细、赛事数据与荣誉将统一结算'}</span><i><em></em></i></div>${swiss ? '<button class="continue-schedule" id="advanceSwissBtn">推进下一轮 →</button>' : ''}</article>`;
+  };
+  renderRunning({ mode: event.simulationMode || (event.tier === 'MAJOR' ? 'SWISS' : 'FAST') });
+  let advancing = false;
+  const advance = async () => {
+    if (advancing) return;
+    advancing = true;
     $('#singleTournamentRun')?.classList.add('is-settling');
     try {
-      const result = await window.COPEEngine.advanceTournament();
+      const progress = await window.COPEEngine.advanceTournament(tournamentPlaybackMode === 'FAST' ? { mode: 'UNTIL_DECISION_OR_COMPLETE' } : { mode: 'NEXT_NODE' });
       const updated = await window.COPEEngine.getProfile();
-      if (!result) {
-        const scheduled = await window.COPEEngine.startSeason();
-        const updatedEdition = scheduled.find((candidate) => candidate.id === event.id);
+      if (progress.uiData?.eventRequired) {
         const inTournamentEvent = await window.COPEEngine.findCareerEvent('SEASON_END');
         if (inTournamentEvent) { await renderEvent(inTournamentEvent); return; }
-        if (updatedEdition?.qualificationStatus === 'QUALIFIER_EXIT') {
-          $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card outcome-stage qualification-failed"><p class="eyebrow">QUALIFIER OUTCOME / 资格赛结果</p><h2>${event.name}</h2><p class="event-copy">预选未通过，本次未进入 T1 正赛。赛事机会已记录，下一场赛事将继续生成。</p><div class="result-grid"><div><span>赛事级别</span><b>${event.tier}</b></div><div><span>资格状态</span><b>预选淘汰</b></div><div><span>VRS 快照排名</span><b>${event.snapshotRank ?? '未上榜'}</b></div><div><span>状态</span><b>未进入正赛</b></div></div><p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
-          window.setTimeout(renderCurrentPeriod, 1500);
-          return;
-        }
-        await renderCurrentPeriod();
+      }
+      if (progress.uiData?.qualifier && progress.uiData?.qualified === true) {
+        const qualifier = progress.uiData.qualifierPerformance;
+        $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card outcome-stage"><p class="eyebrow">QUALIFIER OUTCOME / 预选赛结果</p><h2>${escapeHtml(event.name)}</h2><p class="event-copy">公开预选赛晋级成功。资格赛地图与击杀已计入生涯累计，但不计年度 TOP20，下一步进入正赛。</p><div class="result-grid"><div><span>地图</span><b>${qualifier?.maps ?? '—'}</b></div><div><span>Rating</span><b>${typeof qualifier?.rating === 'number' ? qualifier.rating.toFixed(2) : '—'}</b></div><div><span>击杀</span><b>${qualifier?.kills ?? '—'}</b></div><div><span>结果</span><b>晋级正赛</b></div></div><p class="flow-auto-next">1.5 秒后进入正赛</p></article>`;
+        window.setTimeout(renderCurrentPeriod, 1500);
         return;
       }
-      const rating = result.playerPerformances[0]?.rating ?? 0;
-      $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage outcome-stage"><p class="eyebrow">TOURNAMENT OUTCOME / 赛事结果</p>${tournamentAssetPath(result.seriesId) ? `<img class="outcome-trophy" src="${tournamentAssetPath(result.seriesId)}" alt="${result.eventName}赛事奖杯" />` : ''}<h2>${result.eventName}</h2><p class="event-copy">${result.placement} · Rating ${rating.toFixed(2)} · 赛事档案已写入职业生涯。</p><div class="result-grid"><div><span>地图</span><b>${result.playerPerformances[0]?.maps ?? 0}</b></div><div><span>Rating</span><b>${rating.toFixed(2)}</b></div><div><span>赛事级别</span><b>${result.tier}</b></div><div><span>状态</span><b>${result.title ? '冠军' : '完赛'}</b></div></div><p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
-      renderProfile(updated);
-      const continueSchedule = async () => {
+      if (progress.status === 'QUALIFIER_EXIT') {
+        const qualifier = progress.uiData?.qualifierPerformance;
+        $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card outcome-stage qualification-failed"><p class="eyebrow">QUALIFIER OUTCOME / 预选赛结果</p><h2>${escapeHtml(event.name)}</h2><p class="event-copy">预选赛已经结束。比赛数据保留在资格赛档案中，地图与击杀计入生涯累计，但不计年度 TOP20。</p><div class="result-grid"><div><span>地图</span><b>${qualifier?.maps ?? '—'}</b></div><div><span>Rating</span><b>${typeof qualifier?.rating === 'number' ? qualifier.rating.toFixed(2) : '—'}</b></div><div><span>击杀</span><b>${qualifier?.kills ?? '—'}</b></div><div><span>结果</span><b>止步预选</b></div></div><p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
+        window.setTimeout(renderCurrentPeriod, 1500);
+        return;
+      }
+      if (progress.status === 'ONGOING') {
+        renderRunning(progress.uiData || {});
+        advancing = false;
+        const swissButton = $('#advanceSwissBtn');
+        if (swissButton) swissButton.addEventListener('click', advance, { once: true });
+        else window.setTimeout(advance, tournamentPlaybackMode === 'FAST' ? 0 : 550);
+        return;
+      }
+      const result = progress.result;
+      if (!result) { await renderCurrentPeriod(); return; }
+      const performance = result.playerPerformances.find((item) => item.playerId === updated.id) || result.playerPerformances[0];
+      const rating = performance?.rating ?? 0;
+      const honor = result.honors.find((item) => item.playerId === updated.id)?.type;
+      const teams = await loadTeamDirectory().catch(() => new Map());
+      const seriesRows = (result.seriesDetails || []).map((series) => `<div class="series-row"><span>${escapeHtml(series.stage)}</span><b>${escapeHtml(series.format)}</b><span>${escapeHtml(teams.get(series.opponentTeamId)?.name || '未知战队')} · ${escapeHtml((series.mapScores || []).join(' / '))}</span></div>`).join('');
+      $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage outcome-stage"><p class="eyebrow">TOURNAMENT OUTCOME / 赛事结果</p>${trophy ? `<img class="outcome-trophy" src="${escapeHtml(trophy)}" alt="${escapeHtml(result.eventName)}赛事奖杯" />` : ''}<h2>${escapeHtml(result.eventName)}</h2><p class="event-copy">${escapeHtml(result.placement)} · Rating ${rating.toFixed(2)}${honor ? ` · ${escapeHtml(honor)}` : ''} · 赛事事实已归档。</p><div class="result-grid"><div><span>地图</span><b>${performance?.maps ?? 0}</b></div><div><span>Rating / ADR</span><b>${rating.toFixed(2)} / ${(performance?.adr ?? 0).toFixed(0)}</b></div><div><span>KAST</span><b>${(performance?.kast ?? 0).toFixed(1)}%</b></div><div><span>状态</span><b>${result.title ? '冠军' : '完赛'}</b></div></div>${seriesRows ? `<details class="series-details"><summary>查看比赛明细</summary>${seriesRows}</details>` : ''}<p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
+      await renderProfile(updated);
+      window.setTimeout(async () => {
         const postEvent = await window.COPEEngine.findCareerEvent('POST_TOURNAMENT');
-        if (postEvent) {
-          await renderEvent(postEvent);
-          return;
-        }
+        if (postEvent) { await renderEvent(postEvent); return; }
         await renderTournamentCalendar(updated);
         await renderCurrentPeriod();
-      };
-      window.setTimeout(continueSchedule, 1500);
-    } catch (error) { $('#eventContent').insertAdjacentHTML('beforeend', `<p class="event-result failure">${error.message}</p>`); }
+      }, tournamentPlaybackMode === 'FAST' ? 0 : 1500);
+    } catch (error) {
+      advancing = false;
+      $('#eventContent').insertAdjacentHTML('beforeend', `<p class="event-result failure">${escapeHtml(error.message)}</p>`);
+    }
   };
-  window.setTimeout(runSimulation, 650);
+  const swissButton = $('#advanceSwissBtn');
+  if (swissButton) swissButton.addEventListener('click', advance, { once: true });
+  else window.setTimeout(advance, tournamentPlaybackMode === 'FAST' ? 0 : 650);
 }
+function renderStartupError(message) {
+  const errorNode = $('#startupError');
+  if (errorNode) {
+    errorNode.hidden = false;
+    errorNode.textContent = message;
+  }
+}
+
 async function renderNoEvent(message) {
   activeEventId = null;
+  if (!window.COPEEngine) {
+    renderStartupError(message || '引擎未加载，请重新启动开发服务器。');
+    return;
+  }
   const tournament = await window.COPEEngine.getNextTournament();
   const profile = await window.COPEEngine.getProfile();
-  if (tournament && profile.currentTeamId) {
+  if (tournament) {
     window.setTimeout(() => simulateTournament(tournament, profile), 450);
     return;
   }
   setSingleFlowStage();
-  $('#eventContent').innerHTML = `<article class="single-flow-card event-empty-card"><p class="event-empty">${message}</p><button class="continue-schedule" id="advanceScheduleBtn">继续赛季 →</button></article>`;
+  $('#eventContent').innerHTML = `<article class="single-flow-card event-empty-card"><p class="event-empty">${escapeHtml(message)}</p><button class="continue-schedule" id="advanceScheduleBtn">继续赛季 →</button></article>`;
   $('#advanceScheduleBtn').addEventListener('click', async () => {
     await window.COPEEngine.advancePeriod('NORMAL', nextRoll());
     const updated = await window.COPEEngine.getProfile();
-    renderProfile(updated);
+    await renderProfile(updated);
     await renderTournamentCalendar(updated);
     await renderCurrentPeriod();
   });
@@ -222,27 +397,30 @@ async function renderEvent(event, resultText = '') {
   setSingleFlowStage();
   const profile = await window.COPEEngine.getProfile();
   $('#eventPeriod').textContent = 'DECISION';
-  $('#eventContent').innerHTML = `<div class="single-flow-progress"><span>SEASON FLOW</span><i><em style="width:100%"></em></i><b>DECISION</b></div><article class="single-flow-card event-card"><p class="eyebrow">${event.worldlineId.toUpperCase()} / ${event.type}</p><h2>${event.title}</h2><p class="event-copy">${event.description}</p>${resultText}<div class="event-options">${event.options.map((option) => `<button class="event-option" data-option-id="${option.id}"><span>${option.label}</span><small>${Math.round((option.successChance?.baseChance ?? 0.5) * 100)}%</small></button>`).join('')}</div></article>`;
+  $('#eventContent').innerHTML = `<div class="single-flow-progress"><span>SEASON FLOW</span><i><em style="width:100%"></em></i><b>DECISION</b></div><article class="single-flow-card event-card"><p class="eyebrow">${escapeHtml(event.worldlineId.toUpperCase())} / ${escapeHtml(event.type)}</p><h2>${escapeHtml(event.title)}</h2><p class="event-copy">${escapeHtml(event.description)}</p>${resultText ? `<p class="event-result event-context-result">${escapeHtml(resultText)}</p>` : ''}<div class="event-options">${event.options.map((option) => `<button class="event-option" data-option-id="${escapeHtml(option.id)}"><span>${escapeHtml(option.label)}</span>${option.description ? `<small class="option-description">${escapeHtml(option.description)}</small>` : ''}<small class="option-chance">${Math.round((option.successChance?.baseChance ?? 0.5) * 100)}%</small></button>`).join('')}</div></article>`;
   document.querySelectorAll('.event-option').forEach((button) => button.addEventListener('click', async () => {
     document.querySelectorAll('.event-option').forEach((item) => { item.disabled = true; });
-    const result = await window.COPEEngine.chooseOption({ eventId: activeEventId, optionId: button.dataset.optionId, randomRoll: nextRoll() });
+    try {
+      const result = await window.COPEEngine.chooseOption({ eventId: activeEventId, optionId: button.dataset.optionId, randomRoll: nextRoll() });
     const messages = result.resultMessages?.length ? result.resultMessages : [event.title];
     const effects = result.appliedEffects || [];
-    const effectLabels = { AIM: '枪法', GAME_SENSE: '意识', LEADERSHIP: '指挥', CLUTCH: '残局', CONSISTENCY: '稳定性', TEAM_CONFLICT: '团队冲突', MORALE: '士气', ENERGY: '精力', STRESS: '压力', BALANCE: '余额' };
+    const effectLabels = { AIM: '枪法', GAME_SENSE: '意识', LEADERSHIP: '指挥', CLUTCH: '残局', CONSISTENCY: '稳定性', TEAM_CONFLICT: '团队冲突', MORALE: '士气', ENERGY: '精力', STRESS: '压力', BALANCE: '资金', FAME: '名气', TEAM_STATUS: '队内地位', TEAM_RELATIONSHIP: '队内关系', FORM: '竞技状态', MENTALITY: '心态', CLUB_FAVOR: '俱乐部好感', FAN_REPUTATION: '粉丝口碑' };
+    const teams = await loadTeamDirectory().catch(() => new Map());
     const changes = effects.map((effect) => {
       if (effect.type === 'ATTRIBUTE_CHANGE') return { label: `${effectLabels[effect.attribute] || effect.attribute} ${effect.delta >= 0 ? '+' : ''}${effect.delta}`, negative: isAdverseAttributeDelta(effect.attribute, effect.delta) };
       if (effect.type === 'PLAYER_STAT_CHANGE') {
         const negative = effect.stat === 'STRESS' ? effect.delta > 0 : ['ENERGY', 'MORALE', 'BALANCE'].includes(effect.stat) ? effect.delta < 0 : false;
         return { label: `${effectLabels[effect.stat] || effect.stat} ${effect.delta >= 0 ? '+' : ''}${effect.delta}`, negative };
       }
-      if (effect.type === 'TEAM_TRANSFER') return { label: `转入 ${effect.teamId}`, negative: false };
+      if (effect.type === 'NARRATIVE_METRIC_CHANGE') return { label: `${effectLabels[effect.metric] || effect.metric} ${effect.delta >= 0 ? '+' : ''}${effect.delta}`, negative: effect.delta < 0 };
+      if (effect.type === 'TEAM_TRANSFER') return { label: effect.offerRef === 'CURRENT_TRANSFER_OFFER' ? '接受当前正式报价' : `转入 ${teams.get(effect.teamId)?.name || '新队伍'}`, negative: false };
       if (effect.type === 'FORCE_CONTRACT_TERMINATION') return { label: '被迫解约', negative: true };
       return null;
     }).filter(Boolean);
-    const resultTitle = messages[0] || event.title;
-    const resultDetails = messages.length > 1 ? messages.slice(1).join(' ') : '选项结果已写入本次生涯。';
-    $('#eventContent').innerHTML = `<article class="single-flow-card event-card event-result-card ${result.succeeded ? 'is-success' : 'is-failure'}"><p class="eyebrow">${result.succeeded ? '成功结果' : '失败结果'}</p><h2>${resultTitle}</h2><div class="event-roll"><strong>${result.succeeded ? '✓' : '!'}</strong><span>${resultDetails}</span></div>${changes.length ? `<div class="effect-chips">${changes.map((change) => `<span class="${change.negative ? 'is-negative' : ''}">${change.label}</span>`).join('')}</div>` : ''}<button class="continue-schedule" id="continueEventBtn">继续</button></article>`;
-    renderProfile(result.profile);
+    const resultTitle = event.title;
+    const resultDetails = messages.join(' ') || '选项结果已写入本次生涯。';
+    $('#eventContent').innerHTML = `<article class="single-flow-card event-card event-result-card ${result.succeeded ? 'is-success' : 'is-failure'}"><p class="eyebrow">${result.succeeded ? '成功结果' : '失败结果'}</p><h2>${escapeHtml(resultTitle)}</h2><div class="event-roll"><strong>${result.succeeded ? '✓' : '!'}</strong><span>${escapeHtml(resultDetails)}</span></div>${changes.length ? `<div class="effect-chips">${changes.map((change) => `<span class="${change.negative ? 'is-negative' : ''}">${escapeHtml(change.label)}</span>`).join('')}</div>` : ''}<button class="continue-schedule" id="continueEventBtn">继续</button></article>`;
+    await renderProfile(result.profile);
     await refreshVrsStatus();
     await renderTournamentCalendar(result.profile);
     setSingleFlowStage();
@@ -262,17 +440,87 @@ async function renderEvent(event, resultText = '') {
         await simulateTournament(nextTournament, nextProfile);
       } else {
         const current = await window.COPEEngine.getProfile();
-        if (!current.currentTeamId) {
+        if (current.freeAgencyStatus === 'FREE_AGENT' || current.freeAgencyStatus === 'UNSIGNED') {
           await renderCurrentPeriod();
         } else {
           await renderSeasonReport();
         }
       }
     });
+    } catch (error) {
+      document.querySelectorAll('.event-option').forEach((item) => { item.disabled = false; });
+      const card = $('#eventContent .event-card');
+      card?.querySelector('.event-result.failure')?.remove();
+      card?.insertAdjacentHTML('beforeend', `<p class="event-result failure">${escapeHtml(error instanceof Error ? error.message : String(error))}</p>`);
+    }
   }));
 }
 async function renderCurrentPeriod(resultText = '') {
   setSingleFlowStage();
+  const marketPayload = await loadMarketContent();
+  const profile = await window.COPEEngine.getProfile();
+  if (!profile.currentTeamId) {
+    const standIns = await window.COPEEngine.listStandInOffers();
+    const offer = standIns[0];
+    const copy = marketPayload?.market?.standIn;
+    if (offer && copy) {
+      const tier = copy.tiers?.[offer.tier] || '';
+      const targetRole = copy.roles?.[offer.targetRole] || '';
+      const risk = copy.riskLevels?.[offer.risk] || '';
+      const editionName = offer.edition?.name || '';
+      const eyebrow = fillMarketTemplate(copy.eyebrowTemplate, { tier });
+      const title = fillMarketTemplate(copy.titleTemplate, { teamName: offer.teamName, editionName });
+      const facts = [
+        [copy.labels.teamName, offer.teamName],
+        [copy.labels.editionName, editionName],
+        [copy.labels.tier, tier],
+        [copy.labels.targetRole, targetRole],
+        [copy.labels.expectedPlaytimePercentage, `${offer.expectedPlaytimePercentage}${copy.units.percentage}`],
+        [copy.labels.appearanceFee, formatUsd(offer.appearanceFee)],
+        [copy.labels.perMapBonus, formatUsd(offer.perMapBonus)],
+        [copy.labels.prizeSharePercentage, `${offer.prizeSharePercentage}${copy.units.percentage}`],
+        [copy.labels.expiresAt, String(offer.expiresAt || '').slice(0, 10)],
+        [copy.labels.risk, risk],
+        [copy.labels.reason, offer.reason],
+      ];
+      $('#eventPeriod').textContent = copy.period;
+      $('#eventContent').innerHTML = `<article class="single-flow-card event-card stand-in-card"><p class="eyebrow">${escapeHtml(eyebrow)}</p><h2>${escapeHtml(title)}</h2>${resultText ? `<p class="event-result stand-in-previous-response">${escapeHtml(resultText)}</p>` : ''}<div class="stand-in-facts">${facts.map(([label, value]) => `<div><small>${escapeHtml(label)}</small><strong>${escapeHtml(value)}</strong></div>`).join('')}</div><p class="event-result stand-in-response" hidden></p><div class="stand-in-actions"><button type="button" class="continue-schedule" data-stand-in-response="ACCEPT">${escapeHtml(copy.buttons.accept)}</button><button type="button" class="continue-schedule stand-in-reject" data-stand-in-response="REJECT">${escapeHtml(copy.buttons.reject)}</button><button type="button" class="continue-schedule stand-in-wait" data-stand-in-response="WAIT">${escapeHtml(copy.buttons.wait)}</button></div></article>`;
+      const buttons = [...document.querySelectorAll('[data-stand-in-response]')];
+      const responseNode = $('.stand-in-response');
+      let busy = false;
+      buttons.forEach((button) => button.addEventListener('click', async () => {
+        if (busy) return;
+        busy = true;
+        buttons.forEach((item) => { item.disabled = true; });
+        responseNode.hidden = true;
+        responseNode.classList.remove('failure');
+        try {
+          const response = button.dataset.standInResponse;
+          if (!['ACCEPT', 'REJECT', 'WAIT'].includes(response)) return;
+          await window.COPEEngine.respondStandInOffer(offer.offerId, response);
+          if (response === 'ACCEPT') {
+            await renderTournamentCalendar(profile);
+            await renderCurrentPeriod();
+            return;
+          }
+          if (response === 'REJECT') {
+            await renderCurrentPeriod(copy.rejectedMessage);
+            return;
+          }
+          responseNode.textContent = copy.waitingMessage;
+          responseNode.hidden = false;
+        } catch (error) {
+          responseNode.textContent = error instanceof Error ? error.message : String(error);
+          responseNode.classList.add('failure');
+          responseNode.hidden = false;
+        } finally {
+          busy = false;
+          buttons.forEach((item) => { item.disabled = false; });
+        }
+      }));
+      return;
+    }
+  }
   const event = await window.COPEEngine.findCareerEvent('PRE_TOURNAMENT');
   if (event) { await renderEvent(event, resultText); return; }
   const tournament = await window.COPEEngine.getNextTournament();
@@ -282,6 +530,7 @@ async function renderCurrentPeriod(resultText = '') {
 async function startSimulation() {
   const button = $('#playBtn');
   button.disabled = true;
+  $('#startupError').hidden = true;
   try {
     if (!window.COPEEngine) throw new Error('引擎包未加载，请先运行 npm run build:engine。');
     deterministicState = [...callsign.value.trim()].reduce((value, character) => (value * 31 + character.charCodeAt(0)) >>> 0, 2166136261);
@@ -295,11 +544,13 @@ async function startSimulation() {
     setup.classList.remove('leaving');
     dashboard.hidden = false;
     dashboard.classList.add('active');
-    renderProfile(profile);
+    await renderProfile(profile);
     await refreshVrsStatus();
     await renderTournamentCalendar(profile);
     await renderCurrentPeriod();
-  } catch (error) { renderNoEvent(error.message); } finally { button.disabled = false; helpDialog.close(); }
+  } catch (error) {
+    renderStartupError(error instanceof Error ? error.message : String(error));
+  } finally { button.disabled = false; helpDialog.close(); }
 }
 callsign.addEventListener('input', () => { lastName.value = callsign.value.toUpperCase(); });
 lastName.addEventListener('input', () => { callsign.value = lastName.value.toUpperCase(); });
@@ -309,8 +560,9 @@ document.querySelectorAll('.region').forEach((button) => button.addEventListener
 document.querySelectorAll('.pace').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.pace').forEach((item) => item.classList.remove('selected')); button.classList.add('selected'); selectedCareerMode = button.dataset.mode === 'power' ? 'POWER_FANTASY' : 'HARDCORE'; }));
 async function retireCareer() {
   await loadTournamentAssets();
+  const content = await loadCareerContent();
   const current = await window.COPEEngine.getProfile();
-  if (!current.currentTeamId) { renderNoEvent('签约后才能结束职业生涯。'); return; }
+  if (current.isRetired) return;
   const player = await window.COPEEngine.retire('玩家主动退役');
   const summary = await window.COPEEngine.generateRetirementSummary();
   $('#tournamentGrid').hidden = true;
@@ -318,10 +570,18 @@ async function retireCareer() {
   document.querySelector('#gameSession').classList.add('career-archive-page');
   document.querySelector('.season-header').hidden = true;
   document.querySelector('.season-panel').hidden = true;
-  const trophyMarkup = summary.trophyRoom.map((item) => `<div class="archive-item">${tournamentAssetPath(item.editionId) ? `<img src="${tournamentAssetPath(item.editionId)}" alt="${item.fullName}">` : ''}<span>${item.fullName}</span></div>`).join('');
-  const mvpMarkup = summary.mvpRoom.map((item) => `<div class="archive-item"><img src="assets/mvp/${item.badgeAssetId}.webp" alt="MVP"><span>${item.fullName}</span></div>`).join('');
-  const topMarkup = summary.top20History.map((item) => `<div class="archive-item"><img src="assets/top/${item.rank <= 1 ? 'TOP1' : item.rank === 2 ? 'TOP2' : item.rank === 3 ? 'TOP3' : 'TOP4-20'}.svg" alt="TOP20"><span>${item.year} · #${item.rank}</span></div>`).join('');
-  $('#eventContent').innerHTML = `<div class="career-archive"><p class="eyebrow">CAREER ARCHIVE</p><h2>${player.gameId} · 生涯总结</h2><p class="event-copy">退役时间：${summary.player.retiredAt}</p><div class="result-grid"><div><span>总地图</span><b>${summary.careerOverview.totalMaps}</b></div><div><span>总击杀</span><b>${summary.careerOverview.totalKills}</b></div><div><span>平均Rating</span><b>${summary.careerOverview.averageRating.toFixed(2)}</b></div><div><span>TOP20</span><b>${summary.top20History.length}</b></div></div><section class="archive-section"><h3>TOP20 勋章</h3><div class="archive-grid">${topMarkup || '<p class="event-empty">暂无 TOP20 记录</p>'}</div></section><section class="archive-section"><h3>MVP 勋章</h3><div class="archive-grid">${mvpMarkup || '<p class="event-empty">暂无 MVP 记录</p>'}</div></section><section class="archive-section"><h3>奖杯陈列</h3><div class="archive-grid">${trophyMarkup || '<p class="event-empty">暂无冠军奖杯</p>'}</div></section></div>`;
+  document.querySelector('.dashboard-playerbar').hidden = true;
+  document.querySelector('.career-goals').hidden = true;
+  document.querySelector('.dashboard-side').hidden = true;
+  document.querySelector('.event-panel > .panel-heading').hidden = true;
+  const archiveCopy = content.archive;
+  const trophyMarkup = summary.trophyRoom.map((item) => `<div class="archive-item archive-trophy"><img src="${escapeHtml(tournamentAssetPath(item.editionId) || 'assets/events/PGL_T1.webp')}" alt="${escapeHtml(item.fullName)}"><strong>${escapeHtml(item.fullName)}</strong><span>${item.year} · ${escapeHtml(item.level)}</span></div>`).join('');
+  const mvpMarkup = summary.mvpRoom.map((item) => `<div class="archive-item"><img src="assets/mvp/${escapeHtml(item.badgeAssetId)}.webp" alt="MVP"><strong>${escapeHtml(item.fullName)}</strong><span>${item.year} · ${escapeHtml(item.level === 'MAJOR' ? archiveCopy.itemLabels.majorMvp : archiveCopy.itemLabels.eventMvp)}</span></div>`).join('');
+  const topMarkup = summary.top20History.map((item) => `<div class="archive-item"><img src="assets/top/${item.rank <= 1 ? 'TOP1' : item.rank === 2 ? 'TOP2' : item.rank === 3 ? 'TOP3' : 'TOP4-20'}.svg" alt="TOP20"><strong>${item.year} ${escapeHtml(archiveCopy.itemLabels.annualTop)}</strong><span>${escapeHtml(archiveCopy.itemLabels.worldRank)} #${item.rank}</span></div>`).join('');
+  const bestTop = summary.top20History.length ? Math.min(...summary.top20History.map((item) => item.rank)) : null;
+  const headline = summary.careerOverview.majorChampionships ? archiveCopy.headlines.majorChampion : bestTop ? archiveCopy.headlines.topPlayer.replace('{rank}', String(bestTop)) : summary.careerOverview.otherSTierTitles ? archiveCopy.headlines.tierOneChampion : archiveCopy.headlines.journeyman;
+  $('#eventContent').innerHTML = `<div class="career-archive"><header class="archive-hero"><p class="eyebrow">${escapeHtml(archiveCopy.eyebrow)}</p><h2>${escapeHtml(player.gameId)}</h2><strong>${escapeHtml(headline)}</strong><p>${escapeHtml(archiveCopy.labels.retiredAge)} ${summary.careerOverview.retiredAge} · ${escapeHtml(archiveCopy.labels.careerGrade)} ${summary.careerOverview.grade} · ${escapeHtml(summary.player.retiredAt.slice(0, 10))}</p></header><div class="archive-highlights"><div><span>${escapeHtml(archiveCopy.labels.majorChampionships)}</span><b>${summary.careerOverview.majorChampionships}</b></div><div><span>${escapeHtml(archiveCopy.labels.bestTop)}</span><b>${bestTop ? `#${bestTop}` : '—'}</b></div><div><span>${escapeHtml(archiveCopy.labels.mvp)}</span><b>${summary.mvpRoom.length}</b></div><div><span>${escapeHtml(archiveCopy.labels.peakRating)}</span><b>${summary.careerOverview.peakRating.toFixed(2)}</b></div></div><section class="archive-section archive-first"><h3>${escapeHtml(archiveCopy.sections.trophies)}</h3><div class="archive-grid">${trophyMarkup || `<p class="event-empty">${escapeHtml(archiveCopy.empty.trophies)}</p>`}</div></section><section class="archive-section"><h3>${escapeHtml(archiveCopy.sections.topHistory)}</h3><div class="archive-grid">${topMarkup || `<p class="event-empty">${escapeHtml(archiveCopy.empty.topHistory)}</p>`}</div></section><section class="archive-section"><h3>${escapeHtml(archiveCopy.sections.mvp)}</h3><div class="archive-grid">${mvpMarkup || `<p class="event-empty">${escapeHtml(archiveCopy.empty.mvp)}</p>`}</div></section><section class="archive-section"><h3>${escapeHtml(archiveCopy.sections.statistics)}</h3><div class="result-grid"><div><span>${escapeHtml(archiveCopy.labels.totalMaps)}</span><b>${summary.careerOverview.totalMaps}</b></div><div><span>${escapeHtml(archiveCopy.labels.totalKills)}</span><b>${formatCompactNumber(summary.careerOverview.totalKills)}</b></div><div><span>${escapeHtml(archiveCopy.labels.careerRating)}</span><b>${summary.careerOverview.averageRating.toFixed(2)}</b></div><div><span>${escapeHtml(archiveCopy.labels.careerEarnings)}</span><b>${formatUsd(summary.careerOverview.careerEarnings)}</b></div></div></section><div class="archive-actions"><button class="play-button" id="restartCareerBtn">${escapeHtml(archiveCopy.restartLabel)} <span>→</span></button></div></div>`;
+  $('#restartCareerBtn').addEventListener('click', () => window.location.reload());
   $('#retireBtn').disabled = true;
   $('#retireBtn').textContent = '已退役';
   $('#eventPeriod').textContent = 'CAREER ARCHIVE';
@@ -332,17 +592,47 @@ async function renderSeasonReport() {
   $('#tournamentGrid').hidden = true;
   const top20 = report.top20Ranking?.entries || [];
   const playerRank = report.top20Ranking?.careerPlayerRank;
-  const top20Markup = report.top20Published ? `<div class="top20-summary"><strong>${playerRank ? `你的年度排名 #${playerRank}` : '本年度未进入 TOP20'}</strong><span>${playerRank ? '年度数据已达到榜单资格并完成排名。' : '继续参加 T1/Major，提升高级地图和年度表现。'}</span></div><div class="top20-list">${top20.length ? top20.slice(0, 20).map((entry) => {
+  const fullTop20Markup = top20.map((entry) => {
     const honors = entry.evidence.tournaments.flatMap((event) => event.honors.filter((honor) => honor.type === 'MVP').map((honor) => `MVP · ${honor.eventName}`));
     const titles = entry.evidence.tournaments.filter((event) => event.title).map((event) => `冠军 · ${event.eventName}`);
-    const details = entry.rank <= 3 ? `<details class="top20-honors"><summary>查看年度荣誉</summary><div>${[...honors, ...titles].length ? [...honors, ...titles].map((item) => `<span>${item}</span>`).join('') : '<span>暂无记录</span>'}</div></details>` : '';
-    return `<div class="top20-entry"><b>#${entry.rank}</b><span>${entry.identity.nickname}<small>${entry.identity.countryCode} · ${entry.identity.teamName}</small>${details}</span><strong>Rating ${entry.metrics.annualRating.toFixed(2)}<small>${entry.metrics.t1MajorMaps} 高级地图</small></strong></div>`;
-  }).join('') : '<p class="event-empty">榜单数据暂不可用。</p>'}</div>` : '';
-  $('#eventContent').innerHTML = `<div class="event-card report-card"><p class="eyebrow">${report.top20Published ? 'YEAR-END TOP20' : 'HALF SEASON REPORT'}</p><h2>${report.top20Published ? `${report.season} · 年度名单公示` : `${report.season} · 上半年`}</h2><p class="event-copy">${report.top20Published ? '年度赛事档案已封存，TOP20 名单现已公开。' : '本阶段赛事档案已结算，下一阶段赛历即将生成。'}</p>${top20Markup}<div class="result-grid"><div><span>奖金</span><b>${report.totalPrizeMoney}</b></div><div><span>工资</span><b>${report.salaryExpense}</b></div><div><span>地图</span><b>${report.mapsPlayed}</b></div><div><span>击杀</span><b>${report.kills}</b></div></div><button class="continue-schedule" id="continueYearBtn">${report.top20Published ? '开始下一年度' : '进入下半年'}</button></div>`;
+    const details = [...honors, ...titles].length ? `<small>${[...honors, ...titles].map((item) => escapeHtml(item)).join(' · ')}</small>` : '<small>本年度无高级荣誉</small>';
+    return `<div class="top20-entry"><b>#${entry.rank}</b><span>${escapeHtml(entry.identity.nickname)}<small>${escapeHtml(entry.identity.countryCode)} · ${escapeHtml(entry.identity.teamName)}</small>${details}</span><strong>Rating ${entry.metrics.annualRating.toFixed(2)}<small>${entry.metrics.t1MajorMaps} 高级地图</small></strong></div>`;
+  }).join('');
+  const top20Markup = report.top20Published ? `<div class="top20-summary"><strong>${playerRank ? `你的年度排名 #${playerRank}` : '本年度未进入 TOP20'}</strong><span>${playerRank ? '这一年已经写进你的生涯档案。更高排名仍等待下一赛季。' : '你没有入选，但这一年的榜单与荣誉仍然值得查看。'}</span></div><div class="top20-podium">${top20.slice(0, 3).map((entry) => `<article><b>#${entry.rank}</b><strong>${escapeHtml(entry.identity.nickname)}</strong><span>${escapeHtml(entry.identity.teamName)} · ${entry.metrics.annualRating.toFixed(2)}</span></article>`).join('')}</div><button class="continue-schedule" id="openTop20Btn">查看完整年度 TOP20</button>` : '';
+  $('#eventContent').innerHTML = `<div class="event-card report-card"><p class="eyebrow">${report.top20Published ? 'YEAR-END TOP20' : 'HALF SEASON REPORT'}</p><h2>${report.top20Published ? `${report.season} · 年度名单公示` : `${report.season} · 上半年`}</h2><p class="event-copy">${report.top20Published ? '年度赛事档案已封存，TOP20 名单现已公开。' : '本阶段赛事档案已结算，下一阶段赛历即将生成。'}</p>${top20Markup}<div class="result-grid"><div><span>奖金</span><b>${formatUsd(report.totalPrizeMoney)}</b></div><div><span>工资收入</span><b>${formatUsd(report.salaryIncome ?? Math.max(0, -(report.salaryExpense ?? 0)))}</b></div><div><span>地图</span><b>${report.mapsPlayed}</b></div><div><span>击杀</span><b>${formatCompactNumber(report.kills)}</b></div></div><button class="continue-schedule" id="continueYearBtn">${report.top20Published ? '开始下一年度' : '进入下半年'}</button></div>`;
+  if (report.top20Published) {
+    $('#top20DialogTitle').textContent = `${report.season} · 年度 TOP20`;
+    $('#top20DialogContent').innerHTML = `<div class="top20-list">${fullTop20Markup || '<p class="event-empty">本年度榜单没有足够候选。</p>'}</div>`;
+    $('#openTop20Btn')?.addEventListener('click', () => top20Dialog.showModal());
+  }
   $('#continueYearBtn').addEventListener('click', async () => {
+    const transferEvent = await window.COPEEngine.findCareerEvent('TRANSFER_WINDOW');
+    if (transferEvent) { await renderEvent(transferEvent); return; }
+    const offers = await window.COPEEngine.listTransferTargets();
+    const marketPayload = await loadMarketContent();
+    const marketCopy = marketPayload?.market;
+    const availabilityOrder = ['RECOMMENDED', 'PERSUADABLE', 'UNREACHABLE'];
+    const groups = availabilityOrder.map((availability) => ({ availability, rows: offers.filter((offer) => offer.availability === availability) }));
+    if (offers.length && marketCopy) {
+      $('#eventPeriod').textContent = marketCopy.period;
+      const offerMarkup = (offer) => {
+        const contract = offer.contract || {};
+        const canSelect = offer.eligible && offer.availability !== 'UNREACHABLE';
+        const requirements = (offer.unmetRequirements || []).map((item) => formatMarketRequirement(item, marketCopy)).filter(Boolean);
+        const risks = (offer.risks || []).map((item) => formatMarketRisk(item, marketCopy)).filter(Boolean);
+        const reasons = (offer.reasons || []).slice(0, 2);
+        return `<button class="market-offer-card transfer-target availability-${escapeHtml(offer.availability)}" data-team-id="${escapeHtml(offer.teamId)}" ${canSelect ? '' : 'disabled'}><span class="market-offer-head"><strong>${escapeHtml(offer.teamName)}</strong><em>${escapeHtml(marketCopy.availability[offer.availability])}</em></span><span class="market-score-row"><b>${escapeHtml(marketCopy.labels.tier)} · ${escapeHtml(marketCopy.tiers[offer.tier])}</b><b>${escapeHtml(marketCopy.labels.fitScore)} · ${offer.fitScore}/100</b><b>${escapeHtml(marketCopy.labels.interestScore)} · ${offer.interestScore}/100</b></span><span class="market-contract"><span><small>${escapeHtml(marketCopy.labels.contractLength)}</small>${contract.lengthMonths} ${escapeHtml(marketCopy.units.months)}</span><span><small>${escapeHtml(marketCopy.labels.salaryPerMonth)}</small>${formatUsd(contract.salaryPerMonth)}</span><span><small>${escapeHtml(marketCopy.labels.role)}</small>${escapeHtml(marketCopy.roles[contract.role] || '')}</span><span><small>${escapeHtml(marketCopy.labels.expectedPlaytime)}</small>${contract.expectedPlaytimePercentage}%</span></span>${reasons.length ? `<span class="market-detail"><small>${escapeHtml(marketCopy.labels.reasons)}</small>${reasons.map((item) => `<i>${escapeHtml(item)}</i>`).join('')}</span>` : ''}${requirements.length ? `<span class="market-detail market-requirements"><small>${escapeHtml(marketCopy.labels.requirements)}</small>${requirements.map((item) => `<i>${escapeHtml(item)}</i>`).join('')}</span>` : ''}${risks.length ? `<span class="market-detail market-risks"><small>${escapeHtml(marketCopy.labels.risks)}</small>${risks.map((item) => `<i>${escapeHtml(item)}</i>`).join('')}</span>` : ''}${canSelect ? `<span class="market-eligible">${escapeHtml(marketCopy.labels.eligible)}</span>` : ''}</button>`;
+      };
+      $('#eventContent').innerHTML = `<article class="single-flow-card event-card market-board"><p class="eyebrow">${escapeHtml(marketCopy.eyebrow)}</p><h2>${escapeHtml(marketCopy.title)}</h2><div class="market-groups">${groups.map((group) => `<section class="market-group availability-${group.availability}"><header><h3>${escapeHtml(marketCopy.availability[group.availability])}</h3><p>${escapeHtml(marketCopy.availabilityHints[group.availability])}</p></header><div class="market-offers">${group.rows.map(offerMarkup).join('') || `<p class="event-empty">${escapeHtml(marketCopy.emptyLabel)}</p>`}</div></section>`).join('')}</div><button class="continue-schedule" id="skipTransferBtn">${escapeHtml(marketCopy.skipLabel)}</button></article>`;
+      document.querySelectorAll('.transfer-target:not(:disabled)').forEach((button) => button.addEventListener('click', async () => { await window.COPEEngine.selectTransferTarget(button.dataset.teamId); const event = await window.COPEEngine.findCareerEvent('TRANSFER_WINDOW'); if (event) await renderEvent(event); else renderNoEvent('报价确认事件不可用。'); }, { once: true }));
+      $('#skipTransferBtn').addEventListener('click', async () => { await window.COPEEngine.advancePeriod('OFFSEASON', nextRoll()); await renderCurrentPeriod(); }, { once: true });
+      return;
+    }
+    const offseasonEvent = await window.COPEEngine.findCareerEvent('OFFSEASON');
+    if (offseasonEvent) { await renderEvent(offseasonEvent); return; }
     await window.COPEEngine.advancePeriod('OFFSEASON', nextRoll());
     const profile = await window.COPEEngine.getProfile();
-    renderProfile(profile);
+    await renderProfile(profile);
     await refreshVrsStatus();
     await renderTournamentCalendar(profile);
     await renderCurrentPeriod();
@@ -354,4 +644,11 @@ $('#closeHelp').addEventListener('click', () => helpDialog.close());
 $('#continueBtn').addEventListener('click', () => $('#career').scrollIntoView({ behavior: 'smooth' }));
 $('#playBtn').addEventListener('click', startSimulation);
 $('#dialogPlay').addEventListener('click', startSimulation);
-$('#retireBtn').addEventListener('click', () => retireCareer().catch((error) => renderNoEvent(error.message)));
+$('#closeTop20').addEventListener('click', () => top20Dialog.close());
+$('#retireBtn').addEventListener('click', () => retireDialog.showModal());
+$('#closeRetire').addEventListener('click', () => retireDialog.close());
+$('#cancelRetire').addEventListener('click', () => retireDialog.close());
+$('#confirmRetire').addEventListener('click', () => {
+  $('#confirmRetire').disabled = true;
+  retireCareer().then(() => retireDialog.close()).catch((error) => renderNoEvent(error.message)).finally(() => { $('#confirmRetire').disabled = false; });
+});

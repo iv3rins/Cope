@@ -1,0 +1,15 @@
+{
+  "id": "journeyman",
+  "name": "转会老兵",
+  "description": "在短约、跨区迁移和截止日选择中维持职业位置。",
+  "startEventId": "journeyman-short-contract",
+  "eventIds": [
+    "journeyman-short-contract",
+    "journeyman-transfer-offer",
+    "journeyman-agent-call",
+    "journeyman-language-role",
+    "journeyman-deadline-choice",
+    "journeyman-reset-stop",
+    "journeyman-career-audit"
+  ]
+}

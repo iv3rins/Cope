@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "market": {
+    "period": "转会窗口",
+    "eyebrow": "OFFSEASON OPPORTUNITIES / 休赛期机会",
+    "title": "职业市场机会",
+    "skipLabel": "跳过并继续",
+    "emptyLabel": "当前分组暂无机会",
+    "availability": {
+      "RECOMMENDED": "推荐机会",
+      "PERSUADABLE": "可争取机会",
+      "UNREACHABLE": "暂不可达"
+    },
+    "availabilityHints": {
+      "RECOMMENDED": "条件与兴趣均较匹配，可以直接推进接触。",
+      "PERSUADABLE": "符合基本条件，但仍需争取俱乐部认可。",
+      "UNREACHABLE": "当前尚未满足必要条件，仅供规划生涯路线。"
+    },
+    "labels": {
+      "tier": "竞技层级",
+      "fitScore": "适配度",
+      "interestScore": "俱乐部兴趣",
+      "contract": "合同方案",
+      "contractLength": "合同期限",
+      "salaryPerMonth": "月薪",
+      "role": "阵容角色",
+      "expectedPlaytime": "预计出场率",
+      "risks": "风险提示",
+      "reasons": "机会依据",
+      "requirements": "尚需满足",
+      "eligible": "可以接洽"
+    },
+    "units": {
+      "months": "个月"
+    },
+    "tiers": {
+      "T1": "顶级职业赛场",
+      "T2": "次级职业赛场",
+      "T3": "发展级职业赛场"
+    },
+    "roles": {
+      "STARTER": "首发队员",
+      "SUBSTITUTE": "替补队员",
+      "AWPER": "狙击手",
+      "ENTRY_FRAGGER": "突破手",
+      "IGL": "指挥",
+      "SUPPORT": "辅助",
+      "LURKER": "自由人"
+    },
+    "riskLevels": {
+      "LOW": "低风险",
+      "MEDIUM": "中等风险",
+      "HIGH": "高风险"
+    },
+    "requirements": {
+      "attributeMinimum": "{attribute}需达到 {value}",
+      "roleOneOf": "场上定位需为：{roles}",
+      "minimumAge": "年龄需达到 {value} 岁",
+      "maximumAge": "年龄不得超过 {value} 岁",
+      "maximumTeamConflict": "团队冲突不得高于 {value}",
+      "freeAgentOnly": "仅面向自由球员",
+      "currentTierExcluded": "当前不得效力于{tier}",
+      "minimumRecentRating": "近期赛事 Rating 需达到 {value}",
+      "minimumCareerMaps": "生涯比赛地图数需达到 {value}",
+      "minimumT1MajorMaps": "顶级或 Major 赛事地图数需达到 {value}",
+      "t3ToT1SubstituteOnly": "从发展级直升顶级时仅可接受替补席位",
+      "t3ToT2ContractRequired": "从发展级进入次级赛场需获得正式合同或替补席位",
+      "t2ToT1SubstituteOnly": "从次级直升顶级时仅可接受替补席位",
+      "transferWindowRequired": "该机会仅在正式转会窗口开放",
+      "invalidRoll": "市场评估数据暂时无效",
+      "unknownRequirement": "存在一项尚未满足的市场准入条件"
+    },
+    "attributes": {
+      "aim": "枪法",
+      "gameSense": "比赛意识",
+      "leadership": "领导能力",
+      "clutch": "残局能力",
+      "consistency": "稳定性",
+      "teamConflict": "团队冲突"
+    },
+    "standIn": {
+      "period": "单届替补邀请",
+      "eyebrowTemplate": "TOURNAMENT STAND-IN / 单届替补 · {tier}",
+      "titleTemplate": "{teamName} 邀请你出战 {editionName}",
+      "labels": {
+        "teamName": "邀请队伍",
+        "editionName": "赛事",
+        "tier": "竞技层级",
+        "targetRole": "目标位置",
+        "expectedPlaytimePercentage": "预计出场率",
+        "appearanceFee": "出场费",
+        "perMapBonus": "每图奖金",
+        "prizeSharePercentage": "奖金分成",
+        "expiresAt": "答复截止日期",
+        "risk": "机会风险",
+        "reason": "邀请原因"
+      },
+      "tiers": {
+        "T1": "顶级职业赛场",
+        "T2": "次级职业赛场",
+        "T3": "发展级职业赛场"
+      },
+      "roles": {
+        "STARTER": "首发队员",
+        "SUBSTITUTE": "替补队员",
+        "AWPER": "狙击手",
+        "ENTRY_FRAGGER": "突破手",
+        "IGL": "指挥",
+        "SUPPORT": "辅助",
+        "LURKER": "自由人"
+      },
+      "riskLevels": {
+        "LOW": "低风险",
+        "MEDIUM": "中等风险",
+        "HIGH": "高风险"
+      },
+      "units": {
+        "percentage": "%"
+      },
+      "buttons": {
+        "accept": "接受邀请",
+        "reject": "拒绝邀请",
+        "wait": "稍后决定"
+      },
+      "rejectedMessage": "你婉拒了这次单届替补邀请，职业日程将继续推进。",
+      "waitingMessage": "你暂时保留了这次邀请，可以在截止日期前继续考虑。"
+    }
+  }
+}

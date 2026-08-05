@@ -1,3 +1,0 @@
-{
-  "id":"free-agent-no-offers","title":"没有正式报价","description":"一周过去，队伍只询问了你的状态，没有人愿意立刻承担正式合同。","worldlineId":"rookie","type":"CHOICE","period":"NORMAL","conditions":[{"type":"FREE_AGENCY","expected":true}],"options":[{"id":"keep-waiting","label":"继续等待并参加公开赛","requirements":[],"successChance":{"baseChance":0.55,"modifiers":[]},"outcome":{"successEffects":[{"type":"ATTRIBUTE_CHANGE","attribute":"CONSISTENCY","delta":1}],"failureEffects":[{"type":"PLAYER_STAT_CHANGE","stat":"BALANCE","delta":-100},{"type":"PLAYER_STAT_CHANGE","stat":"MORALE","delta":-5}],"successMessages":["你用公开赛维持比赛状态，下一轮谈判仍有机会。"],"failureMessages":["生活成本继续消耗余额，必须重新评估短期合同。"],"failureNextEventId":"free-agent-economic-pressure"}}],"autoEffects":[],"phase":"POST_TOURNAMENT","weight":1,"priority":80
-}

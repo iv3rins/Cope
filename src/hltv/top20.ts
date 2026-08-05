@@ -26,6 +26,7 @@ export interface Top20TournamentEvidence {
   readonly maps: number;
   readonly rating: number;
   readonly adr?: number;
+  readonly kast?: number;
   readonly playoffMaps: number;
   readonly playoffRating: number;
   readonly top5Maps: number;
@@ -48,6 +49,18 @@ export interface Top20Rules {
   readonly minimumT1MajorMaps: number;
   readonly honorBaseScore: Readonly<Record<HonorType, number>>;
   readonly honorClassMultiplier: Readonly<Record<HonorClass, number>>;
+  readonly panelWeights?: {
+    readonly baseData: number;
+    readonly honors: number;
+    readonly pressure: number;
+    readonly stability: number;
+    readonly teamAchievement: number;
+  };
+  readonly pressureCoefficients?: {
+    readonly playoffRating: number;
+    readonly top5Rating: number;
+    readonly finalRating: number;
+  };
 }
 
 export interface Top20Metrics {
@@ -56,6 +69,7 @@ export interface Top20Metrics {
   readonly annualRating: number;
   readonly overallRating: number;
   readonly adr: number;
+  readonly kast: number;
   readonly playoffRating: number;
   readonly top5Rating: number;
   readonly finalRating: number | null;

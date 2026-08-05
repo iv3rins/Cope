@@ -1,7 +1,7 @@
 import type { HltvTeamId } from '../hltv/team';
 import type { TournamentId, TournamentInterventionType } from '../hltv/tournament';
 import type { EventCondition } from './condition';
-import type { PlayerAttribute, PlayerFlag, PlayerProfile, PlayerRole } from './profile';
+import type { NarrativeMetric, PlayerAttribute, PlayerFlag, PlayerProfile, PlayerRole } from './profile';
 import type { ForceContractTerminationEffect, PlayerContract } from './contract';
 import type { GameDifficultyMode } from './mode';
 
@@ -10,7 +10,7 @@ export type EventPeriod = 'FINAL_DECISIVE_MOMENT' | 'OFFSEASON' | 'TRANSFER_WIND
 /** 赛事相对阶段；缺省时由 period 推导，保证旧事件包可继续运行。 */
 export type StoryEventPhase = 'PRE_TOURNAMENT' | 'IN_TOURNAMENT' | 'POST_TOURNAMENT';
 /** 赛季编排窗口；具体事件仍由 StoryEngine 按 EventPeriod/条件从 JSON 选择。 */
-export type CareerEventWindow = 'SEASON_START' | 'PRE_TOURNAMENT' | 'POST_TOURNAMENT' | 'SEASON_END' | 'REPORT' | 'OFFSEASON';
+export type CareerEventWindow = 'SEASON_START' | 'PRE_TOURNAMENT' | 'POST_TOURNAMENT' | 'SEASON_END' | 'REPORT' | 'OFFSEASON' | 'TRANSFER_WINDOW';
 export type StoryEventType = 'CHOICE' | 'MANDATORY';
 export type PlayerMutableStat = 'MORALE' | 'ENERGY' | 'BALANCE' | 'STRESS' | 'RATING2';
 export type CareerStat = 'TOTAL_KILLS' | 'MAPS_PLAYED' | 'CLUTCH_WON' | 'CAREER_EARNINGS';
@@ -24,6 +24,12 @@ export interface AttributeChangeEffect {
 export interface PlayerStatChangeEffect {
   readonly type: 'PLAYER_STAT_CHANGE';
   readonly stat: PlayerMutableStat;
+  readonly delta: number;
+}
+
+export interface NarrativeMetricChangeEffect {
+  readonly type: 'NARRATIVE_METRIC_CHANGE';
+  readonly metric: NarrativeMetric | 'MENTALITY' | 'BALANCE';
   readonly delta: number;
 }
 
@@ -83,7 +89,7 @@ export interface TournamentInterventionEffect {
   readonly description: string;
 }
 
-export type EventEffect = AttributeChangeEffect | PlayerStatChangeEffect | TeamTransferEffect | RoleChangeEffect | WorldlineChangeEffect | FlagChangeEffect | TrophyChangeEffect | CareerStatChangeEffect | AdvanceStoryEffect | TournamentInterventionEffect | ForceContractTerminationEffect;
+export type EventEffect = AttributeChangeEffect | PlayerStatChangeEffect | NarrativeMetricChangeEffect | TeamTransferEffect | RoleChangeEffect | WorldlineChangeEffect | FlagChangeEffect | TrophyChangeEffect | CareerStatChangeEffect | AdvanceStoryEffect | TournamentInterventionEffect | ForceContractTerminationEffect;
 
 export interface SuccessChanceModifier {
   readonly attribute: PlayerAttribute;
@@ -110,6 +116,8 @@ export interface EventOutcome {
 export interface StoryEventOption {
   readonly id: string;
   readonly label: string;
+  /** 选项的收益与隐患说明；属于事件包内容，由 UI 展示。 */
+  readonly description?: string;
   /** 快捷模式过滤；未填写时由 requirements 中的 GAME_MODE 条件决定。 */
   readonly allowedModes?: readonly GameDifficultyMode[];
   readonly requirements: readonly EventCondition[];
@@ -119,8 +127,10 @@ export interface StoryEventOption {
 
 export interface StoryContextFacts {
   readonly activeContract?: PlayerContract | null;
+  readonly currentDate?: string;
   readonly currentTeamRank?: number | null;
   readonly transferWindowOpen?: boolean;
+  readonly pendingTransferOffer?: import('../hltv/transfer-targets').TransferOffer | null;
   readonly lowRatingStreak?: number;
   readonly advancedMapsPlayed?: number;
 }

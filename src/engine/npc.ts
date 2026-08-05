@@ -38,6 +38,7 @@ export interface NpcGenerationResult {
   readonly season: number;
   readonly generated: readonly NpcPlayerProfile[];
   readonly retiredNpcIds: readonly HltvPlayerId[];
+  readonly progressed?: readonly NpcPlayerProfile[];
 }
 
 /** NPC 仓储是 TOP20 生态、转会市场和赛事阵容的共同数据源。 */
@@ -52,5 +53,6 @@ export interface NpcPlayerRepository {
 /** 每年生成青训天才、路人王并淘汰退役 NPC，维持世界生态数量。 */
 export interface NpcGenerationService {
   generateSeason(input: { readonly season: number; readonly targetPopulation: number; readonly profiles: readonly NpcGenerationProfile[] }): Promise<NpcGenerationResult>;
+  advanceSeason(input: { readonly season: number; readonly players: readonly NpcPlayerProfile[] }): Promise<NpcGenerationResult>;
   retireExpired(input: { readonly season: number; readonly minimumAge: number }): Promise<readonly HltvPlayerId[]>;
 }

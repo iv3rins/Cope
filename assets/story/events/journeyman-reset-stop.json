@@ -1,0 +1,108 @@
+{
+  "id": "journeyman-reset-stop",
+  "title": "老兵中转站",
+  "description": "连续赶路、试训和跨区沟通耗光了储备，你需要在下一站前重新校准状态。",
+  "worldlineId": "journeyman",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "phase": "POST_TOURNAMENT",
+  "weight": 1,
+  "priority": 80,
+  "repeatable": true,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "journeyman"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 30
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 70
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "delay-travel",
+      "label": "改签延后一天",
+      "description": "在酒店完整休息，但改签和住宿会增加支出。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 26
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -450
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "你多留了一晚，醒来时终于不再被时差拉扯。"
+        ],
+        "failureMessages": [
+          "改签没有完成。"
+        ]
+      }
+    },
+    {
+      "id": "cancel-media",
+      "label": "取消媒体行程",
+      "description": "减少心理负担并补充体能，但会损失一些市场曝光。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 1,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 17
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -18
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [],
+        "successMessages": [
+          "经纪人替你推掉采访，安静的半天让思绪重新归位。"
+        ],
+        "failureMessages": [
+          "媒体行程没能取消。"
+        ]
+      }
+    }
+  ],
+  "autoEffects": []
+}

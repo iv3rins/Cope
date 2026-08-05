@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "injury-recovery-review",
+      "name": "伤病恢复复核",
+      "factType": "AGE_MILESTONE",
+      "conditions": [
+        { "type": "WORLDLINE", "worldlineId": "comeback" }
+      ],
+      "eventId": "comeback-medical-review",
+      "priority": 120,
+      "oncePerCareer": true
+    },
+    {
+      "id": "integrity-contact-review",
+      "name": "诚信接触审查",
+      "factType": "CONTRACT_TERMINATED",
+      "conditions": [
+        { "type": "WORLDLINE", "worldlineId": "matchfixing" },
+        { "type": "FREE_AGENCY", "expected": true }
+      ],
+      "eventId": "matchfixing-evidence-review",
+      "priority": 140,
+      "oncePerCareer": true
+    },
+    {
+      "id": "journeyman-market-window",
+      "name": "老兵市场窗口",
+      "factType": "PLAYER_BANKRUPT",
+      "conditions": [
+        { "type": "WORLDLINE", "worldlineId": "journeyman" },
+        { "type": "FREE_AGENCY", "expected": true },
+        { "type": "ACTIVE_CONTRACT", "expected": false }
+      ],
+      "eventId": "journeyman-agent-call",
+      "priority": 100,
+      "oncePerCareer": false
+    }
+  ]
+}

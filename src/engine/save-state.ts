@@ -1,9 +1,12 @@
 import type { VrsInviteSnapshot } from '../hltv/team';
-import type { TournamentEdition, TournamentIntervention, TournamentResult } from '../hltv/tournament';
+import type { TournamentEdition, TournamentIntervention, TournamentProgressState, TournamentResult, TournamentStandInAssignment, TournamentStandInOffer } from '../hltv/tournament';
 import type { Top20Ranking } from '../hltv/top20';
 import type { NpcPlayerProfile } from './npc';
 import type { PlayerContract } from './contract';
 import type { PlayerProfile } from './profile';
+
+/** 旧存档缺失剧情指标时的中性值；MENTALITY/BALANCE 分别由 player.morale/life.balance 提供。 */
+export const LEGACY_NARRATIVE_METRIC_DEFAULT = 50;
 import type { Worldline } from './graph';
 import type { TransferOffer } from '../hltv/transfer-targets';
 
@@ -12,7 +15,7 @@ export type CareerSeasonPhase = 'READY' | 'ACTIVE' | 'EVENT' | 'REPORT' | 'OFFSE
 export type CareerTournamentPhase = 'PRE' | 'IN' | 'POST';
 
 /** 事件完成后的恢复目标，禁止 UI 根据事件标题或窗口自行推断。 */
-export type CareerEventResume = 'START_SEASON' | 'CONTINUE_SEASON' | 'CONTINUE_REPORT';
+export type CareerEventResume = 'START_SEASON' | 'CONTINUE_SEASON' | 'CONTINUE_REPORT' | 'CONTINUE_OFFSEASON' | 'CONTINUE_TRANSFER_WINDOW';
 
 export interface CareerEventResumeState {
   readonly mode: CareerEventResume;
@@ -26,7 +29,12 @@ export interface HalfSeasonSettlement {
   readonly half: 1 | 2;
   readonly tournamentIds: readonly string[];
   readonly totalPrizeMoney: number;
-  readonly salaryExpense: number;
+  /** 玩家合同工资收入，按本阶段覆盖月份结算。 */
+  readonly salaryIncome: number;
+  /** 旧存档兼容字段；新结算不再把工资视为支出。 */
+  readonly salaryExpense?: number;
+  readonly expenses: number;
+  readonly currency: 'USD';
   readonly netBalanceDelta: number;
   readonly mapsPlayed: number;
   readonly kills: number;
@@ -40,6 +48,15 @@ export interface HalfSeasonSettlement {
  * 第一版完整生涯状态.
  * 所有字段必须是可 JSON 序列化的纯数据，不得把 Service、Repository、Map、Set 或函数写入存档。
  */
+export interface StandInLedgerEntry {
+  readonly offerId: string;
+  readonly season: number;
+  readonly half: 1 | 2;
+  readonly status: 'ISSUED' | 'COMPLETED' | 'REJECTED' | 'EXPIRED';
+  readonly teamId: string;
+  readonly occurredAt: string;
+}
+
 export interface CareerGameState {
   readonly schemaVersion: number;
   readonly savedAt: string;
@@ -51,17 +68,24 @@ export interface CareerGameState {
   readonly tournamentCursor?: number;
   readonly eventResume?: CareerEventResumeState | null;
   readonly tournamentResults?: readonly TournamentResult[];
+  /** 预选赛独立归档；地图与击杀计入生涯累计，但不进入正式赛事归档和 TOP20 证据。 */
+  readonly qualificationResults?: readonly TournamentResult[];
   /** 当前赛事内部阶段；赛事结果结算后保留 POST，便于赛后事件读取上下文。 */
   readonly tournamentPhase?: CareerTournamentPhase | null;
   /** 当前赛事内的比赛/阶段游标，至少从 0（首场）开始。 */
   readonly tournamentMatchCursor?: number;
   readonly activeTournamentId?: string | null;
+  /** Opaque, serializable state owned by TournamentService. CareerGame must not inspect payload. */
+  readonly activeTournamentState?: TournamentProgressState | null;
   readonly halfSeasonSettlement?: HalfSeasonSettlement | null;
 
   readonly player: PlayerProfile;
   readonly contracts: readonly PlayerContract[];
   /** Current real-team invitation context referenced by story effects. */
   readonly pendingTransferOffer?: TransferOffer | null;
+  readonly pendingStandInOffer?: TournamentStandInOffer | null;
+  readonly standInAssignment?: TournamentStandInAssignment | null;
+  readonly standInLedger?: readonly StandInLedgerEntry[];
   readonly npcPlayers: readonly NpcPlayerProfile[];
 
   readonly worldlines: readonly Worldline[];
@@ -69,8 +93,11 @@ export interface CareerGameState {
   readonly completedEventIds: readonly string[];
   /** 重复事件按年度记录，避免同一年度连续抽到同一事件。 */
   readonly repeatableEventHistory?: readonly { readonly eventId: string; readonly season: number }[];
-  /** 本半年已展示的剧情事件数；硬核模式最多 4 个。 */
+  /** Random narrative events shown in this season. System-triggered events do not consume this quota. */
+  readonly seasonNarrativeEventCount?: number;
+  /** Legacy half-season counter retained for save migration only. */
   readonly storyEventsThisHalf?: number;
+  readonly pendingSystemEvents?: readonly import('./event-trigger').TriggeredEvent[];
 
   /** 当前半年由赛事服务自动生成的完整赛历。 */
   readonly scheduledTournaments: readonly TournamentEdition[];

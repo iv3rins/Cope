@@ -1,0 +1,111 @@
+{
+  "id": "grinder-integrity-test",
+  "title": "盘口接触",
+  "description": "陌生中间人提出操纵小局换取现金。这是违规行为，可能导致调查、禁赛和职业崩塌。",
+  "worldlineId": "grinder",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-market-trial"
+    }
+  ],
+  "options": [
+    {
+      "id": "report-contact",
+      "label": "保存证据并报告",
+      "description": "保护赛事诚信并留下调查材料，但可能遭遇报复和短期队内震荡。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.78,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "matchfixing"
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "matchfixing"
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "赛事方接收了材料。"
+        ],
+        "failureMessages": [
+          "消息泄露引发队内猜疑。"
+        ],
+        "successNextEventId": "matchfixing-evidence-review",
+        "failureNextEventId": "matchfixing-evidence-review"
+      }
+    },
+    {
+      "id": "accept-fix",
+      "label": "接受操纵安排",
+      "description": "短期现金可以缓解欠薪，但聊天记录、异常下注和比赛录像都可能成为调查证据。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.58,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "BALANCE",
+            "delta": 420
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -10
+          },
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "matchfixing"
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "BALANCE",
+            "delta": -120
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -12
+          },
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "matchfixing"
+          }
+        ],
+        "successMessages": [
+          "约定款项到账，赛事诚信部门随后开始调取记录。"
+        ],
+        "failureMessages": [
+          "比赛异常被提前标记，款项没有按约支付。"
+        ],
+        "successNextEventId": "matchfixing-evidence-review",
+        "failureNextEventId": "matchfixing-evidence-review"
+      }
+    }
+  ],
+  "autoEffects": []
+}

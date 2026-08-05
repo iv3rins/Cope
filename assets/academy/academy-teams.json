@@ -1,8 +1,15 @@
-﻿{
-  "schemaVersion": 1,
+{
+  "schemaVersion": 2,
   "teams": [
-    { "teamId": "academy-arg-juniors", "name": "Argentinos Juniors Academy", "region": "AMERICAS", "tier": "T3", "description": "本地青训体系，先从线上公开赛积累地图经验。", "startingRole": "PROSPECT", "monthlySalary": 350 },
-    { "teamId": "academy-san-lorenzo", "name": "San Lorenzo Academy", "region": "AMERICAS", "tier": "T2", "description": "稳定参加 CCT 线上赛，目标是打进地区淘汰赛。", "startingRole": "ROTATION", "monthlySalary": 500 },
-    { "teamId": "academy-northstar", "name": "Northstar Youth", "region": "EUROPE", "tier": "T3", "description": "高强度训练营，赛程密集，适合快速证明自己。", "startingRole": "PROSPECT", "monthlySalary": 420 }
+    { "teamId": "mouznxt", "name": "MOUZ NXT", "region": "EUROPE", "tier": "T3", "description": "VRS 第115名的欧洲青训队。", "startingRole": "STARTER", "monthlySalary": 900, "contractLengthMonths": 12, "buyoutAmount": 1000, "expectedPlaytimePercentage": 70, "initialCandidate": true },
+    { "teamId": "g2ares", "name": "G2 Ares", "region": "EUROPE", "tier": "T3", "description": "VRS 第117名的欧洲青训队。", "startingRole": "SUBSTITUTE", "monthlySalary": 800, "contractLengthMonths": 12, "buyoutAmount": 0, "expectedPlaytimePercentage": 50, "initialCandidate": true },
+    { "teamId": "painacademy", "name": "paiN Academy", "region": "AMERICAS", "tier": "T3", "description": "VRS 第200名的美洲青训队。", "startingRole": "STARTER", "monthlySalary": 750, "contractLengthMonths": 12, "buyoutAmount": 0, "expectedPlaytimePercentage": 75, "initialCandidate": true },
+    { "teamId": "furiafe", "name": "FURIA fe", "region": "AMERICAS", "tier": "T3", "description": "VRS 第302名的美洲发展阵容。", "startingRole": "SUBSTITUTE", "monthlySalary": 650, "contractLengthMonths": 12, "buyoutAmount": 0, "expectedPlaytimePercentage": 55, "initialCandidate": true },
+    { "teamId": "alterego", "name": "Alter Ego", "region": "ASIA", "tier": "T3", "description": "VRS 第136名的亚洲地区队。", "startingRole": "STARTER", "monthlySalary": 600, "contractLengthMonths": 12, "buyoutAmount": 0, "expectedPlaytimePercentage": 80, "initialCandidate": true },
+    { "teamId": "semperfi", "name": "SemperFi", "region": "OCEANIA", "tier": "T3", "description": "VRS 第101名的大洋洲地区队。", "startingRole": "STARTER", "monthlySalary": 700, "contractLengthMonths": 12, "buyoutAmount": 0, "expectedPlaytimePercentage": 80, "initialCandidate": true },
+    { "teamId": "falconsforce", "name": "Falcons Force", "region": "MIDDLE_EAST", "tier": "T3", "description": "VRS 第189名的中东发展阵容。", "startingRole": "SUBSTITUTE", "monthlySalary": 700, "contractLengthMonths": 12, "buyoutAmount": 0, "expectedPlaytimePercentage": 55, "initialCandidate": true },
+    { "teamId": "fury", "name": "FURY", "region": "AFRICA", "tier": "T3", "description": "VRS 第328名的非洲开档兜底阵容。", "startingRole": "STARTER", "monthlySalary": 600, "contractLengthMonths": 12, "buyoutAmount": 0, "expectedPlaytimePercentage": 75, "initialCandidate": true },
+    { "teamId": "tyloo", "name": "TYLOO", "region": "ASIA", "tier": "T2", "description": "排名第22的稀有剧情直入机会，通过率低且可能从替补开始。", "startingRole": "SUBSTITUTE", "monthlySalary": 2600, "storyOnly": true },
+    { "teamId": "gamerlegion", "name": "GamerLegion", "region": "EUROPE", "tier": "T2", "description": "排名第16的稀有剧情试训，仅高压分支可触发。", "startingRole": "SUBSTITUTE", "monthlySalary": 3000, "storyOnly": true }
   ]
 }

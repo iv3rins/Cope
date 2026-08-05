@@ -1,3 +1,0 @@
-{
-  "id":"free-agent-economic-pressure","title":"经济压力","description":"没有固定薪资后，余额和训练时间同时收紧，经纪人建议先接受短期合同。","worldlineId":"rookie","type":"CHOICE","period":"NORMAL","conditions":[{"type":"FREE_AGENCY","expected":true},{"type":"PLAYER_STAT","stat":"BALANCE","maximum":300}],"options":[{"id":"accept-short","label":"接受三个月短合同","requirements":[],"successChance":{"baseChance":1,"modifiers":[]},"outcome":{"successEffects":[{"type":"TEAM_TRANSFER","teamId":"mouznxt","salaryPerMonth":450,"buyoutAmount":500}],"failureEffects":[],"successMessages":["短期合同缓解了现金流，但你需要在三个月内重新证明自己。"],"failureMessages":[]}}],"autoEffects":[],"phase":"POST_TOURNAMENT","weight":1,"priority":90
-}

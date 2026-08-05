@@ -1,0 +1,56 @@
+{
+  "id": "rookie-team-entry",
+  "title": "队内新人评估",
+  "description": "你已经与地区战队完成签约。教练组将在第一周的队内训练中评估你的角色适配、轮换顺位和首发机会。",
+  "worldlineId": "rookie",
+  "type": "CHOICE",
+  "period": "NORMAL",
+  "priority": 120,
+  "conditions": [
+    { "type": "ACTIVE_CONTRACT", "expected": true }
+  ],
+  "options": [
+    {
+      "id": "earn-trust",
+      "label": "先融入体系，争取教练信任",
+      "description": "以稳定沟通和执行力换取长期信任。",
+      "requirements": [{ "type": "ACTIVE_CONTRACT", "expected": true }],
+      "successChance": { "baseChance": 0.75, "modifiers": [{ "attribute": "CONSISTENCY", "perPoint": 0.002, "minimum": 45 }] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 6 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 5 }
+        ],
+        "successMessages": ["你以稳定执行赢得了教练组的初步信任。"],
+        "failureMessages": ["你还需要时间适应职业队的训练节奏。"],
+        "successNextEventId": "rookie-role-audit",
+        "failureNextEventId": "rookie-role-audit"
+      }
+    },
+    {
+      "id": "fight-for-start",
+      "label": "直接竞争首发位置",
+      "description": "用个人能力争取更多出场，但会增加压力与消耗。",
+      "requirements": [{ "type": "ACTIVE_CONTRACT", "expected": true }],
+      "successChance": { "baseChance": 0.55, "modifiers": [{ "attribute": "AIM", "perPoint": 0.003, "minimum": 55 }] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": 8 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": -8 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 7 }
+        ],
+        "successMessages": ["你的主动竞争让教练开始考虑增加出场时间。"],
+        "failureMessages": ["高强度竞争让你付出了额外的精力和压力。"],
+        "successNextEventId": "rookie-role-audit",
+        "failureNextEventId": "rookie-role-audit"
+      }
+    }
+  ],
+  "autoEffects": []
+}

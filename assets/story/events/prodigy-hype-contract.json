@@ -1,0 +1,14 @@
+{
+  "id": "prodigy-hype-contract",
+  "title": "宣传合约",
+  "description": "俱乐部希望用你的年轻身份做赛季宣传，但商业承诺会挤占训练。",
+  "worldlineId": "prodigy",
+  "type": "CHOICE",
+  "period": "OFFSEASON",
+  "conditions": [{ "type": "WORLDLINE", "worldlineId": "prodigy" }],
+  "options": [
+    { "id": "sign-media", "label": "签下宣传条款", "description": "曝光和收入预期上升，但训练时间与隐私减少。", "requirements": [], "successChance": { "baseChance": 0.7, "modifiers": [] }, "outcome": { "successEffects": [{ "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 8 }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -3 }], "failureEffects": [{ "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": -5 }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "MENTALITY", "delta": -4 }], "successMessages": ["宣传带来更多关注。"], "failureMessages": ["过度曝光引发质疑。"], "successNextEventId": "prodigy-role-demand", "failureNextEventId": "prodigy-role-demand" } },
+    { "id": "limit-media", "label": "限制商业活动", "description": "保住训练计划，却可能失去俱乐部的资源倾斜。", "requirements": [], "successChance": { "baseChance": 0.78, "modifiers": [] }, "outcome": { "successEffects": [{ "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": 6 }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -3 }], "failureEffects": [{ "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": -5 }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -4 }], "successMessages": ["训练节奏保持完整。"], "failureMessages": ["资源转向了其他队员。"], "successNextEventId": "prodigy-role-demand", "failureNextEventId": "prodigy-role-demand" } }
+  ],
+  "autoEffects": []
+}

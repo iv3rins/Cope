@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "eyebrow": "CAREER COMPLETE / 周目封存",
+    "headlines": {
+      "majorChampion": "Major 冠军的职业生涯",
+      "topPlayer": "年度 TOP {rank} 选手",
+      "tierOneChampion": "顶级赛事冠军选手",
+      "journeyman": "一段属于底层选手的征途"
+    },
+    "labels": {
+      "retiredAge": "退役年龄",
+      "careerGrade": "生涯评级",
+      "majorChampionships": "Major 冠军",
+      "bestTop": "生涯最佳 TOP",
+      "mvp": "MVP",
+      "peakRating": "峰值 Rating",
+      "totalMaps": "总地图",
+      "totalKills": "总击杀",
+      "careerRating": "生涯 Rating",
+      "careerEarnings": "生涯奖金"
+    },
+    "itemLabels": {
+      "majorMvp": "Major MVP",
+      "eventMvp": "赛事 MVP",
+      "annualTop": "年度 TOP",
+      "worldRank": "世界排名"
+    },
+    "sections": {
+      "trophies": "冠军陈列柜",
+      "topHistory": "年度 TOP 轨迹",
+      "mvp": "MVP 荣誉",
+      "statistics": "职业生涯数据"
+    },
+    "empty": {
+      "trophies": "本次生涯没有冠军奖杯。这会成为下一条世界线的目标。",
+      "topHistory": "暂无年度 TOP 记录",
+      "mvp": "暂无 MVP 记录"
+    },
+    "restartLabel": "寻找下一条世界线"
+  }
+}
