@@ -138,3 +138,25 @@ test('FLAG 支线：mentor-legacy 收束事件需决赛周期 + 高龄', async (
   const normal = await engine.findAvailableEvents({ profile: ready, period: 'NORMAL', randomRoll: 0.5 });
   assert.ok(!normal.some((event) => event.id === 'mentor-trophy'), 'NORMAL 周期不应出现');
 });
+
+test('冲突支线：转会背刺线走 TRANSFER_WINDOW 周期 + CLUB_FAVOR 门控', async () => {
+  const engine = await buildEngine();
+  const approached = sampleProfile({ flags: [{ id: 'transfer-drama', name: '转会风波', category: 'CAREER' }], narrativeMetrics: { FAME: 30, TEAM_STATUS: 50, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 20, FAN_REPUTATION: 10 } });
+  const lowFavor = { ...approached, narrativeMetrics: { FAME: 30, TEAM_STATUS: 50, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 20, FAN_REPUTATION: 10 } };
+  const windowEvents = await engine.findAvailableEvents({ profile: lowFavor, period: 'TRANSFER_WINDOW', randomRoll: 0.5 });
+  assert.ok(windowEvents.some((event) => event.id === 'transfer-leak'), '转会窗 + 低 CLUB_FAVOR 应看到照片泄露');
+  const normalEvents = await engine.findAvailableEvents({ profile: lowFavor, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!normalEvents.some((event) => event.id === 'transfer-leak'), 'NORMAL 周期不应出现转会泄露');
+  const highFavor = { ...approached, narrativeMetrics: { FAME: 30, TEAM_STATUS: 50, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 60, FAN_REPUTATION: 10 } };
+  const highFavorEvents = await engine.findAvailableEvents({ profile: highFavor, period: 'TRANSFER_WINDOW', randomRoll: 0.5 });
+  assert.ok(!highFavorEvents.some((event) => event.id === 'transfer-leak'), 'CLUB_FAVOR 高时不被怀疑');
+});
+
+test('冲突支线：黑马羞辱线复仇局锁定决赛周期', async () => {
+  const engine = await buildEngine();
+  const ready = sampleProfile({ age: 22, flags: [{ id: 'upset', name: '恩怨局', category: 'SOCIAL' }] });
+  const finale = await engine.findAvailableEvents({ profile: ready, period: 'FINAL_DECISIVE_MOMENT', randomRoll: 0.5 });
+  assert.ok(finale.some((event) => event.id === 'upset-revenge'), '决赛周期应看到复仇局');
+  const normal = await engine.findAvailableEvents({ profile: ready, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!normal.some((event) => event.id === 'upset-revenge'), 'NORMAL 周期不出现复仇局');
+});

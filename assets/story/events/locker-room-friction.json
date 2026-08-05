@@ -1,0 +1,67 @@
+{
+  "id": "locker-room-friction",
+  "worldlineId": "shared",
+  "title": "战术板上的争吵",
+  "description": "训练赛输了一局，指挥把战术板摔在桌上：\"你那个站位就是白给。\"你回了一句：\"你那套战术早就过时了。\"训练室安静下来。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "stand-firm",
+      "label": "寸步不让",
+      "description": "成绩会证明谁是对的，但不是今天。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.55, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "locker-room", "flag": { "id": "locker-room", "name": "更衣室火药桶", "category": "TEAM", "metadata": { "source": "locker-room-friction" } } },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": -5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -3 }
+        ],
+        "failureEffects": [
+          { "type": "FLAG_ADD", "flagId": "locker-room", "flag": { "id": "locker-room", "name": "更衣室火药桶", "category": "TEAM", "metadata": { "source": "locker-room-friction" } } },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": -8 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": -4 }
+        ],
+        "successMessages": [
+          "你寸步不让，指挥摔门走了。训练赛提前解散。"
+        ],
+        "failureMessages": [
+          "你们吵到教练进来才停，那局训练赛的录像谁也没再提。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "back-down",
+      "label": "认怂，听他的",
+      "description": "先赢比赛，恩怨以后再说。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "locker-room", "flag": { "id": "locker-room", "name": "更衣室火药桶", "category": "TEAM", "metadata": { "source": "locker-room-friction" } } },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": -2 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 7 }
+        ],
+        "successMessages": [
+          "你让了，训练赛照常打完。但你心里那根刺扎下了。"
+        ],
+        "failureMessages": [
+          "你让了，可下一次他摔战术板的时候，你忍得更辛苦了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": "upset-revenge",
+  "worldlineId": "shared",
+  "title": "复仇局",
+  "description": "淘汰赛抽签，命运把你们又分到了一起——正是那支把你钉在耻辱柱上的队伍。赛前他们的队长在通道里朝你比了个\"1:07\"的手势。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "upset", "expected": true },
+    { "type": "AGE", "minimum": 20 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "bloodbath",
+      "label": "血洗",
+      "description": "不留情面，每一局都往死里打，打到他们怀疑人生。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.55, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 8 },
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 1 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": -4 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": -4 }
+        ],
+        "successMessages": [
+          "16:2。最后一局结束，你站起来，朝对面队长竖了个大拇指——然后慢慢把拇指朝下。全场炸了。"
+        ],
+        "failureMessages": [
+          "你打得又凶又急，0:2。他们队长赛后采访只说了一句：\"1:07，记得吗？\""
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "clinical",
+      "label": "干净利落地赢",
+      "description": "不羞辱，不庆祝，赢就够了。"
+      ,
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": 6 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": -4 }
+        ],
+        "successMessages": [
+          "2:0，干净利落。赛后你路过他们队长，他低声说了句\"打得好\"。"
+        ],
+        "failureMessages": [
+          "你赢得不痛快，拖满三局才拿下。但赢就是赢。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

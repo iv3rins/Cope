@@ -1,0 +1,68 @@
+{
+  "id": "locker-room-ultimatum",
+  "worldlineId": "shared",
+  "title": "二选一",
+  "description": "管理层的办公室里，经理把两份合同摆在你面前：\"俱乐部决定重建，你和指挥，只能留一个。\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "locker-room", "expected": true },
+    { "type": "AGE", "minimum": 20 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "i-stay",
+      "label": "留我，他走",
+      "description": "这些年谁在扛着队伍，管理层心里有数。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 4 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 300 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": -4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -6 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_STATUS", "delta": -5 }
+        ],
+        "successMessages": [
+          "指挥走的那天，头也没回。你成了更衣室唯一的声音。"
+        ],
+        "failureMessages": [
+          "管理层反悔了——他们选了指挥，条件是给你涨薪压惊。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "reconcile",
+      "label": "和解，都不走",
+      "description": "队伍还要打比赛，别为了面子拆家。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.65, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "TEAM_RELATIONSHIP", "delta": 6 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 5 }
+        ],
+        "successMessages": [
+          "你在指挥面前先低了这个头。训练赛第一次没吵。"
+        ],
+        "failureMessages": [
+          "和解只维持了两周。下次爆发，可能就没有二选一的机会了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

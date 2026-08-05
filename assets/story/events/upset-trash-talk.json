@@ -1,0 +1,65 @@
+{
+  "id": "upset-trash-talk",
+  "worldlineId": "shared",
+  "title": "赛前垃圾话",
+  "description": "赛前采访，对面队伍的明星选手被问到怎么看你们队，他笑了笑：\"没听说过，等他们打进淘汰赛再说吧。\"弹幕全在刷你的名字。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "fire-back",
+      "label": "当场回击",
+      "description": "\"打完这场，他就听说过了。\"",
+      "requirements": [],
+      "successChance": { "baseChance": 0.6, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "upset", "flag": { "id": "upset", "name": "恩怨局", "category": "SOCIAL", "metadata": { "source": "upset-trash-talk" } } },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 5 }
+        ],
+        "failureEffects": [
+          { "type": "FLAG_ADD", "flagId": "upset", "flag": { "id": "upset", "name": "恩怨局", "category": "SOCIAL", "metadata": { "source": "upset-trash-talk" } } },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 2 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 7 }
+        ],
+        "successMessages": [
+          "你回击的话被剪成了预告片。这场比赛的门票瞬间售罄。"
+        ],
+        "failureMessages": [
+          "你回击了，但他那句\"没听说过\"已经上了热搜第一。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "let-play",
+      "label": "不接话",
+      "description": "垃圾话是弱者的心理战，赛场上见。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "FLAG_ADD", "flagId": "upset", "flag": { "id": "upset", "name": "恩怨局", "category": "SOCIAL", "metadata": { "source": "upset-trash-talk" } } },
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 1 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "successMessages": [
+          "你没接话。但你训练赛里把每颗子弹都打在了那个转角。"
+        ],
+        "failureMessages": [
+          "你没接话，可那句话在你脑子里循环了一整晚。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

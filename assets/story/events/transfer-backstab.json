@@ -1,0 +1,69 @@
+{
+  "id": "transfer-backstab",
+  "worldlineId": "shared",
+  "title": "窗口最后一天",
+  "description": "转会窗口最后一天，那边的报价突然砍了三分之一——\"市场行情变了\"。你的经纪人劝你认了，但你在合同细节里看到了他的名字：他两头吃回扣。",
+  "period": "TRANSFER_WINDOW",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "transfer-drama", "expected": true },
+    { "type": "AGE", "minimum": 21 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "call-out",
+      "label": "当场拆穿",
+      "description": "当着双方的面，把回扣的事摆上桌。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.5, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 500 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 4 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -3 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": -6 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 8 }
+        ],
+        "successMessages": [
+          "你拆穿了他，转会黄了，但你的名声立住了——圈里人都知道你不傻。"
+        ],
+        "failureMessages": [
+          "你拆穿了他，可两家俱乐部都觉得你\"难搞\"，转会彻底泡汤。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "swallow",
+      "label": "认栽签约",
+      "description": "窗口要关了，先签下来，这笔账以后慢慢算。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.65, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 600 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "BALANCE", "delta": 300 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 7 }
+        ],
+        "successMessages": [
+          "你签了。经纪人在背后拍了拍你的肩，你记住了那只手。"
+        ],
+        "failureMessages": [
+          "你签了，但那份合同里埋的坑，你花了两年才填平。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}
