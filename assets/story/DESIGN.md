@@ -16,7 +16,7 @@
 | 层 | 性质 | 数量 | 节奏 |
 |---|---|---|---|
 | 主线 | 16 条线 × 8 事件，性格弧 | 128 | 每年最多 1-2 个（AGE 门控） |
-| 支线 | FLAG 驱动的跨线关系线 | 24 | 获得 FLAG 后触发，1 条线 2-3 个节点 |
+| 支线 | FLAG 驱动的跨线冲突线 | 11 | 获得 FLAG 后触发，1 条线 2-3 个节点 |
 | 日常 | 无 FLAG 的赛季填充 | 21 | 赛季中随机，同赛季去重 |
 
 ## 三、主线（16 条线弧表）
@@ -44,29 +44,9 @@
 
 跨线转换共 10 条（见上表箭头），由玩家在岔口的选择触发，**转换后保留全部 FLAG 与数值**——命运可变，记忆延续。
 
-## 四、支线设计（FLAG 体系）——本轮新增
+## 四、支线设计（FLAG 体系）
 
-支线的规则：**每个支线有"起点事件"（种下 FLAG）→ 1-2 个中期节点（FLAG + 数值/年龄门控）→ 终局节点（收束情感）**。支线事件不归属任何故事线（worldlineId: 'shared'），任何玩家获得对应 FLAG 后都能进入。
-
-### 4.1 引路人（mentor）
-
-起点：`shared-youth-coach`（青训教练来电，种下 `mentor`）
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 中期 | `mentor-watch-live` | mentor + AGE≥18 | 教练来现场看你比赛 | 他为你骄傲，你想让他看到最好的自己 |
-| 低潮 | `mentor-phone-call` | mentor + STRESS≥40 | 连败低谷，教练主动打来 | 他一句话点醒你 |
-| 终局 | `mentor-farewell` | mentor + AGE≥22 | 教练病重/退役，最后一面 | 你把他的口头禅带进了你的赛场 |
-
-### 4.2 忠实粉丝（fan-base）
-
-起点：`shared-fan-letter`（粉丝来信，种下 `fan-base`）
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 中期 | `fan-arena-sign` | fan-base + FAME≥20 | 看台上有举着你名字的牌子 | 你在比赛里看到了他 |
-| 低潮 | `fan-message` | fan-base + MORALE≤45 | 连败时收到粉丝私信 | "输赢都看你" |
-| 终局 | `fan-last-match` | fan-base + AGE≥23 | 生涯最后一战，他还在看台 | 你朝他举了个躬 |
+支线的规则：**每个支线有"起点事件"（种下 FLAG）→ 1-2 个中期节点（FLAG + 数值/年龄门控）→ 终局节点（收束冲突）**。支线事件不归属任何故事线（worldlineId: 'shared'），任何玩家获得对应 FLAG 后都能进入。
 
 ### 4.3 宿敌（rivalry）
 
@@ -85,16 +65,7 @@
 |---|---|---|---|---|
 | 中期 | `health-checkup` | health-warning + ENERGY≤45 | 体检报告亮黄灯 | 医生看着你的手腕摇头 |
 
-### 4.5 家人线（family）
-
-起点：`family-phone`（父母来电，种下 `family`）。起点无门槛——每个 16 岁离家打游戏的孩子，都接过这样的电话。
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 中期 | `family-watch` | family + FAME≥25 | 父母偷偷看你的比赛直播 | 妈妈发来"看到了，打得好" |
-| 终局 | `family-home` | family + AGE≥22 + OFFSEASON | 休赛期回家 | 你发现爸爸的电脑桌面是你的比赛截图 |
-
-### 4.6 队友线（teammate）
+### 4.5 队友线（teammate）
 
 起点：`teammate-depart`（并肩两年的队友转会，种下 `teammate`）。起点无门槛——职业赛场人来人往，这是第一课。
 
@@ -102,7 +73,7 @@
 |---|---|---|---|---|
 | 终局 | `teammate-reunion` | teammate + AGE≥20 + FAME≥30 + 决赛周期 | 决赛重逢，他站在对面 | 赛前他走过来：别手软，不然看不起你 |
 
-### 4.7 老板线（owner）
+### 4.6 老板线（owner）
 
 起点：`owner-talk`（老板单独谈话"你是建队核心"，种下 `owner`）。门控：FAME≥25 或 TEAM_STATUS≥30。
 
@@ -110,7 +81,7 @@
 |---|---|---|---|---|
 | 低潮 | `owner-crisis` | owner + TEAM_STATUS≤30 | 连败后老板开会，目光扫过你 | 他问的不是战绩，是你还想不想打 |
 
-### 4.8 媒体线（media）
+### 4.7 媒体线（media）
 
 起点：`media-interview`（官方专访，种下 `media`）。门控：FAME≥20。
 
@@ -118,15 +89,7 @@
 |---|---|---|---|---|
 | 中期 | `media-backlash` | media + FAME≥35 | 你的采访被剪辑成"嚣张" | 弹幕和评论区同时开火 |
 
-### 4.9 引路人的嘱托（mentor-legacy 收束）
-
-前情：`mentor-farewell` 种下 `mentor-legacy`。
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 收束 | `mentor-trophy` | mentor-legacy + AGE≥24 + 决赛周期 | 夺冠后你把奖杯举向天空 | 你想起他说的"打给他们看" |
-
-### 4.10 队内宫斗线（locker-room）
+### 4.8 队内宫斗线（locker-room）
 
 职业队更衣室是高压锅。FLAG：`locker-room`。
 
@@ -136,7 +99,7 @@
 | 爆发 | `locker-room-blowup` | locker-room + TEAM_STATUS≤40 | 连败后，你们互喷的语音被"无意"外泄到网上 | 全网吃瓜，俱乐部公关紧急灭火 |
 | 摊牌 | `locker-room-ultimatum` | locker-room + AGE≥20 | 管理层二选一："要么你走，要么他走" | 站队还是低头，你选 |
 
-### 4.11 转会背刺线（transfer-drama）
+### 4.9 转会背刺线（transfer-drama）
 
 转会窗是修罗场。FLAG：`transfer-drama`。
 
@@ -146,7 +109,7 @@
 | 泄露 | `transfer-leak` | transfer-drama + CLUB_FAVOR≤40 | 你们见面的照片被拍到，教练把你按在替补席 | 俱乐部怀疑你吃里扒外 |
 | 反噬 | `transfer-backstab` | transfer-drama + AGE≥21 | 窗口最后一天，对方突然压价，经纪人两头吃回扣 | 你被当成了讨价还价的筹码 |
 
-### 4.12 舆论风暴线（scandal）
+### 4.10 舆论风暴线（scandal）
 
 名声是最脆弱的资产。FLAG：`scandal`。
 
@@ -156,7 +119,7 @@
 | 听证 | `scandal-hearing` | scandal + AGE≥19 | 官方调查组约谈你的关键比赛操作 | 录像逐帧播放，全场沉默 |
 | 裁决 | `scandal-verdict` | scandal + AGE≥20 | 结果二选一：自证清白，或禁赛三个月 | 清白或社死，反转拉满 |
 
-### 4.13 黑马羞辱线（upset）
+### 4.11 黑马羞辱线（upset）
 
 竞技世界最爽的剧本是打脸。FLAG：`upset`。
 
