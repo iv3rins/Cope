@@ -24,6 +24,7 @@ import { RetirementServiceImpl } from './engine/impl/retirement-service';
 import { MatchSimulationServiceImpl } from './hltv/match-simulation-service-impl';
 import { TournamentServiceImpl } from './hltv/tournament-service-impl';
 import { VrsResultProjector, type VrsResultProjectionRules } from './hltv/vrs-result-projector';
+import { validateBalanceConfig, type BalanceConfig, type ProdigyEasterEggConfig } from './hltv/balance-config';
 import { ConditionEvaluatorImpl } from './engine/impl/condition-evaluator';
 import { SaveContractService } from './engine/impl/contract-service';
 import { AssetEventTriggerRuleRepository, EventTriggerServiceImpl } from './engine/impl/event-trigger-service';
@@ -282,6 +283,40 @@ function createBaseProfile(config: BrowserCareerConfig): PlayerProfile {
   };
 }
 
+/**
+ * 出生天赋彩蛋：基于 gameId 的确定性随机（不消耗随机数序列，同 gameId 结果稳定）。
+ * 现实中有选手天生某项属性满级，此处以极小概率复现：
+ * - roll < almostAllProbability（默认 0.05%）：点满几乎所有正面属性
+ * - roll < partialProbability（默认 0.1%，含上一档）：点满一部分天赋
+ */
+export function prodigyEasterEggRoll(gameId: string): number {
+  let hash = 2166136261;
+  for (let index = 0; index < gameId.length; index += 1) {
+    hash ^= gameId.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  const value = Math.sin((hash >>> 0) * 0.618033988749895) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+export function applyProdigyEasterEgg(profile: PlayerProfile, roll: number, config: ProdigyEasterEggConfig): PlayerProfile {
+  if (roll < config.almostAllProbability) {
+    const attributes = { ...profile.attributes };
+    for (const key of config.almostAllAttributes) attributes[key] = 100;
+    return { ...profile, attributes };
+  }
+  if (roll < config.partialProbability) {
+    const count = Math.min(config.partialAttributeCount, config.almostAllAttributes.length);
+    const picked = [...config.almostAllAttributes]
+      .sort((left, right) => prodigyEasterEggRoll(`${roll}:${left}`) - prodigyEasterEggRoll(`${roll}:${right}`))
+      .slice(0, count);
+    const attributes = { ...profile.attributes };
+    for (const key of picked) attributes[key] = 100;
+    return { ...profile, attributes };
+  }
+  return profile;
+}
+
 function browserStateRepository(): import('./engine/save-state').CareerGameStateRepository {
   try {
     if (typeof window !== 'undefined' && window.localStorage) return new LocalStorageStateRepository(window.localStorage);
@@ -299,9 +334,13 @@ const supersedeSession = (slotId: string): number => { const next = sessionGener
 
 async function composeCareerGame(config: BrowserCareerConfig, restoredState: CareerSaveEnvelope | null = null, generation = sessionGeneration(config.gameId)): Promise<BrowserCareerGame> {
   if (!config.gameId.trim()) throw new Error('Game ID is required.');
+  const balanceResponse = await fetch('assets/balance/performance.json').catch(() => null);
+  if (!balanceResponse?.ok) throw new Error('Unable to load required balance configuration.');
+  const balanceConfig = validateBalanceConfig(await balanceResponse.json());
   const stateRepository = new SessionGuardedStateRepository(browserStateRepository(), config.gameId, generation, () => sessionGeneration(config.gameId));
   const progression = new PlayerProgressionServiceImpl(progressionRules);
   const unsignedPlayer = await progression.createProfile({ profile: createBaseProfile(config), difficultyMode: config.mode, originRule: ORIGIN_RULES[config.region], modeRule: MODE_RULES[config.mode] });
+  const playerWithProdigy = applyProdigyEasterEgg(unsignedPlayer, prodigyEasterEggRoll(config.gameId), balanceConfig.prodigy);
   const clock = new BrowserClock();
   const random = new BrowserRandomSource(config.gameId);
   const dailyActions = new DailyActionServiceImpl(new BrowserDailyActionRepository());
@@ -324,10 +363,10 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
   const startedAt = '2026-01-01T00:00:00.000Z';
   const initialContracts = restoredState?.state.contracts ?? [];
   const contracts = new SaveContractService(initialContracts, new ConditionEvaluatorImpl(), (candidate) => ({ player: candidate, currentTeamId: candidate.currentTeamId, opponentTeamId: null, randomRoll: 0, difficultyMode: candidate.difficultyMode }), (teamId) => teamTiers.get(teamId));
-  let player = restoredState?.state.player ?? unsignedPlayer;
+  let player = restoredState?.state.player ?? playerWithProdigy;
   if (startingTeam) {
     const endsAt = new Date(startedAt); endsAt.setUTCMonth(endsAt.getUTCMonth() + (startingTeam.contractLengthMonths ?? 12));
-    const signed = await contracts.sign({ profile: unsignedPlayer, terms: { teamId: startingTeam.teamId, startedAt, endsAt: endsAt.toISOString(), salaryPerMonth: startingTeam.monthlySalary, buyoutAmount: startingTeam.buyoutAmount ?? 0, role: startingTeam.startingRole ?? 'STARTER', expectedPlaytimePercentage: startingTeam.expectedPlaytimePercentage ?? 75 }, occurredAt: startedAt });
+    const signed = await contracts.sign({ profile: playerWithProdigy, terms: { teamId: startingTeam.teamId, startedAt, endsAt: endsAt.toISOString(), salaryPerMonth: startingTeam.monthlySalary, buyoutAmount: startingTeam.buyoutAmount ?? 0, role: startingTeam.startingRole ?? 'STARTER', expectedPlaytimePercentage: startingTeam.expectedPlaytimePercentage ?? 75 }, occurredAt: startedAt });
     if (!('contract' in signed) || 'reason' in signed) throw new Error(`Unable to create initial T3 contract for ${startingTeam.teamId}.`);
     player = signed.profile;
   }
@@ -388,7 +427,8 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
     playerId: config.gameId,
     random,
     clock,
-    matches: new MatchSimulationServiceImpl(),
+    balance: balanceConfig.rating,
+    matches: new MatchSimulationServiceImpl(balanceConfig.rating),
     teamRoster: async (teamId) => {
       const dynamic = (await stateRepository.load(config.gameId))?.state.npcPlayers.filter((npc) => npc.currentTeamId === teamId && npc.availability !== 'RETIRED').map((npc) => ({ playerId: npc.id, role: npc.role, active: true })) ?? [];
       const staticRoster = rosterByTeam.get(teamId) ?? [];

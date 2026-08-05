@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "description": "赛事表现与出生天赋平衡参数。调平衡只改本文件，无需改代码。",
+  "rating": {
+    "base": 0.72,
+    "abilityDivisor": 210,
+    "conditionFactor": 0.01,
+    "rollSpan": 0.24,
+    "clampMinimum": 0.55,
+    "clampMaximum": 1.75,
+    "aggregateCeiling": 1.35,
+    "hotStreak": {
+      "probability": 0.012,
+      "minimumBoost": 0.35,
+      "maximumBoost": 0.55,
+      "ceiling": 1.65
+    }
+  },
+  "prodigy": {
+    "partialProbability": 0.001,
+    "almostAllProbability": 0.0005,
+    "partialAttributeCount": 2,
+    "almostAllAttributes": [
+      "aim",
+      "gameSense",
+      "leadership",
+      "clutch",
+      "consistency"
+    ]
+  }
+}

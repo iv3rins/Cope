@@ -18,6 +18,7 @@ import type {
 } from './tournament';
 import type { MatchPlayerSnapshot, MatchSimulationResult, MatchSimulationService } from './match';
 import { tierForRank, type HltvPlayerId, type TeamRosterSlot, type VrsInviteSnapshot } from './team';
+import { DEFAULT_BALANCE_CONFIG, type RatingBalanceConfig } from './balance-config';
 
 export interface TournamentCalendarAssetEdition {
   readonly id: string;
@@ -48,6 +49,8 @@ export interface TournamentSimulationDependencies {
   readonly random: RandomSource;
   readonly clock: GameClock;
   readonly matches: MatchSimulationService;
+  /** 赛事聚合（全年/平均）表现上限等平衡参数；缺省时使用内置默认。 */
+  readonly balance?: RatingBalanceConfig;
   readonly playerSnapshot?: (playerId: HltvPlayerId, teamId: string) => MatchPlayerSnapshot | Promise<MatchPlayerSnapshot>;
   readonly teamRoster?: (teamId: string) => readonly TeamRosterSlot[] | Promise<readonly TeamRosterSlot[]>;
   readonly facts?: TournamentFactRepository;
@@ -414,7 +417,7 @@ export class TournamentServiceImpl implements TournamentService {
         kills: rows.reduce((sum, row) => sum + row.performance.kills, 0),
         deaths: rows.reduce((sum, row) => sum + row.performance.deaths, 0),
         assists: rows.reduce((sum, row) => sum + row.performance.assists, 0),
-        rating: Math.min(1.35, weighted((row) => row.performance.rating2_0)),
+        rating: Math.min(this.dependencies.balance?.aggregateCeiling ?? DEFAULT_BALANCE_CONFIG.rating.aggregateCeiling, weighted((row) => row.performance.rating2_0)),
         adr: Math.min(95, weighted((row) => row.performance.adr)),
         kast: weighted((row) => row.performance.kast),
         headshotPercentage: weighted((row) => row.performance.headshotPercentage),

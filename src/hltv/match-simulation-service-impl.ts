@@ -5,13 +5,22 @@ import type {
   MatchSimulationResult,
   MatchSimulationService,
 } from './match';
+import { DEFAULT_BALANCE_CONFIG, type RatingBalanceConfig } from './balance-config';
 
 /** Deterministic match simulator shared by every tournament format. */
 export class MatchSimulationServiceImpl implements MatchSimulationService {
+  public constructor(private readonly balance: RatingBalanceConfig = DEFAULT_BALANCE_CONFIG.rating) {}
+
   public async simulate(input: MatchSimulationInput): Promise<MatchSimulationResult> {
     this.assertRoll(input.randomRoll);
     const penalties = this.resourceConflictPenalties(input.players);
-    const performances = input.players.map((player, index) => this.performance(player, penalties[player.playerId] ?? 0, input.pressure, this.roll(input.randomRoll, index + 1)));
+    const performances = input.players.map((player, index) => {
+      const roll = this.roll(input.randomRoll, index + 1);
+      // 独立于表现 roll 的爆种判定与加成 roll：避免"打得好才可能爆冷"式的耦合。
+      const hotRoll = this.roll(input.randomRoll, (index + 1) * 131 + 7);
+      const boostRoll = this.roll(input.randomRoll, (index + 1) * 991 + 13);
+      return this.performance(player, penalties[player.playerId] ?? 0, input.pressure, roll, hotRoll, boostRoll);
+    });
     const leftStrength = this.teamStrength(input.left.playerIds, performances);
     const rightStrength = this.teamStrength(input.right.playerIds, performances);
     const leftWon = leftStrength + (input.randomRoll - 0.5) * 18 >= rightStrength;
@@ -37,12 +46,16 @@ export class MatchSimulationServiceImpl implements MatchSimulationService {
     };
   }
 
-  private performance(player: MatchPlayerSnapshot, conflictPenalty: number, pressure: number, roll: number): MatchPlayerPerformance {
+  private performance(player: MatchPlayerSnapshot, conflictPenalty: number, pressure: number, roll: number, hotRoll: number, boostRoll: number): MatchPlayerPerformance {
+    const cfg = this.balance;
     const ability = player.aim * 0.28 + player.gameSense * 0.22 + player.clutch * 0.14 + player.consistency * 0.2 + player.leadership * 0.08 - player.teamConflict * 0.08;
     const condition = (player.morale - 50) * 0.05 + (player.energy - 50) * 0.04;
     const pressurePenalty = Math.max(0, pressure - player.clutch) * 0.0018;
-    const rawRating = 0.72 + ability / 210 + condition / 100 + (roll - 0.5) * 0.24 - conflictPenalty - pressurePenalty;
-    const rating = this.clamp(rawRating, 0.55, 1.75);
+    const hot = hotRoll < cfg.hotStreak.probability;
+    const boost = hot ? cfg.hotStreak.minimumBoost + (cfg.hotStreak.maximumBoost - cfg.hotStreak.minimumBoost) * boostRoll : 0;
+    const rawRating = cfg.base + ability / cfg.abilityDivisor + condition * cfg.conditionFactor + (roll - 0.5) * cfg.rollSpan - conflictPenalty - pressurePenalty + boost;
+    // 单场爆种时允许突破正常上界（可达 1.5+）；clampMaximum 仅约束非爆种场次。
+    const rating = this.clamp(rawRating, cfg.clampMinimum, hot ? cfg.hotStreak.ceiling : cfg.clampMaximum);
     const adr = this.clamp(43 + rating * 31 + (roll - 0.5) * 8, 45, 108);
     const kast = this.clamp(48 + rating * 19 + (roll - 0.5) * 5, 50, 88);
     return {
