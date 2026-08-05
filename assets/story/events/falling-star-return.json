@@ -8,63 +8,6 @@
   "priority": 97,
   "options": [
     {
-      "id": "demote",
-      "label": "降薪重来",
-      "description": "接受降薪，去二三线队伍重新证明自己。",
-      "requirements": [],
-      "successChance": {
-        "baseChance": 0.6,
-        "modifiers": []
-      },
-      "outcome": {
-        "successEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "late-bloomer"
-          },
-          {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "MORALE",
-            "delta": 6
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAME",
-            "delta": -5
-          },
-          {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "BALANCE",
-            "delta": -800
-          }
-        ],
-        "failureEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "late-bloomer"
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAME",
-            "delta": -6
-          },
-          {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "MORALE",
-            "delta": -4
-          }
-        ],
-        "successMessages": [
-          "你背起行囊，从头开始。"
-        ],
-        "failureMessages": [
-          "低级别赛场的节奏让你更加迷茫。"
-        ],
-        "successNextEventId": "falling-star-to-late-bloomer",
-        "failureNextEventId": "falling-star-to-late-bloomer"
-      }
-    },
-    {
       "id": "retire-now",
       "label": "急流勇退",
       "description": "在还能留下体面的时候选择离开。",
@@ -98,6 +41,55 @@
         ],
         "failureMessages": [
           "深夜你反复问自己：真的甘心吗？"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "fight-back",
+      "label": "死磕到底",
+      "description": "不降薪，不走人，我就在这儿证明他们错了。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 4
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你留在了聚光灯下，把每一次上场都当成最后一场来打。"
+        ],
+        "failureMessages": [
+          "你咬着牙撑了半个赛季，数据没有起色，质疑声更大了。"
         ],
         "successNextEventId": null,
         "failureNextEventId": null

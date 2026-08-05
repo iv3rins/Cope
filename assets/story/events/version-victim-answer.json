@@ -52,59 +52,52 @@
       }
     },
     {
-      "id": "reinvent",
-      "label": "另辟蹊径",
-      "description": "放弃枪手路线，转型成为战术大脑。",
+      "id": "rebuild-style",
+      "label": "剑走偏锋",
+      "description": "版本淘汰我的打法？那就把打法改造到版本都认不出来。",
       "requirements": [],
       "successChance": {
-        "baseChance": 0.6,
+        "baseChance": 0.55,
         "modifiers": []
       },
       "outcome": {
         "successEffects": [
           {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "tactical-captain"
-          },
-          {
-            "type": "ROLE_CHANGE",
-            "role": "IGL"
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
           },
           {
             "type": "ATTRIBUTE_CHANGE",
-            "attribute": "LEADERSHIP",
-            "delta": 2
+            "attribute": "CONSISTENCY",
+            "delta": 1
           },
           {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAME",
-            "delta": 2
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 3
           }
         ],
         "failureEffects": [
           {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "tactical-captain"
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
           },
           {
             "type": "NARRATIVE_METRIC_CHANGE",
             "metric": "FORM",
-            "delta": -6
-          },
-          {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "MORALE",
             "delta": -4
           }
         ],
         "successMessages": [
-          "你以另一种方式留在了赛场上。"
+          "你把旧打法揉碎了掺进新版本，居然有人开始偷偷学你。"
         ],
         "failureMessages": [
-          "指挥的担子比想象中重。"
+          "你折腾出的那套'歪招'，在训练赛里被打得满地找牙。"
         ],
-        "successNextEventId": "version-victim-to-tactical-captain",
-        "failureNextEventId": "version-victim-to-tactical-captain"
+        "successNextEventId": null,
+        "failureNextEventId": null
       }
     }
   ],

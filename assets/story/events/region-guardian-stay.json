@@ -104,58 +104,6 @@
         "successNextEventId": null,
         "failureNextEventId": null
       }
-    },
-    {
-      "id": "chase-glory",
-      "label": "追随冠军执念",
-      "description": "守门人的责任放下——冠军只有一个，我不甘心只当看门人。",
-      "requirements": [],
-      "successChance": {
-        "baseChance": 0.55,
-        "modifiers": []
-      },
-      "outcome": {
-        "successEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "crownless-king"
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAME",
-            "delta": 4
-          },
-          {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "BALANCE",
-            "delta": 600
-          }
-        ],
-        "failureEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "crownless-king"
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAN_REPUTATION",
-            "delta": -5
-          },
-          {
-            "type": "PLAYER_STAT_CHANGE",
-            "stat": "MORALE",
-            "delta": -3
-          }
-        ],
-        "successMessages": [
-          "你背上包去了那支能摸到奖杯的队伍。赛区的孩子还在骂，但你听见了自己的心跳。"
-        ],
-        "failureMessages": [
-          "你走了，却发现自己连豪门的替补席都挤不进去。"
-        ],
-        "successNextEventId": "region-guardian-to-crownless-king",
-        "failureNextEventId": "region-guardian-to-crownless-king"
-      }
     }
   ],
   "autoEffects": [],

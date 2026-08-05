@@ -83,23 +83,23 @@ test('跨线转换：选择转换选项后 worldlineId 切换并进入目标线�
   const reader = new FileSystemStoryEventPackReader(join(root, 'assets/story/events'), readFile, readdir, join(root, 'assets/story/worldlines'));
   const repository = new StoryRepositoryImpl(reader);
   const engine = new StoryEngineImpl(repository, new ConditionEvaluatorImpl(), { successChancePolicy: { adjust: ({ baseChance }) => baseChance } });
-  const fallingStar = sampleProfile({ worldlineId: 'falling-star', completedEventIds: ['falling-star-mvp', 'falling-star-offer', 'falling-star-burnout'], life: { ...sampleProfile().life, stress: 55 } });
+  const battery = sampleProfile({ worldlineId: 'team-battery', completedEventIds: ['team-battery-sacrifice', 'team-battery-abuse', 'team-battery-loyalty'], age: 21 });
   const result = await engine.decide({
-    profile: fallingStar,
-    decision: { eventId: 'falling-star-return', optionId: 'demote', randomRoll: 0.2 },
+    profile: battery,
+    decision: { eventId: 'team-battery-demand', optionId: 'switch-captain', randomRoll: 0.2 },
   });
   assert.equal(result.succeeded, true);
-  assert.equal(result.profile.worldlineId, 'late-bloomer', '选择降薪重来后应切入老将线');
-  assert.equal(result.nextEventId, 'falling-star-to-late-bloomer', '下一事件应为转换过渡事件');
+  assert.equal(result.profile.worldlineId, 'tactical-captain', '选择转指挥后应切入战术大脑线（同基调平凡线）');
+  assert.equal(result.nextEventId, 'team-battery-to-tactical-captain', '下一事件应为转换过渡事件');
   const transition = await engine.findAvailableEvents({ profile: result.profile, period: 'NORMAL', randomRoll: 0.5 });
-  assert.ok(transition.some((event) => event.id === 'falling-star-to-late-bloomer'), '过渡事件应在转换后可触发');
+  assert.ok(transition.some((event) => event.id === 'team-battery-to-tactical-captain'), '过渡事件应在转换后可触发');
   const transitionResult = await engine.decide({
     profile: result.profile,
-    decision: { eventId: 'falling-star-to-late-bloomer', optionId: 'walk-away', randomRoll: 0.2 },
+    decision: { eventId: 'team-battery-to-tactical-captain', optionId: 'lead-by-plan', randomRoll: 0.2 },
   });
-  assert.equal(transitionResult.nextEventId, 'late-bloomer-start', '过渡事件完成后进入目标线起始事件');
+  assert.equal(transitionResult.nextEventId, 'tactical-captain-decline', '过渡事件完成后进入目标线起始事件');
   const available = await engine.findAvailableEvents({ profile: transitionResult.profile, period: 'NORMAL', randomRoll: 0.5 });
-  assert.ok(available.some((event) => event.id === 'late-bloomer-start'), '目标线起始事件应在转换后可触发');
+  assert.ok(available.some((event) => event.id === 'tactical-captain-decline'), '目标线起始事件应在转换后可触发');
 });
 
 test('跨线转换：不选转换选项则保持原线并回到原线结局', async () => {

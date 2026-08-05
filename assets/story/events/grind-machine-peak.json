@@ -99,53 +99,6 @@
         "successNextEventId": null,
         "failureNextEventId": null
       }
-    },
-    {
-      "id": "break-free",
-      "label": "释放一次天性",
-      "description": "自律了太久，你想试试不按剧本打一天。",
-      "requirements": [],
-      "successChance": {
-        "baseChance": 0.55,
-        "modifiers": []
-      },
-      "outcome": {
-        "successEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "rule-breaker"
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAME",
-            "delta": 3
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAN_REPUTATION",
-            "delta": 3
-          }
-        ],
-        "failureEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "rule-breaker"
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FORM",
-            "delta": -4
-          }
-        ],
-        "successMessages": [
-          "那天你混烟、干拉、打出了久违的野性。"
-        ],
-        "failureMessages": [
-          "野性的代价是纪律的崩盘。"
-        ],
-        "successNextEventId": "grind-machine-to-rule-breaker",
-        "failureNextEventId": "grind-machine-to-rule-breaker"
-      }
     }
   ],
   "autoEffects": [],

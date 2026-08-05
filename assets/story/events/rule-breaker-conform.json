@@ -99,53 +99,6 @@
         "successNextEventId": null,
         "failureNextEventId": null
       }
-    },
-    {
-      "id": "weaponize",
-      "label": "把反叛变成战术",
-      "description": "你厌倦了独狼的日子，把混烟的直觉献给指挥位。",
-      "requirements": [],
-      "successChance": {
-        "baseChance": 0.6,
-        "modifiers": []
-      },
-      "outcome": {
-        "successEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "tactical-captain"
-          },
-          {
-            "type": "ATTRIBUTE_CHANGE",
-            "attribute": "LEADERSHIP",
-            "delta": 1
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FAME",
-            "delta": 2
-          }
-        ],
-        "failureEffects": [
-          {
-            "type": "WORLDLINE_CHANGE",
-            "worldlineId": "tactical-captain"
-          },
-          {
-            "type": "NARRATIVE_METRIC_CHANGE",
-            "metric": "FORM",
-            "delta": -3
-          }
-        ],
-        "successMessages": [
-          "你第一次以指挥身份复盘，思路清奇。"
-        ],
-        "failureMessages": [
-          "体系化让你浑身不自在。"
-        ],
-        "successNextEventId": "rule-breaker-to-tactical-captain",
-        "failureNextEventId": "rule-breaker-to-tactical-captain"
-      }
     }
   ],
   "autoEffects": [],
