@@ -1,0 +1,64 @@
+{
+  "id": "fan-message",
+  "worldlineId": "shared",
+  "title": "一条私信",
+  "description": "连败之后，你打开私信想关掉评论，第一条是那个老粉丝发来的：\"输赢都看你。\"",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "fan-base", "expected": true },
+    { "type": "PLAYER_STAT", "stat": "MORALE", "maximum": 45 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "reply",
+      "label": "回他一句",
+      "description": "\"下一场，我打给你看。\"",
+      "requirements": [],
+      "successChance": { "baseChance": 0.8, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 7 },
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 2 }
+        ],
+        "successMessages": [
+          "他回了一串感叹号，你盯着屏幕笑了。"
+        ],
+        "failureMessages": [
+          "他回得很快：\"别勉强，照顾好自己。\""
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "close-app",
+      "label": "关掉手机",
+      "description": "现在的你，配不上这句\"输赢都看你\"。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.5, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "ENERGY", "delta": 2 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 }
+        ],
+        "successMessages": [
+          "你关掉手机，去训练室打了四小时。"
+        ],
+        "failureMessages": [
+          "你关掉手机，在训练室坐到凌晨。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

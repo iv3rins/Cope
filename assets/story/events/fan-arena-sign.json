@@ -1,0 +1,64 @@
+{
+  "id": "fan-arena-sign",
+  "worldlineId": "shared",
+  "title": "看台上的名字",
+  "description": "观众席第一排，有人举着一块手写的灯牌，上面是你的名字——就是那个给你写信的粉丝。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "fan-base", "expected": true },
+    { "type": "NARRATIVE_METRIC", "metric": "FAME", "minimum": 20 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "wave-back",
+      "label": "朝他挥手",
+      "description": "让他知道，你看到了。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.85, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAN_REPUTATION", "delta": 1 }
+        ],
+        "successMessages": [
+          "他愣住了，然后举着牌子跳了起来。"
+        ],
+        "failureMessages": [
+          "你挥手的时候，镜头没拍到。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-focused",
+      "label": "专心打比赛",
+      "description": "粉丝会懂，最好的回应是赢。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.7, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -3 }
+        ],
+        "successMessages": [
+          "你打出了这场最好的表现。"
+        ],
+        "failureMessages": [
+          "赛后你看向看台，牌子还举着。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

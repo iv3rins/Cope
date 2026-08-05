@@ -1,0 +1,65 @@
+{
+  "id": "mentor-watch-live",
+  "worldlineId": "shared",
+  "title": "教练在现场",
+  "description": "青训教练发来一张照片：他坐在观众席第三排，举着一块手写的牌子，上面是你的名字。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "repeatable": false,
+  "priority": 60,
+  "conditions": [
+    { "type": "FLAG", "flagId": "mentor", "expected": true },
+    { "type": "AGE", "minimum": 18 }
+  ],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "win-for-him",
+      "label": "这场比赛为他打",
+      "description": "他来看你，你就不能让他失望。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.68, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 6 },
+          { "type": "ATTRIBUTE_CHANGE", "attribute": "CLUTCH", "delta": 1 }
+        ],
+        "failureEffects": [
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": -5 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": 5 }
+        ],
+        "successMessages": [
+          "赛后你朝他的方向挥了挥手，他喊得比谁都大声。"
+        ],
+        "failureMessages": [
+          "比赛输了，你甚至不敢看第三排的方向。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "play-normal",
+      "label": "就当没看见",
+      "description": "有他在反而紧张，按平时打。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.75, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": 4 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": -3 }
+        ],
+        "successMessages": [
+          "你打得很稳，像他教你的那样。"
+        ],
+        "failureMessages": [
+          "稳是稳了，但你总觉得缺了点什么。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

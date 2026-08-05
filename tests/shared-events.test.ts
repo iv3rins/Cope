@@ -67,3 +67,39 @@ test('shared 随机事件：FLAG 条件事件在获得 FLAG 前不可见', async
   const plainEvents = await engine.findAvailableEvents({ profile: plain, period: 'NORMAL', randomRoll: 0.5 });
   assert.ok(plainEvents.some((event) => event.id === 'shared-youth-coach'), '无门槛事件应可见');
 });
+
+test('FLAG 支线：mentor 支线按 FLAG + 年龄解锁，一生一次', async () => {
+  const engine = await buildEngine();
+  const withMentor = sampleProfile({ age: 18, flags: [{ id: 'mentor', name: '引路人', category: 'CAREER' }] });
+  const events = await engine.findAvailableEvents({ profile: withMentor, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(events.some((event) => event.id === 'mentor-watch-live'), '有 mentor FLAG 且 18 岁应看到教练现场');
+  const without = sampleProfile({ age: 18 });
+  const withoutEvents = await engine.findAvailableEvents({ profile: without, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!withoutEvents.some((event) => event.id === 'mentor-watch-live'), '无 mentor FLAG 不可见');
+  const young = sampleProfile({ age: 16, flags: [{ id: 'mentor', name: '引路人', category: 'CAREER' }] });
+  const youngEvents = await engine.findAvailableEvents({ profile: young, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!youngEvents.some((event) => event.id === 'mentor-watch-live'), '有 FLAG 但 16 岁不可见（AGE 门控）');
+});
+
+test('FLAG 支线：rivalry 终局事件需要决赛周期 + 高龄 + 声望', async () => {
+  const engine = await buildEngine();
+  const ready = sampleProfile({ age: 24, flags: [{ id: 'rivalry', name: '宿敌', category: 'SOCIAL' }], narrativeMetrics: { FAME: 55, TEAM_STATUS: 50, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 10, FAN_REPUTATION: 10 } });
+  const finale = await engine.findAvailableEvents({ profile: ready, period: 'FINAL_DECISIVE_MOMENT', randomRoll: 0.5 });
+  assert.ok(finale.some((event) => event.id === 'rival-handshake'), '条件齐备时应看到领奖台握手');
+  const mid = await engine.findAvailableEvents({ profile: ready, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!mid.some((event) => event.id === 'rival-handshake'), 'NORMAL 周期不应出现决赛事件');
+  const young = sampleProfile({ age: 18, flags: [{ id: 'rivalry', name: '宿敌', category: 'SOCIAL' }], narrativeMetrics: { FAME: 55, TEAM_STATUS: 50, TEAM_RELATIONSHIP: 50, FORM: 50, CLUB_FAVOR: 10, FAN_REPUTATION: 10 } });
+  const youngFinale = await engine.findAvailableEvents({ profile: young, period: 'FINAL_DECISIVE_MOMENT', randomRoll: 0.5 });
+  assert.ok(!youngFinale.some((event) => event.id === 'rival-handshake'), '18 岁不可见（AGE 门控）');
+});
+
+test('FLAG 支线：health 起点事件种下 health-warning，体检事件按精力门槛解锁', async () => {
+  const engine = await buildEngine();
+  const tired = sampleProfile({ flags: [{ id: 'health-warning', name: '健康警报', category: 'CAREER' }], life: { balance: 500, currentJob: 'NONE', incomePerWeek: 0, expensePerWeek: 0, stress: 12 } });
+  const lowEnergy = { ...tired, energy: 40 };
+  const events = await engine.findAvailableEvents({ profile: lowEnergy, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(events.some((event) => event.id === 'health-checkup'), '有 health-warning 且 ENERGY<=45 应看到体检事件');
+  const energetic = { ...tired, energy: 70 };
+  const energeticEvents = await engine.findAvailableEvents({ profile: energetic, period: 'NORMAL', randomRoll: 0.5 });
+  assert.ok(!energeticEvents.some((event) => event.id === 'health-checkup'), '精力充足时不应触发体检');
+});

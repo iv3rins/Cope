@@ -14,7 +14,20 @@
       "minimum": 55
     }
   ],
-  "autoEffects": [],
+  "autoEffects": [
+    {
+      "type": "FLAG_ADD",
+      "flagId": "health-warning",
+      "flag": {
+        "id": "health-warning",
+        "name": "健康警报",
+        "category": "CAREER",
+        "metadata": {
+          "source": "shared-burnout-warning"
+        }
+      }
+    }
+  ],
   "options": [
     {
       "id": "rest",
