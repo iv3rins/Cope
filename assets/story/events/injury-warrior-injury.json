@@ -1,0 +1,119 @@
+{
+  "id": "injury-warrior-injury",
+  "worldlineId": "injury-warrior",
+  "title": "伤病爆发",
+  "description": "巅峰期，你的手腕突然传来撕裂般的剧痛——腱鞘炎。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 100,
+  "options": [
+    {
+      "id": "surgery-now",
+      "label": "立即手术",
+      "description": "长痛不如短痛，接受手术。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "手术很成功，但康复期以月计算。"
+        ],
+        "failureMessages": [
+          "手术后的手腕依然不听使唤。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "bandage",
+      "label": "保守治疗",
+      "description": "打固定、吃药，先撑过这赛季。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 9
+          }
+        ],
+        "successMessages": [
+          "你缠着绷带继续打完了季后赛。"
+        ],
+        "failureMessages": [
+          "保守治疗让伤情反反复复。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [
+    {
+      "type": "FLAG_ADD",
+      "flagId": "wrist-injury",
+      "flag": {
+        "id": "wrist-injury",
+        "name": "手腕旧伤",
+        "category": "CAREER",
+        "metadata": {
+          "trigger": "injury-warrior"
+        }
+      }
+    }
+  ],
+  "conditions": []
+}

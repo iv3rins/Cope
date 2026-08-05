@@ -1,0 +1,101 @@
+{
+  "id": "rule-breaker-style",
+  "worldlineId": "rule-breaker",
+  "title": "混烟狂徒",
+  "description": "你的打法与传统教科书完全相反，却总能打乱对手的节奏。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 100,
+  "options": [
+    {
+      "id": "style",
+      "label": "贯彻风格",
+      "description": "继续混烟、刷闪、暴力干拉。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "对手教练气得摔了白板笔。"
+        ],
+        "failureMessages": [
+          "队友觉得你是在胡闹。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "conventional",
+      "label": "收敛打常规",
+      "description": "暂时放弃个人风格，先融入体系。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你打了一整场的\"教科书\"。"
+        ],
+        "failureMessages": [
+          "失去风格的你泯然众人。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": []
+}

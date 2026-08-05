@@ -2,7 +2,7 @@ import type { HltvTeamId } from '../hltv/team';
 import type { TournamentId, TournamentInterventionType } from '../hltv/tournament';
 import type { EventCondition } from './condition';
 import type { NarrativeMetric, PlayerAttribute, PlayerFlag, PlayerProfile, PlayerRole } from './profile';
-import type { ForceContractTerminationEffect, PlayerContract } from './contract';
+import type { ContractRenewalEffect, ForceContractTerminationEffect, PlayerContract } from './contract';
 import type { GameDifficultyMode } from './mode';
 
 /** 生涯剧情图接口：只描述内容和状态转换，不包含具体渲染与存储实现。 */
@@ -89,7 +89,7 @@ export interface TournamentInterventionEffect {
   readonly description: string;
 }
 
-export type EventEffect = AttributeChangeEffect | PlayerStatChangeEffect | NarrativeMetricChangeEffect | TeamTransferEffect | RoleChangeEffect | WorldlineChangeEffect | FlagChangeEffect | TrophyChangeEffect | CareerStatChangeEffect | AdvanceStoryEffect | TournamentInterventionEffect | ForceContractTerminationEffect;
+export type EventEffect = AttributeChangeEffect | PlayerStatChangeEffect | NarrativeMetricChangeEffect | TeamTransferEffect | RoleChangeEffect | WorldlineChangeEffect | FlagChangeEffect | TrophyChangeEffect | CareerStatChangeEffect | AdvanceStoryEffect | TournamentInterventionEffect | ForceContractTerminationEffect | ContractRenewalEffect;
 
 export interface SuccessChanceModifier {
   readonly attribute: PlayerAttribute;

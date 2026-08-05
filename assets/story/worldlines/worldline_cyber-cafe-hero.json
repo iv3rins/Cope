@@ -1,0 +1,16 @@
+{
+  "id": "cyber-cafe-hero",
+  "name": "黑网吧走出的追梦者",
+  "description": "出身电竞荒漠赛区，没有赞助与基建，靠代练、众筹机票、睡机场地毯挤进国际大赛。",
+  "startEventId": "cyber-cafe-hero-start",
+  "eventIds": [
+    "cyber-cafe-hero-start",
+    "cyber-cafe-hero-budget",
+    "cyber-cafe-hero-qualifier",
+    "cyber-cafe-hero-offer",
+    "cyber-cafe-hero-rise",
+    "cyber-cafe-hero-cost",
+    "cyber-cafe-hero-climax",
+    "cyber-cafe-hero-finale"
+  ]
+}

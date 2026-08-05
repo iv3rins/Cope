@@ -1,0 +1,135 @@
+{
+  "id": "system-core-pressure",
+  "worldlineId": "system-core",
+  "title": "完美主义的代价",
+  "description": "长期高压让你开始失眠，健康警报拉响。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 99,
+  "options": [
+    {
+      "id": "face",
+      "label": "正视压力",
+      "description": "去看医生，接受心理疏导。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你开始规律作息与治疗。"
+        ],
+        "failureMessages": [
+          "治疗期间状态起伏不定。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "suppress",
+      "label": "压抑情绪",
+      "description": "把不适咽下去，继续上场比赛。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 13
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你在止痛药和咖啡因里继续打。"
+        ],
+        "failureMessages": [
+          "身体用更糟的方式向你抗议。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [
+    {
+      "type": "FLAG_ADD",
+      "flagId": "health-warning",
+      "flag": {
+        "id": "health-warning",
+        "name": "健康警报",
+        "category": "CAREER",
+        "metadata": {
+          "trigger": "system-core"
+        }
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 60
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "TEAM_STATUS",
+          "minimum": 25
+        }
+      ]
+    }
+  ]
+}

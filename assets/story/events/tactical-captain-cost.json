@@ -1,0 +1,117 @@
+{
+  "id": "tactical-captain-cost",
+  "worldlineId": "tactical-captain",
+  "title": "指挥的重压",
+  "description": "每一场比赛都在透支你的大脑，赛后你常常头痛欲裂。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 95,
+  "options": [
+    {
+      "id": "simplify",
+      "label": "简化体系",
+      "description": "砍掉华而不实的战术，只留最扎实的。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "队伍的执行力直线上升。"
+        ],
+        "failureMessages": [
+          "简单的战术容易被摸透。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "carry-load",
+      "label": "硬扛",
+      "description": "把所有细节都装进脑子。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 9
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你的指挥让人叹为观止。"
+        ],
+        "failureMessages": [
+          "赛后你在休息室躺了很久。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 68
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 50
+        }
+      ]
+    }
+  ]
+}

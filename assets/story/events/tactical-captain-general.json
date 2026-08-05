@@ -1,0 +1,112 @@
+{
+  "id": "tactical-captain-general",
+  "worldlineId": "tactical-captain",
+  "title": "铁血指挥官",
+  "description": "你终于把\"打不好枪的突破手\"活成了\"整个赛区都怕的战术大脑\"。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "general",
+      "label": "终成帅才",
+      "description": "用脑子赢下职业生涯的黄金期。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你的队伍成了战术教科书的案例。"
+        ],
+        "failureMessages": [
+          "指挥的担子越来越重。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "exit",
+      "label": "光荣转身",
+      "description": "在声望最高时，把指挥棒交给年轻人。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你退役时，无数指挥选手说受你启发。"
+        ],
+        "failureMessages": [
+          "也有人遗憾你没再带一届。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 72
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 62
+        }
+      ]
+    }
+  ]
+}

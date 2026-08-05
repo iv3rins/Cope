@@ -1,0 +1,16 @@
+{
+  "id": "version-victim",
+  "name": "版本之子与落幕者",
+  "description": "靠某种离谱的反应速度统治赛场，逼得官方更新版本削弱该机制，从此在转型与陨落之间挣扎。",
+  "startEventId": "version-victim-glory",
+  "eventIds": [
+    "version-victim-glory",
+    "version-victim-patch",
+    "version-victim-slump",
+    "version-victim-rebuild",
+    "version-victim-answer",
+    "version-victim-cost",
+    "version-victim-climax",
+    "version-victim-finale"
+  ]
+}

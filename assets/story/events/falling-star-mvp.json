@@ -1,0 +1,101 @@
+{
+  "id": "falling-star-mvp",
+  "worldlineId": "falling-star",
+  "title": "年少封王",
+  "description": "你以破纪录的年龄捧起大赛MVP，全世界都记住了你的名字。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 100,
+  "options": [
+    {
+      "id": "celebrate",
+      "label": "享受巅峰",
+      "description": "沉浸在荣耀与赞美的海洋里。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你被记者和粉丝包围了整整一周。"
+        ],
+        "failureMessages": [
+          "庆祝的余波让训练荒废了几天。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-sharp",
+      "label": "保持训练",
+      "description": "MVP只是起点，你继续泡在训练室。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "奖杯摆在训练室角落，你继续练枪。"
+        ],
+        "failureMessages": [
+          "你错过了许多本可享受的荣光。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": []
+}

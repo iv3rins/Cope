@@ -1,0 +1,117 @@
+{
+  "id": "cyber-cafe-hero-qualifier",
+  "worldlineId": "cyber-cafe-hero",
+  "title": "国际预选",
+  "description": "你们靠众筹的机票飞往国际赛场，落地睡机场地毯。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 98,
+  "options": [
+    {
+      "id": "go-all-in",
+      "label": "全力出线",
+      "description": "把命押在这几场比赛上。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你们爆冷杀进了正赛，全场都在喊你们的名字。"
+        ],
+        "failureMessages": [
+          "出线差一步，但你已经证明了自己。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "conserve",
+      "label": "保存体力",
+      "description": "先把状态稳住，别在预选就燃尽。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你稳扎稳打地打完了预选。"
+        ],
+        "failureMessages": [
+          "保守让队伍错过了关键的机会。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "BALANCE",
+          "minimum": 500
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 20
+        }
+      ]
+    }
+  ]
+}

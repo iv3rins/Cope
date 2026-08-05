@@ -1,0 +1,127 @@
+{
+  "id": "lone-hero-carry",
+  "worldlineId": "lone-hero",
+  "title": "负重前行",
+  "description": "淘汰赛生死局，队伍陷入僵局，所有人都在等你接管。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 98,
+  "options": [
+    {
+      "id": "burn",
+      "label": "燃烧自己",
+      "description": "用极限操作强行carry，代价是巨大的消耗。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你一个人杀穿了整个回合，队友难以置信地看着屏幕。"
+        ],
+        "failureMessages": [
+          "极限操作差了零点几秒，遗憾落败。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "steady",
+      "label": "等待队友",
+      "description": "控制节奏，给队友创造发挥空间。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把回合节奏稳了下来。"
+        ],
+        "failureMessages": [
+          "队友没能接住你创造的窗口。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 62
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 28
+        }
+      ]
+    }
+  ]
+}

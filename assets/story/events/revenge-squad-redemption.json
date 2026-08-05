@@ -1,0 +1,117 @@
+{
+  "id": "revenge-squad-redemption",
+  "worldlineId": "revenge-squad",
+  "title": "复仇或放下",
+  "description": "这支由弃子组成的队伍，最终走到了你从未想过的高度。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "forgive",
+      "label": "与过去和解",
+      "description": "你终于明白，被抛弃有时是另一种成全。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 9
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "夺冠那天，你在采访里感谢了所有人，包括他们。"
+        ],
+        "failureMessages": [
+          "和解来得比想象中晚了一些。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "complete",
+      "label": "完成复仇",
+      "description": "用冠军奖杯向所有看轻你的人宣战。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你举着奖杯，看着观众席，笑了。"
+        ],
+        "failureMessages": [
+          "复仇完成了，但心里空了一块。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 52
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 70
+        }
+      ]
+    }
+  ]
+}

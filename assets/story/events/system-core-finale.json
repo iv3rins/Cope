@@ -1,0 +1,107 @@
+{
+  "id": "system-core-finale",
+  "worldlineId": "system-core",
+  "title": "传承",
+  "description": "你毕生构建的体系，成了后人的教科书。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 93,
+  "options": [
+    {
+      "id": "teach",
+      "label": "倾囊相授",
+      "description": "把全部笔记交给下一代。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你培养出了下一个体系核心。"
+        ],
+        "failureMessages": [
+          "传承比夺冠更难。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "quiet",
+      "label": "悄然离开",
+      "description": "把一切留在训练室，不带走一片云彩。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你走的那天，训练室静了很久。"
+        ],
+        "failureMessages": [
+          "有人到现在还觉得你没走。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 78
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 65
+        }
+      ]
+    }
+  ]
+}

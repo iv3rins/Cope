@@ -1,0 +1,101 @@
+{
+  "id": "lone-hero-debut",
+  "worldlineId": "lone-hero",
+  "title": "孤胆首秀",
+  "description": "你以统治级的个人数据完成首秀，但队伍整体实力平庸，胜利依然遥远。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 100,
+  "options": [
+    {
+      "id": "keep-firing",
+      "label": "继续全力输出",
+      "description": "保持个人统治力，但队友的短板被进一步放大。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你的枪管发热，但胜利依然遥远。"
+        ],
+        "failureMessages": [
+          "爆发未能延续，质疑声开始出现。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "lift-team",
+      "label": "分担队友压力",
+      "description": "牺牲部分数据帮助队伍运转，等待他们成长。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.62,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          }
+        ],
+        "successMessages": [
+          "你把资源让给队友，队伍开始像一个整体。"
+        ],
+        "failureMessages": [
+          "你的牺牲暂时没有换来回报。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": []
+}

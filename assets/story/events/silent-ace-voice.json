@@ -1,0 +1,174 @@
+{
+  "id": "silent-ace-voice",
+  "worldlineId": "silent-ace",
+  "title": "领袖抉择",
+  "description": "是继续做纯粹的输出机器，还是逼自己成为声量十足的领袖？",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 97,
+  "options": [
+    {
+      "id": "become-leader",
+      "label": "逼自己开口",
+      "description": "牺牲一部分手感，换来团队的化学反应。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 7
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你的声音开始被队友习惯。"
+        ],
+        "failureMessages": [
+          "分心指挥让你的枪法直线下滑。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-machine",
+      "label": "保持输出机器",
+      "description": "把天赋留给枪口，让数据证明价值。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你的rating依旧恐怖。"
+        ],
+        "failureMessages": [
+          "队伍缺少声音的问题依旧存在。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "join-system",
+      "label": "把天赋交给体系",
+      "description": "你不想当领袖，只想成为体系里最锋利的一块。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "system-core"
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "system-core"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你退到体系里，安静地做那把刀。"
+        ],
+        "failureMessages": [
+          "沉默让队伍误解了你的决定。"
+        ],
+        "successNextEventId": "system-core-precision",
+        "failureNextEventId": "system-core-precision"
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 72
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 55
+        }
+      ]
+    }
+  ]
+}

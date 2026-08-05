@@ -1,0 +1,117 @@
+{
+  "id": "rule-breaker-cost",
+  "worldlineId": "rule-breaker",
+  "title": "反叛的反噬",
+  "description": "冒险开始付出代价，队伍的战绩因你的风格起伏。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 95,
+  "options": [
+    {
+      "id": "balance",
+      "label": "收放自如",
+      "description": "在疯狂与纪律之间找到平衡点。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.62,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你开始知道什么时候该疯。"
+        ],
+        "failureMessages": [
+          "收放之间，手感也飘忽。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "defiant",
+      "label": "死不悔改",
+      "description": "让他们适应你的节奏，而不是反过来。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你继续我行我素。"
+        ],
+        "failureMessages": [
+          "队内矛盾终于爆发。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 55
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 65
+        }
+      ]
+    }
+  ]
+}

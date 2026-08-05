@@ -1,0 +1,101 @@
+{
+  "id": "silent-ace-calm",
+  "worldlineId": "silent-ace",
+  "title": "低调首秀",
+  "description": "你几乎不流汗就拿下了全队最高的数据，连欢呼都显得多余。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 100,
+  "options": [
+    {
+      "id": "humble",
+      "label": "保持低调",
+      "description": "让数据替你说话。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你安静地打完比赛，安静地离开。"
+        ],
+        "failureMessages": [
+          "低调让观众记不住你的脸。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "express",
+      "label": "主动表达",
+      "description": "试着在镜头前多说话，让更多人认识你。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "采访里你磕磕绊绊说完了一整句。"
+        ],
+        "failureMessages": [
+          "紧张让你语无伦次。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": []
+}

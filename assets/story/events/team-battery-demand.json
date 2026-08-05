@@ -1,0 +1,169 @@
+{
+  "id": "team-battery-demand",
+  "worldlineId": "team-battery",
+  "title": "转岗抉择",
+  "description": "有队伍邀请你去做明星选手的位子，代价是离开熟悉的一切。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 97,
+  "options": [
+    {
+      "id": "leave",
+      "label": "要求换岗",
+      "description": "去一支需要你的队伍，争一争数据与尊严。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你终于拿到了主枪手的资源。"
+        ],
+        "failureMessages": [
+          "新体系并不像想象中那样围绕你。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-devoted",
+      "label": "继续牺牲",
+      "description": "这支队伍需要你，这就够了。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 7
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你拒绝了报价，继续发枪。"
+        ],
+        "failureMessages": [
+          "又一年过去，你的数据依旧难看。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "switch-captain",
+      "label": "转岗当指挥",
+      "description": "你发现自己的价值不只是送死——让脑子也参与比赛。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "tactical-captain"
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "tactical-captain"
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你开始研究每一张图的经济与站位。"
+        ],
+        "failureMessages": [
+          "指挥的思考让你手忙脚乱。"
+        ],
+        "successNextEventId": "tactical-captain-decline",
+        "failureNextEventId": "tactical-captain-decline"
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "CLUB_FAVOR",
+          "minimum": 30
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FORM",
+          "minimum": 50
+        }
+      ]
+    }
+  ]
+}

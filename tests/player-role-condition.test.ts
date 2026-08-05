@@ -39,16 +39,3 @@ test('StoryRepository 拒绝含非法 PLAYER_ROLE 的 JSON 事件', async () => 
   assert.equal(await repository.findEvent('invalid-role'), null);
 });
 
-test('SUPPORT 玩家在 rookie-role-audit 看不到 learn-support，且强行选择会被拒绝', async () => {
-  const root = process.cwd();
-  const repository = new StoryRepositoryImpl(new FileSystemStoryEventPackReader(join(root, 'assets/story/events'), readFile, readdir, join(root, 'assets/story/worldlines')));
-  const engine = new StoryEngineImpl(repository, new ConditionEvaluatorImpl(), { successChancePolicy: { adjust: ({ baseChance }) => baseChance } });
-  const events = await engine.findAvailableEvents({ profile: player, period: 'NORMAL', randomRoll: 0.1 });
-  const audit = events.find((event) => event.id === 'rookie-role-audit');
-  assert.ok(audit);
-  assert.equal(audit.options.some((option) => option.id === 'learn-support'), false);
-  await assert.rejects(
-    engine.decide({ profile: player, decision: { eventId: 'rookie-role-audit', optionId: 'learn-support', randomRoll: 0.1 } }),
-    /Story option requirements are not met: learn-support/,
-  );
-});

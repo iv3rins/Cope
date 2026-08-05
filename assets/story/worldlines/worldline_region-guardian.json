@@ -1,0 +1,16 @@
+{
+  "id": "region-guardian",
+  "name": "守擂赛区的寂寞孤勇者",
+  "description": "有一线豪门的枪法，却留守电竞荒漠赛区，做那个永远无法捧杯但被全赛区奉为英雄的守门人。",
+  "startEventId": "region-guardian-home",
+  "eventIds": [
+    "region-guardian-home",
+    "region-guardian-ceiling",
+    "region-guardian-invite",
+    "region-guardian-stay",
+    "region-guardian-legacy",
+    "region-guardian-cost",
+    "region-guardian-climax",
+    "region-guardian-finale"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "modes": {
+    "HARDCORE": "硬核模式",
+    "POWER_FANTASY": "爽文模式"
+  },
+  "regions": {
+    "ASIA": "亚洲",
+    "EUROPE": "欧洲",
+    "AMERICAS": "美洲",
+    "OCEANIA": "大洋洲",
+    "MIDDLE_EAST": "中东",
+    "AFRICA": "非洲"
+  },
+  "playerRoles": {
+    "ENTRY_FRAGGER": "突破手",
+    "AWPER": "狙击手",
+    "IGL": "指挥",
+    "SUPPORT": "辅助",
+    "LURKER": "自由人"
+  },
+  "tiers": {
+    "MAJOR": "Major",
+    "T1": "顶级赛事",
+    "T2": "次级赛事",
+    "T3": "发展级赛事",
+    "QUALIFIER": "预选赛"
+  },
+  "placements": {
+    "CHAMPION": "冠军",
+    "RUNNER_UP": "亚军",
+    "SEMI_FINAL": "四强",
+    "QUARTER_FINAL": "八强",
+    "GROUP_EXIT": "小组出局",
+    "QUALIFIED": "晋级正赛",
+    "NOT_QUALIFIED": "止步预选"
+  },
+  "honors": {
+    "MVP": "最有价值选手",
+    "EVP": "杰出选手",
+    "VP": "优秀选手"
+  },
+  "releaseReasons": {
+    "CONTRACT_EXPIRED": "合同到期",
+    "FORCED_RELEASE": "被战队解约",
+    "TEAM_REBUILD": "战队重建",
+    "NO_ROSTER_SPACE": "阵容没有位置",
+    "MUTUAL_TERMINATION": "双方协商解约"
+  },
+  "eventTypes": {
+    "CHOICE": "生涯抉择",
+    "AUTO": "生涯事件"
+  },
+  "levels": {
+    "MAJOR": "Major",
+    "T1": "顶级赛事",
+    "T2": "次级赛事",
+    "T3": "发展级赛事"
+  }
+}

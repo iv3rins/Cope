@@ -1,0 +1,101 @@
+{
+  "id": "cyber-cafe-hero-start",
+  "worldlineId": "cyber-cafe-hero",
+  "title": "黑网吧起步",
+  "description": "你的家乡没有青训营，只有一间风扇轰鸣的黑网吧。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 100,
+  "options": [
+    {
+      "id": "boost",
+      "label": "白天代练",
+      "description": "靠代练攒钱，晚上再练自己的枪。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": 300
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你的手指在键盘上磨出了茧。"
+        ],
+        "failureMessages": [
+          "代练单子挤占了训练时间。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "grind",
+      "label": "熬夜训练",
+      "description": "把所有时间砸进游戏，等一个机会。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -150
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -200
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "网吧老板认识了你：又是那个通宵的。"
+        ],
+        "failureMessages": [
+          "生活费见底了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": []
+}

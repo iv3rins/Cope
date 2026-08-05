@@ -1,0 +1,112 @@
+{
+  "id": "cyber-cafe-hero-climax",
+  "worldlineId": "cyber-cafe-hero",
+  "title": "世界赛之夜",
+  "description": "你们第一次站上世界赛的舞台，灯光晃得人睁不开眼。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 94,
+  "options": [
+    {
+      "id": "go-big",
+      "label": "放手一搏",
+      "description": "让全世界记住你们的名字。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.58,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你们赢了世界赛首战，弹幕刷屏。"
+        ],
+        "failureMessages": [
+          "世界赛的强度远超想象。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "enjoy",
+      "label": "享受舞台",
+      "description": "能站在这里，已经是很多人的梦了。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你打出了久违的轻松。"
+        ],
+        "failureMessages": [
+          "享受比赛也让成绩平庸。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 45
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "TEAM_STATUS",
+          "minimum": 30
+        }
+      ]
+    }
+  ]
+}

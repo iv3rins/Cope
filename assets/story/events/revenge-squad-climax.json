@@ -1,0 +1,112 @@
+{
+  "id": "revenge-squad-climax",
+  "worldlineId": "revenge-squad",
+  "title": "巅峰对决",
+  "description": "决赛对阵老东家，全世界都在看这场恩怨。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 94,
+  "options": [
+    {
+      "id": "full-revenge",
+      "label": "全力复仇",
+      "description": "把这场当成生涯最重要的比赛。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你们赢了，旧队友的脸色精彩极了。"
+        ],
+        "failureMessages": [
+          "复仇失败了，场面一度尴尬。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "calm-match",
+      "label": "平常心",
+      "description": "只当一场普通决赛来打。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你平静地赢下了比赛。"
+        ],
+        "failureMessages": [
+          "赢得很干净，但少了点故事性。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 55
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 65
+        }
+      ]
+    }
+  ]
+}

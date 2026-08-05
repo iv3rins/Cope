@@ -1,0 +1,16 @@
+{
+  "id": "falling-star",
+  "name": "闪耀即熄灭的流星",
+  "description": "最年轻就斩获大赛 MVP，随后因一次错误的转会，状态断崖式下跌，在黄金年龄面临心理危机。",
+  "startEventId": "falling-star-mvp",
+  "eventIds": [
+    "falling-star-mvp",
+    "falling-star-offer",
+    "falling-star-burnout",
+    "falling-star-return",
+    "falling-star-afterglow",
+    "falling-star-cost",
+    "falling-star-climax",
+    "falling-star-finale"
+  ]
+}

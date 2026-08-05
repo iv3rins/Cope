@@ -1,0 +1,112 @@
+{
+  "id": "team-battery-legacy",
+  "worldlineId": "team-battery",
+  "title": "无名功臣",
+  "description": "多年之后，人们终于开始谈论你的价值。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "content",
+      "label": "接受身份",
+      "description": "你为胜利而生，不需要数据证明。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 9
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "退役那天，无数职业选手发文致敬你。"
+        ],
+        "failureMessages": [
+          "你依旧不习惯被聚光灯照着。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "regret",
+      "label": "心有不甘",
+      "description": "如果当年选择要数据，人生会不同吗？",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你在直播里偶尔会想起那个岔路口。"
+        ],
+        "failureMessages": [
+          "遗憾成为深夜常客。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "CLUB_FAVOR",
+          "minimum": 40
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAN_REPUTATION",
+          "minimum": 30
+        }
+      ]
+    }
+  ]
+}

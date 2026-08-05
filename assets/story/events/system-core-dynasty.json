@@ -1,0 +1,112 @@
+{
+  "id": "system-core-dynasty",
+  "worldlineId": "system-core",
+  "title": "王朝时代",
+  "description": "在你的体系支撑下，队伍建立了一个时代。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 98,
+  "options": [
+    {
+      "id": "sustain",
+      "label": "全力维系",
+      "description": "不惜代价维持王朝的统治力。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 9
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你们又一次捧起了冠军奖杯。"
+        ],
+        "failureMessages": [
+          "王朝的齿轮开始发出异响。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "plan-ahead",
+      "label": "未雨绸缪",
+      "description": "在巅峰期就开始培养接班人。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把自己的战术笔记倾囊相授。"
+        ],
+        "failureMessages": [
+          "新人还接不住你的体系。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 65
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 30
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "id": "rule-breaker-icon",
+  "worldlineId": "rule-breaker",
+  "title": "反叛图腾",
+  "description": "你的打法最终影响了整整一代年轻选手。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "school",
+      "label": "开宗立派",
+      "description": "把自己的风格整理成方法论，教给后来者。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "年轻选手们开始模仿你的混烟。"
+        ],
+        "failureMessages": [
+          "也有人学不会你的天赋。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "return",
+      "label": "回归正统",
+      "description": "最终与学院派和解，成为体系的一部分。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你笑着承认：当年确实太莽了。"
+        ],
+        "failureMessages": [
+          "老粉丝叹息那个叛逆者不见了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 65
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 55
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "id": "grind-machine-discipline",
+  "worldlineId": "grind-machine",
+  "title": "一万小时",
+  "description": "你的日常是四小时练枪、十小时看Demo，单调得像苦行僧。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 99,
+  "options": [
+    {
+      "id": "push-harder",
+      "label": "再加练",
+      "description": "天赋不够，时间凑。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.62,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -13
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你比队里任何人都早到训练室。"
+        ],
+        "failureMessages": [
+          "透支开始影响睡眠。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "balanced",
+      "label": "劳逸结合",
+      "description": "科学训练，保证休息。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你把训练计划调整得更科学了。"
+        ],
+        "failureMessages": [
+          "效率上去了，但心里总觉得练得不够。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 55
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 55
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "id": "crownless-king-cost",
+  "worldlineId": "crownless-king",
+  "title": "心魔的纠缠",
+  "description": "又一年，又是决赛，又是那个熟悉的失误。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 95,
+  "options": [
+    {
+      "id": "face-demon",
+      "label": "直面心魔",
+      "description": "把每一次失误都摊开来看。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.58,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 7
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你在镜子里与自己对视。"
+        ],
+        "failureMessages": [
+          "直视深渊的代价是失眠。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "divert",
+      "label": "转移注意",
+      "description": "把精力投进训练，不去想那座奖杯。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你练到忘记紧张。"
+        ],
+        "failureMessages": [
+          "逃避让心魔藏得更深。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 68
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 68
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "id": "silent-ace-cost",
+  "worldlineId": "silent-ace",
+  "title": "沉默的隔阂",
+  "description": "你在沉默中独自消化一切，队伍却以为你不在乎。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 95,
+  "options": [
+    {
+      "id": "break-ice",
+      "label": "主动破冰",
+      "description": "把想法说出来，哪怕笨拙。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.62,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 9
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你第一次主动开了个会。"
+        ],
+        "failureMessages": [
+          "开口后的尴尬让你后悔。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "by-numbers",
+      "label": "让数据说话",
+      "description": "用表现堵住所有嘴。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你的rating说明了一切。"
+        ],
+        "failureMessages": [
+          "数据之外，隔阂依旧。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 76
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 70
+        }
+      ]
+    }
+  ]
+}

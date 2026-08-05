@@ -1,0 +1,112 @@
+{
+  "id": "version-victim-climax",
+  "worldlineId": "version-victim",
+  "title": "版本答案之战",
+  "description": "你用新打法赢下了质疑者们口中的\"不可能\"。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 94,
+  "options": [
+    {
+      "id": "go-all",
+      "label": "全力一战",
+      "description": "把所有理解押在这场比赛上。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 7
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -9
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你重新定义了这套体系。"
+        ],
+        "failureMessages": [
+          "一战成名与一战出局只差一步。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "steady",
+      "label": "稳步推进",
+      "description": "用系列赛的胜利慢慢回应。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你一步步打回了尊重。"
+        ],
+        "failureMessages": [
+          "稳扎稳打少了几分戏剧性。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 75
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 45
+        }
+      ]
+    }
+  ]
+}

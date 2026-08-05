@@ -1,0 +1,169 @@
+{
+  "id": "rule-breaker-conform",
+  "worldlineId": "rule-breaker",
+  "title": "风格的代价",
+  "description": "战术体系要求你放弃混烟和冒险——你愿意牺牲个人风格吗？",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 97,
+  "options": [
+    {
+      "id": "sacrifice",
+      "label": "牺牲风格",
+      "description": "迎合常规打法，换取体系的信任。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 7
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -7
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你收起了那些\"不理智\"的操作。"
+        ],
+        "failureMessages": [
+          "失去了灵魂的打法让你痛苦。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-rogue",
+      "label": "坚持风格",
+      "description": "即使被质疑，也把反叛贯彻到底。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你继续做那个\"不听话\"的选手。"
+        ],
+        "failureMessages": [
+          "教练和你的矛盾逐渐公开化。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "weaponize",
+      "label": "把反叛变成战术",
+      "description": "你厌倦了独狼的日子，把混烟的直觉献给指挥位。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "tactical-captain"
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "tactical-captain"
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你第一次以指挥身份复盘，思路清奇。"
+        ],
+        "failureMessages": [
+          "体系化让你浑身不自在。"
+        ],
+        "successNextEventId": "tactical-captain-decline",
+        "failureNextEventId": "tactical-captain-decline"
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 50
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 62
+        }
+      ]
+    }
+  ]
+}

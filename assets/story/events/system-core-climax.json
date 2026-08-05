@@ -1,0 +1,112 @@
+{
+  "id": "system-core-climax",
+  "worldlineId": "system-core",
+  "title": "王朝终章",
+  "description": "最后的战役，你要么完美收官，要么轰然倒塌。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 94,
+  "options": [
+    {
+      "id": "perfect-end",
+      "label": "完美收官",
+      "description": "用一座奖杯给王朝画上句号。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 7
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "王朝以最体面的方式落幕。"
+        ],
+        "failureMessages": [
+          "王朝的句号画歪了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "exit-early",
+      "label": "急流勇退",
+      "description": "在崩塌之前离开。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你宣布退役，队伍措手不及。"
+        ],
+        "failureMessages": [
+          "有人骂你逃兵。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 76
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "TEAM_STATUS",
+          "minimum": 40
+        }
+      ]
+    }
+  ]
+}

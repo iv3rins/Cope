@@ -1,7 +1,0 @@
-{
-  "id": "rookie-career-fork", "title": "路线评估", "description": "赛季复盘给出两种判断：围绕天赋争取更高资源，或从低级别赛程积累稳定样本。", "worldlineId": "rookie", "type": "CHOICE", "period": "OFFSEASON", "conditions": [{ "type": "COMPLETED_EVENT", "eventId": "rookie-lan-pressure" }],
-  "options": [
-    { "id": "accept-hype", "label": "接受重点培养", "description": "资源和曝光更高，但每场失误都会被放大。", "requirements": [], "successChance": { "baseChance": 0.58, "modifiers": [] }, "outcome": { "successEffects": [{ "type": "WORLDLINE_CHANGE", "worldlineId": "prodigy" }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": 7 }], "failureEffects": [{ "type": "WORLDLINE_CHANGE", "worldlineId": "prodigy" }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "MENTALITY", "delta": -5 }], "successMessages": ["俱乐部把资源向你倾斜。"], "failureMessages": ["宣传先于成绩到来。"], "successNextEventId": "prodigy-hype-contract", "failureNextEventId": "prodigy-hype-contract" } },
-    { "id": "build-samples", "label": "选择稳定积累", "description": "比赛机会更多且预期可控，但上升速度和收入有限。", "requirements": [], "successChance": { "baseChance": 0.72, "modifiers": [] }, "outcome": { "successEffects": [{ "type": "WORLDLINE_CHANGE", "worldlineId": "grinder" }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FORM", "delta": 5 }], "failureEffects": [{ "type": "WORLDLINE_CHANGE", "worldlineId": "grinder" }, { "type": "NARRATIVE_METRIC_CHANGE", "metric": "FAME", "delta": -4 }], "successMessages": ["你获得稳定赛程。"], "failureMessages": ["低曝光延长了等待。"], "successNextEventId": "grinder-daily-schedule", "failureNextEventId": "grinder-daily-schedule" } }
-  ], "autoEffects": []
-}

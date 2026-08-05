@@ -1,0 +1,112 @@
+{
+  "id": "region-guardian-cost",
+  "worldlineId": "region-guardian",
+  "title": "独守的深夜",
+  "description": "赛区只有你一个能打的人，训练室里常常只有你。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 95,
+  "options": [
+    {
+      "id": "solo-practice",
+      "label": "独自加练",
+      "description": "一个人也要练出整个赛区的希望。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.66,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你对着空训练室打了一晚上。"
+        ],
+        "failureMessages": [
+          "孤独在深夜放大。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "grow-others",
+      "label": "培养新人",
+      "description": "把种子种下去，总有一天会长成森林。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你开始带三个十六岁的孩子。"
+        ],
+        "failureMessages": [
+          "新人的成长比你想象的慢。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAN_REPUTATION",
+          "minimum": 45
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 40
+        }
+      ]
+    }
+  ]
+}

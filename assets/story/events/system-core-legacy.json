@@ -1,0 +1,112 @@
+{
+  "id": "system-core-legacy",
+  "worldlineId": "system-core",
+  "title": "传奇的延续",
+  "description": "你重新定义了自己的职业生涯。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "new-system",
+      "label": "建立新体系",
+      "description": "用沉淀的智慧再建一支队伍。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你开始书写第二个时代。"
+        ],
+        "failureMessages": [
+          "重建比想象中漫长。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "exit-gracefully",
+      "label": "急流勇退",
+      "description": "在传奇的顶点选择离开。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 7
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你留给赛场一个完美的背影。"
+        ],
+        "failureMessages": [
+          "王朝的记忆随你一起落幕。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "FLAG",
+          "flagId": "health-warning",
+          "expected": true
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 75
+        }
+      ]
+    }
+  ]
+}

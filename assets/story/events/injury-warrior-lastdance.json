@@ -1,0 +1,127 @@
+{
+  "id": "injury-warrior-lastdance",
+  "worldlineId": "injury-warrior",
+  "title": "最后一舞",
+  "description": "伤病给了你倒计时，但你决定用自己喜欢的方式告别。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "grand-final",
+      "label": "完美谢幕",
+      "description": "在状态允许的最后一年，拼尽全力不留遗憾。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 9
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 7
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你在退役战打出了全场最佳。"
+        ],
+        "failureMessages": [
+          "谢幕战差一点就是冠军，但你已经笑了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "linger",
+      "label": "坚持到底",
+      "description": "只要还能握住鼠标，就继续打。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 9
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你打到了医生严令禁止的那一天。"
+        ],
+        "failureMessages": [
+          "身体最终替你做下了决定。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "FLAG",
+          "flagId": "wrist-injury",
+          "expected": true
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 40
+        }
+      ]
+    }
+  ]
+}

@@ -20,6 +20,7 @@ export class SaveContractService implements PlayerContractService {
     private readonly conditions: ConditionEvaluator,
     private readonly context: (profile: PlayerProfile) => ConditionContext,
     private readonly teamTier: (teamId: string) => TeamTier | undefined,
+    private readonly allowExceptionalFirstContract: (profile: PlayerProfile, terms: ContractTerms) => boolean = () => false,
   ) {
     this.currentContracts = [...contracts];
   }
@@ -31,7 +32,7 @@ export class SaveContractService implements PlayerContractService {
     const active = this.activeFor(input.profile.id);
     if (active) return { operation: 'SIGN', profile: input.profile, contract: active, previousContract: active, fee: 0, reason: 'ALREADY_SIGNED' };
     const isFirstContract = input.profile.career.teamHistory.length === 0 && input.profile.currentContractId === null && !this.currentContracts.some((contract) => contract.playerId === input.profile.id);
-    if (isFirstContract && this.teamTier(input.terms.teamId) !== 'T3') return { operation: 'SIGN', profile: input.profile, reason: 'FIRST_CONTRACT_REQUIRES_T3' };
+    if (isFirstContract && this.teamTier(input.terms.teamId) !== 'T3' && !this.allowExceptionalFirstContract(input.profile, input.terms)) return { operation: 'SIGN', profile: input.profile, reason: 'FIRST_CONTRACT_REQUIRES_T3' };
     const contract = this.createContract(input.profile.id, input.terms, input.occurredAt);
     this.replace(null, contract);
     return { operation: 'SIGN', profile: this.withContract(input.profile, contract), contract, previousContract: null, fee: 0 };

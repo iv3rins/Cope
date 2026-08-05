@@ -1,0 +1,117 @@
+{
+  "id": "lone-hero-anger",
+  "worldlineId": "lone-hero",
+  "title": "红怒临界",
+  "description": "关键回合里队友连续失误，你的怒火几乎压不住。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 99,
+  "options": [
+    {
+      "id": "vent",
+      "label": "当场发作",
+      "description": "释放情绪，但你与队友的关系出现裂痕。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "你把耳机摔在桌上，吼出了积压的不满。"
+        ],
+        "failureMessages": [
+          "争执让训练室陷入沉默。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "swallow",
+      "label": "咽下怒火",
+      "description": "把情绪吞进肚子，维持队内氛围。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你深吸一口气，继续下一回合。"
+        ],
+        "failureMessages": [
+          "沉默的愤怒在胸口烧了一整晚。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 58
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 15
+        }
+      ]
+    }
+  ]
+}

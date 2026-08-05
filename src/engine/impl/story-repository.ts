@@ -89,6 +89,7 @@ export class StoryRepositoryImpl implements StoryEventDirectory {
     if (value.type === 'TEAM') return typeof value.teamId === 'string' && value.teamId.length > 0;
     if (value.type === 'WORLDLINE') return typeof value.worldlineId === 'string' && value.worldlineId.length > 0;
     if (value.type === 'COMPLETED_EVENT') return typeof value.eventId === 'string' && value.eventId.length > 0;
+    if (value.type === 'CONTRACT_ENDS_WITHIN') return typeof value.days === 'number' && Number.isFinite(value.days) && value.days >= 0;
     if (value.type === 'ACTIVE_CONTRACT' || value.type === 'FREE_AGENCY' || value.type === 'TRANSFER_WINDOW' || value.type === 'TRANSFER_OFFER') return typeof value.expected === 'boolean';
     if (value.type === 'TEAM_VRS_RANK' || value.type === 'RATING_STREAK' || value.type === 'ADVANCED_MAPS' || value.type === 'TOP20_RANK') return this.validRange(value);
     if (value.type === 'GAME_MODE') return Array.isArray(value.modes) && value.modes.length > 0 && value.modes.every((mode) => mode === 'HARDCORE' || mode === 'POWER_FANTASY');
@@ -109,6 +110,14 @@ export class StoryRepositoryImpl implements StoryEventDirectory {
     if (value.type === 'ATTRIBUTE_CHANGE') return ['AIM', 'GAME_SENSE', 'LEADERSHIP', 'CLUTCH', 'CONSISTENCY', 'TEAM_CONFLICT'].includes(String(value.attribute)) && Number.isFinite(value.delta);
     if (value.type === 'PLAYER_STAT_CHANGE') return ['MORALE', 'ENERGY', 'BALANCE', 'STRESS', 'RATING2'].includes(String(value.stat)) && Number.isFinite(value.delta);
     if (value.type === 'NARRATIVE_METRIC_CHANGE') return this.isNarrativeMetric(String(value.metric)) && Number.isFinite(value.delta);
+    if (value.type === 'CONTRACT_RENEWAL') {
+      const lengthMonths = value.lengthMonths;
+      const salaryMultiplier = value.salaryMultiplier;
+      const buyoutMultiplier = value.buyoutMultiplier;
+      return typeof lengthMonths === 'number' && Number.isSafeInteger(lengthMonths) && lengthMonths > 0 && lengthMonths <= 120
+        && typeof salaryMultiplier === 'number' && Number.isFinite(salaryMultiplier) && salaryMultiplier > 0 && salaryMultiplier <= 10
+        && typeof buyoutMultiplier === 'number' && Number.isFinite(buyoutMultiplier) && buyoutMultiplier >= 0 && buyoutMultiplier <= 10;
+    }
     if (value.type === 'FORCE_CONTRACT_TERMINATION') return Array.isArray(value.requirements) && value.requirements.every((item) => this.isCondition(item)) && typeof value.reason === 'string' && typeof value.note === 'string';
     const known = ['TEAM_TRANSFER', 'ROLE_CHANGE', 'WORLDLINE_CHANGE', 'FLAG_ADD', 'FLAG_REMOVE', 'TROPHY_CHANGE', 'CAREER_STAT_CHANGE', 'ADVANCE_STORY', 'TOURNAMENT_INTERVENTION'];
     return known.includes(value.type);

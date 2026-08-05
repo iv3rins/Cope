@@ -1,0 +1,112 @@
+{
+  "id": "grind-machine-habit",
+  "worldlineId": "grind-machine",
+  "title": "习惯成自然",
+  "description": "当年那个被质疑开挂的少年，成了别人眼中的标杆。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "keep-habit",
+      "label": "保持苦修",
+      "description": "把这份自律带到职业生涯的终点。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -7
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -9
+          }
+        ],
+        "successMessages": [
+          "你的作息比闹钟还准，队友都习惯了。"
+        ],
+        "failureMessages": [
+          "苦修的日子还在继续。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "ease-up",
+      "label": "松开一点",
+      "description": "终于学会，生活不止有CS。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你开始偶尔休假、学做饭、交朋友。"
+        ],
+        "failureMessages": [
+          "放松的日子让手感有些生疏。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 70
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 65
+        }
+      ]
+    }
+  ]
+}

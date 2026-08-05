@@ -5,6 +5,8 @@ export interface GameClock {
 
 /** 返回 [0, 1) 的随机值；每次关键掷骰都应写入事件或赛事结果。 */
 export interface RandomSource {
+  /** 可持久化随机源返回已消费次数；旧实现可省略。 */
+  cursor?(): number;
   next(): number;
 }
 

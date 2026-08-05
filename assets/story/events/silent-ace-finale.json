@@ -1,0 +1,107 @@
+{
+  "id": "silent-ace-finale",
+  "worldlineId": "silent-ace",
+  "title": "禅意落幕",
+  "description": "你始终没有学会大声说话，但所有人都听你的。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 93,
+  "options": [
+    {
+      "id": "quiet-exit",
+      "label": "功成身退",
+      "description": "在安静中告别赛场。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 9
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "退役声明只有一行字。"
+        ],
+        "failureMessages": [
+          "有人遗憾你没多说几句。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "keep-calm",
+      "label": "继续沉淀",
+      "description": "把沉默变成一种力量。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你还在用最安静的方式赢比赛。"
+        ],
+        "failureMessages": [
+          "沉淀的岁月也很长。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 80
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 65
+        }
+      ]
+    }
+  ]
+}

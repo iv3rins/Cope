@@ -1,0 +1,16 @@
+{
+  "id": "revenge-squad",
+  "name": "被抛弃者的复仇记",
+  "description": "因理念不合被豪门踢出，怀着怒火搜罗同样被淘汰的弃子，组建复仇者联盟。",
+  "startEventId": "revenge-squad-betrayal",
+  "eventIds": [
+    "revenge-squad-betrayal",
+    "revenge-squad-assemble",
+    "revenge-squad-grudge",
+    "revenge-squad-decision",
+    "revenge-squad-redemption",
+    "revenge-squad-cost",
+    "revenge-squad-climax",
+    "revenge-squad-finale"
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "id": "team-battery-climax",
+  "worldlineId": "team-battery",
+  "title": "大舞台的证明",
+  "description": "决赛的赛点局，教练把最脏的活交给了你。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 94,
+  "options": [
+    {
+      "id": "silent-work",
+      "label": "默默付出",
+      "description": "冲烟、探点、发枪——你做了所有没人记得的事。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 7
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你们赢了，你在角落笑了。"
+        ],
+        "failureMessages": [
+          "胜利的采访没有你的镜头。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "spotlight",
+      "label": "抢一次镜头",
+      "description": "这次，让数据也好看一回。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你打出了生涯最亮的一局。"
+        ],
+        "failureMessages": [
+          "抢镜的代价是队伍的失误。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "CLUB_FAVOR",
+          "minimum": 48
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FORM",
+          "minimum": 55
+        }
+      ]
+    }
+  ]
+}

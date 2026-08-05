@@ -1,0 +1,127 @@
+{
+  "id": "system-core-breakdown",
+  "worldlineId": "system-core",
+  "title": "王朝崩塌",
+  "description": "核心队友接连离队，你的身体也在报警——休赛调养，还是带病坚持？",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 97,
+  "options": [
+    {
+      "id": "sabbatical",
+      "label": "休赛一年",
+      "description": "放下一切调养身心，接受被新人取代的风险。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你宣布暂时离开赛场。"
+        ],
+        "failureMessages": [
+          "休赛期你的名字渐渐被遗忘。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-sick",
+      "label": "带病坚持",
+      "description": "撑着病体留在场上，赌自己能撑过去。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 16
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你咬着牙打完了整个赛季。"
+        ],
+        "failureMessages": [
+          "身体在赛季末彻底垮掉。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 70
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 45
+        }
+      ]
+    }
+  ]
+}

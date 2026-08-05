@@ -59,6 +59,9 @@ export interface StandInLedgerEntry {
 
 export interface CareerGameState {
   readonly schemaVersion: number;
+  readonly randomSeed?: string;
+  readonly randomCursor?: number;
+  readonly talentTier?: 'GENIUS' | 'ORDINARY';
   readonly savedAt: string;
   readonly currentDate: string;
   readonly season: number;

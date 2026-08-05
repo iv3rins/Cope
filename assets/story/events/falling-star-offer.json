@@ -1,0 +1,122 @@
+{
+  "id": "falling-star-offer",
+  "worldlineId": "falling-star",
+  "title": "高薪诱惑",
+  "description": "一支豪门开出天价合同，但你要离开把你培养成MVP的体系。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 99,
+  "options": [
+    {
+      "id": "leave",
+      "label": "接受高薪",
+      "description": "为了更高的薪水离开舒适区。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": 2000
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "转会官宣，旧队友的眼神有些复杂。"
+        ],
+        "failureMessages": [
+          "谈判中的不愉快让离开变得尴尬。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay",
+      "label": "留在体系",
+      "description": "拒绝诱惑，继续留在熟悉的环境。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -500
+          }
+        ],
+        "successMessages": [
+          "你留了下来，队伍松了口气。"
+        ],
+        "failureMessages": [
+          "经纪人直呼你错过了一个时代。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 25
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "BALANCE",
+          "minimum": 800
+        }
+      ]
+    }
+  ]
+}

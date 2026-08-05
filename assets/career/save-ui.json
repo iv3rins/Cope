@@ -11,5 +11,11 @@
     "missingId": "请先填写游戏 ID。",
     "missingSave": "没有找到该游戏 ID 的生涯存档。",
     "failure": "重开生涯失败：{message}"
+  },
+  "existing": {
+    "title": "{gameId} 已有生涯存档",
+    "description": "你可以继续现有生涯，或使用当前设置与随机种子重新开始。重新开始会覆盖原存档。",
+    "continueLabel": "继续生涯",
+    "restartLabel": "重新开始"
   }
 }

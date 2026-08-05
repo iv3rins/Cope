@@ -6,7 +6,7 @@ import type { CareerGameState, CareerGameStateRepository } from './save-state';
 import type { TournamentAdvanceResult, TournamentEdition, TournamentResult, TournamentStandInAssignment, TournamentStandInOffer } from '../hltv/tournament';
 import type { TransferOffer, TransferTargetView } from '../hltv/transfer-targets';
 import type { RankingSource } from '../hltv/team';
-import type { DailyActionService } from './daily-action';
+import type { DailyActionDefinition, DailyActionService } from './daily-action';
 import type { EconomyTickService } from './economy';
 import type { EventTriggerService } from './event-trigger';
 import type { RetirementSummary, RetirementSummaryService, RetirementService } from './retirement';
@@ -42,6 +42,8 @@ export interface CareerGame {
   advanceAge(years?: number): Promise<AgeProgressionResult>;
   chooseStoryOption(decision: StoryDecision): Promise<StoryDecisionResult>;
   executeDailyAction(actionId: string, randomRoll: number): Promise<PlayerProfile>;
+  /** 返回当前时期可执行的日常行动，供无赛事阶段使用。 */
+  listDailyActions(period: DailyActionDefinition['allowedPeriods'][number]): Promise<readonly DailyActionDefinition[]>;
   /** 触发退役、关闭当前生涯活动并写入最终归档状态。 */
   retire(reason?: string): Promise<PlayerProfile>;
   /** 仅允许在 isRetired=true 后生成最终生涯总结面板。 */

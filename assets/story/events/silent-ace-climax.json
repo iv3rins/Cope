@@ -1,0 +1,112 @@
+{
+  "id": "silent-ace-climax",
+  "worldlineId": "silent-ace",
+  "title": "开口的时刻",
+  "description": "决胜局，队伍需要一个声音，而那个声音只能是你。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 94,
+  "options": [
+    {
+      "id": "shout",
+      "label": "开口指挥",
+      "description": "第一次在赛场喊出战术。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.58,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 9
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你喊完之后，队友愣了半秒，然后赢了。"
+        ],
+        "failureMessages": [
+          "你的声音在关键局破了音。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "demonstrate",
+      "label": "以身作则",
+      "description": "用残局和操作回答所有问题。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你用一打二终结了比赛。"
+        ],
+        "failureMessages": [
+          "胜利没能弥合沟通的裂痕。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 78
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 62
+        }
+      ]
+    }
+  ]
+}

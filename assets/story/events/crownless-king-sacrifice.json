@@ -1,0 +1,121 @@
+{
+  "id": "crownless-king-sacrifice",
+  "worldlineId": "crownless-king",
+  "title": "核心地位的代价",
+  "description": "教练建议你兼任指挥，用脑子赢下决赛，但那会削弱你的个人数据。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 97,
+  "options": [
+    {
+      "id": "become-igl",
+      "label": "转任指挥",
+      "description": "牺牲个人数据，掌控全局节奏。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ROLE_CHANGE",
+            "role": "IGL"
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你开始用另一种方式赢比赛。"
+        ],
+        "failureMessages": [
+          "指挥分散了你的枪感。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stay-rifler",
+      "label": "死守枪位",
+      "description": "相信自己的枪就是夺冠的答案。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 11
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你拒绝了指挥的位置。"
+        ],
+        "failureMessages": [
+          "决赛的阴影继续笼罩。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 50
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 55
+        }
+      ]
+    }
+  ]
+}

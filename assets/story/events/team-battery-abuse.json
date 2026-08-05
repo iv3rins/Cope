@@ -1,0 +1,117 @@
+{
+  "id": "team-battery-abuse",
+  "worldlineId": "team-battery",
+  "title": "舆论毒舌",
+  "description": "你的战绩常常是8-18，弹幕和评论区铺天盖地地骂你\"水货\"。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 99,
+  "options": [
+    {
+      "id": "ignore",
+      "label": "无视舆论",
+      "description": "相信懂的人自然懂。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你关掉了所有社交软件。"
+        ],
+        "failureMessages": [
+          "恶评还是会钻进你的耳朵。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "fight-back",
+      "label": "下场回击",
+      "description": "忍不住和黑粉对线。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -7
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 3
+          }
+        ],
+        "successMessages": [
+          "你和黑粉吵了整整一夜。"
+        ],
+        "failureMessages": [
+          "俱乐部发来警告：别在公共平台发言。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "TEAM_STATUS",
+          "minimum": 20
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 10
+        }
+      ]
+    }
+  ]
+}

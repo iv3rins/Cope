@@ -75,6 +75,11 @@ export interface ContractCondition extends ConditionBase {
   readonly expected: boolean;
 }
 
+export interface ContractEndsWithinCondition extends ConditionBase {
+  readonly type: 'CONTRACT_ENDS_WITHIN';
+  readonly days: number;
+}
+
 export interface FreeAgencyCondition extends ConditionBase {
   readonly type: 'FREE_AGENCY';
   readonly expected: boolean;
@@ -132,7 +137,7 @@ export interface CompositeCondition extends ConditionBase {
   readonly conditions: readonly EventCondition[];
 }
 
-export type EventCondition = AttributeCondition | PlayerStatCondition | NarrativeMetricCondition | AgeCondition | PlayerOriginRegionCondition | PlayerRoleCondition | FlagCondition | TeamCondition | WorldlineCondition | CompletedEventCondition | ContractCondition | FreeAgencyCondition | TransferWindowCondition | TransferOfferCondition | TeamVrsRankCondition | RatingStreakCondition | AdvancedMapsCondition | Top20RankCondition | GameModeCondition | RandomCondition | CompositeCondition;
+export type EventCondition = AttributeCondition | PlayerStatCondition | NarrativeMetricCondition | AgeCondition | PlayerOriginRegionCondition | PlayerRoleCondition | FlagCondition | TeamCondition | WorldlineCondition | CompletedEventCondition | ContractCondition | ContractEndsWithinCondition | FreeAgencyCondition | TransferWindowCondition | TransferOfferCondition | TeamVrsRankCondition | RatingStreakCondition | AdvancedMapsCondition | Top20RankCondition | GameModeCondition | RandomCondition | CompositeCondition;
 
 /** 条件求值所需的完整上下文，未提供的目标必须返回不可满足而非静默读取玩家。 */
 export interface ConditionContext {

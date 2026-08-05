@@ -75,6 +75,12 @@ export class CareerGameImpl implements CareerGame {
   }
 
   public async listTransferTargets(): Promise<readonly TransferTargetView[]> {
+    const result = await this.listTransferTargetsInternal();
+    await this.save();
+    return result;
+  }
+
+  private async listTransferTargetsInternal(): Promise<readonly TransferTargetView[]> {
     const service = this.runtime.transferTargets;
     if (!service) return [];
     const envelope = await this.requireSave();
@@ -448,6 +454,18 @@ export class CareerGameImpl implements CareerGame {
       }
     }
     for (const effect of result.appliedEffects) {
+      if (effect.type !== 'CONTRACT_RENEWAL') continue;
+      const current = player.currentContractId ? contracts.find((contract) => contract.id === player.currentContractId && contract.status === 'ACTIVE') : undefined;
+      if (!current) continue;
+      const renewalBase = Date.parse(current.endsAt) > Date.parse(envelope.state.currentDate) ? current.endsAt : envelope.state.currentDate;
+      const endsAt = this.contractEndDateByMonths(renewalBase, effect.lengthMonths);
+      const renewal = await contractService.renew({ profile: player, contractId: current.id, terms: { endsAt, salaryPerMonth: Math.round(current.salaryPerMonth * effect.salaryMultiplier), buyoutAmount: Math.round(current.buyoutAmount * effect.buyoutMultiplier) }, occurredAt: envelope.state.currentDate });
+      if ('contract' in renewal && !('reason' in renewal)) {
+        player = renewal.profile;
+        contracts = [...contractService.snapshot];
+      }
+    }
+    for (const effect of result.appliedEffects) {
       if (effect.type !== 'TEAM_TRANSFER') continue;
       const now = envelope.state.currentDate;
       const offer = effect.offerRef === 'CURRENT_TRANSFER_OFFER' ? consumedOffer : null;
@@ -497,6 +515,13 @@ export class CareerGameImpl implements CareerGame {
     if (!story) return [];
     const envelope = await this.requireSave();
     return story.findAvailableEvents({ profile: envelope.state.player, ...input, facts: this.storyFacts(envelope.state) });
+  }
+
+  public async listDailyActions(period: import('../daily-action').DailyActionDefinition['allowedPeriods'][number]): Promise<readonly import('../daily-action').DailyActionDefinition[]> {
+    const service = this.runtime.dailyActions ?? this.dependencies.dailyActions;
+    const envelope = await this.requireSave();
+    this.assertActive(envelope.state.player);
+    return service.listAvailable({ player: envelope.state.player, period });
   }
 
   public async executeDailyAction(actionId: string, randomRoll: number): Promise<PlayerProfile> {
@@ -745,7 +770,11 @@ export class CareerGameImpl implements CareerGame {
   private copy<T>(value: T): T { return JSON.parse(JSON.stringify(value)) as T; }
   private async requireOriginRule(region: PlayerProfile['originRegion']): Promise<RegionOriginRule> { const rule = await this.runtime.progressionRules?.findOriginRule(region); if (!rule) throw new CareerGameConfigurationError(`RegionOriginRule for ${region}`); return rule; }
   private async requireSave(): Promise<CareerSaveEnvelope> { const value = await this.dependencies.stateRepository.load(this.dependencies.playerId); if (!value) throw new Error(`No career save exists for player ${this.dependencies.playerId}.`); return value; }
-  private async saveEnvelope(envelope: CareerSaveEnvelope): Promise<void> { await this.dependencies.stateRepository.save(this.dependencies.playerId, envelope); }
+  private async saveEnvelope(envelope: CareerSaveEnvelope): Promise<void> {
+    const cursor = this.runtime.random?.cursor?.();
+    const state = cursor === undefined ? envelope.state : { ...envelope.state, randomCursor: cursor };
+    await this.dependencies.stateRepository.save(this.dependencies.playerId, { ...envelope, state });
+  }
   private assertActive(player: PlayerProfile): void { if (player.isRetired) throw new Error('This career is retired and can no longer advance.'); }
   private assertRoll(roll: number): void { if (!Number.isFinite(roll) || roll < 0 || roll >= 1) throw new RangeError('randomRoll must be a finite number in [0, 1).'); }
   private nextRoll(): number {

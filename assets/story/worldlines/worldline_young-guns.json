@@ -1,0 +1,16 @@
+{
+  "id": "young-guns",
+  "name": "横扫千军的少年天才",
+  "description": "16岁被发掘，一上赛场就以极具侵略性的打法暴打老将，出道即巅峰，被舆论与名利包围。",
+  "startEventId": "young-guns-debut",
+  "eventIds": [
+    "young-guns-debut",
+    "young-guns-hype",
+    "young-guns-coach",
+    "young-guns-peak",
+    "young-guns-future",
+    "young-guns-cost",
+    "young-guns-climax",
+    "young-guns-finale"
+  ]
+}

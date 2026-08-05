@@ -1,0 +1,16 @@
+{
+  "id": "late-bloomer",
+  "name": "十载饮冰的老将",
+  "description": "天赋算不上顶级，熬过无数次决赛失利、队内内讧甚至被豪门踢掉，才迎来迟来的加冕。",
+  "startEventId": "late-bloomer-start",
+  "eventIds": [
+    "late-bloomer-start",
+    "late-bloomer-blow",
+    "late-bloomer-mentor",
+    "late-bloomer-prime",
+    "late-bloomer-crown",
+    "late-bloomer-cost",
+    "late-bloomer-climax",
+    "late-bloomer-finale"
+  ]
+}

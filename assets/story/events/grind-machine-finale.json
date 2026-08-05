@@ -1,0 +1,102 @@
+{
+  "id": "grind-machine-finale",
+  "worldlineId": "grind-machine",
+  "title": "习惯的传承",
+  "description": "当年的质疑者早已闭嘴，你的训练表成了新的传说。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 93,
+  "options": [
+    {
+      "id": "hand-down",
+      "label": "传给新人",
+      "description": "把一万小时的方法论写下来，教给他们。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.68,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你的训练笔记被抢着复印。"
+        ],
+        "failureMessages": [
+          "没人能复刻你的十年。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "rest",
+      "label": "享受生活",
+      "description": "终于可以睡个懒觉了。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.74,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 9
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "退役后的第一件事：关掉闹钟。"
+        ],
+        "failureMessages": [
+          "戒掉自律比自律更难。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 78
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 70
+        }
+      ]
+    }
+  ]
+}

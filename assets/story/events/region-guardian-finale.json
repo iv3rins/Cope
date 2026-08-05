@@ -1,0 +1,112 @@
+{
+  "id": "region-guardian-finale",
+  "worldlineId": "region-guardian",
+  "title": "星火燎原",
+  "description": "你守了一辈子的赛区，终于长出了自己的大树。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 93,
+  "options": [
+    {
+      "id": "witness",
+      "label": "见证崛起",
+      "description": "看着家乡的队伍走向世界，你比谁都骄傲。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 7
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你退役那天，全赛区都在送别。"
+        ],
+        "failureMessages": [
+          "荣耀属于年轻人，你退到了幕后。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "keep-guard",
+      "label": "继续守望",
+      "description": "只要还能打，就再守一年。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 7
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -9
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你又签了一年。"
+        ],
+        "failureMessages": [
+          "守望的日子看不到尽头。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAN_REPUTATION",
+          "minimum": 65
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 65
+        }
+      ]
+    }
+  ]
+}

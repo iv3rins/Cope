@@ -1,0 +1,16 @@
+{
+  "id": "system-core",
+  "name": "战术解构者",
+  "description": "像精密仪器一样极少犯错，帮助队伍建立王朝，但追求完美的性格带来长期焦虑与健康警报。",
+  "startEventId": "system-core-precision",
+  "eventIds": [
+    "system-core-precision",
+    "system-core-pressure",
+    "system-core-dynasty",
+    "system-core-breakdown",
+    "system-core-legacy",
+    "system-core-cost",
+    "system-core-climax",
+    "system-core-finale"
+  ]
+}

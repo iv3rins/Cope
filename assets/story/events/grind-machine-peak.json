@@ -1,0 +1,169 @@
+{
+  "id": "grind-machine-peak",
+  "worldlineId": "grind-machine",
+  "title": "纪律兑现",
+  "description": "关键时刻，一万小时的肌肉记忆替你做出了最冷静的选择。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 97,
+  "options": [
+    {
+      "id": "execute",
+      "label": "冷酷执行",
+      "description": "相信纪律，永远站该站的位置。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.72,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你像机器一样终结了比赛，解说反复回放你的站位。"
+        ],
+        "failureMessages": [
+          "执行失误时，纪律的漏洞格外刺眼。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "improvise",
+      "label": "即兴发挥",
+      "description": "偶尔也相信一次直觉。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你赌了一把，赌赢了。"
+        ],
+        "failureMessages": [
+          "赌徒式的操作让你心有余悸。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "break-free",
+      "label": "释放一次天性",
+      "description": "自律了太久，你想试试不按剧本打一天。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "rule-breaker"
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "rule-breaker"
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "那天你混烟、干拉、打出了久违的野性。"
+        ],
+        "failureMessages": [
+          "野性的代价是纪律的崩盘。"
+        ],
+        "successNextEventId": "rule-breaker-style",
+        "failureNextEventId": "rule-breaker-style"
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 65
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 62
+        }
+      ]
+    }
+  ]
+}

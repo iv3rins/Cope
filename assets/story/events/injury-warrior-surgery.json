@@ -1,0 +1,127 @@
+{
+  "id": "injury-warrior-surgery",
+  "worldlineId": "injury-warrior",
+  "title": "手术之后",
+  "description": "康复期的每一次握拳都在告诉你：巅峰回不去了。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 99,
+  "options": [
+    {
+      "id": "rehab",
+      "label": "配合康复",
+      "description": "老老实实做理疗，接受缓慢的恢复。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你每天泡在理疗室，手腕一点点找回知觉。"
+        ],
+        "failureMessages": [
+          "恢复的速度让你心急如焚。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "rush-back",
+      "label": "提前复出",
+      "description": "队里需要你，你不能缺席。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "你提前三个月回到了赛场。"
+        ],
+        "failureMessages": [
+          "复出首战，你的手腕再次报警。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "FLAG",
+          "flagId": "wrist-injury",
+          "expected": true
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 55
+        }
+      ]
+    }
+  ]
+}

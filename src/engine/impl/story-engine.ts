@@ -197,6 +197,9 @@ export class StoryEngineImpl implements StoryEngine {
           break;
         case 'TOURNAMENT_INTERVENTION':
           throw new Error('Tournament interventions require a tournament event gateway.');
+        case 'CONTRACT_RENEWAL':
+          // Contract lifecycle is finalized by CareerGame after this decision.
+          break;
         case 'FORCE_CONTRACT_TERMINATION':
           // Contract lifecycle is finalized by CareerGame after this decision.
           break;

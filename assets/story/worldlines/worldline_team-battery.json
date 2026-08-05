@@ -1,0 +1,16 @@
+{
+  "id": "team-battery",
+  "name": "团队的隐形干电池",
+  "description": "永远在发枪、丢闪、为队伍牺牲数据，被外界骂作水货，但队内核心知道没有你就会崩盘。",
+  "startEventId": "team-battery-sacrifice",
+  "eventIds": [
+    "team-battery-sacrifice",
+    "team-battery-abuse",
+    "team-battery-loyalty",
+    "team-battery-demand",
+    "team-battery-legacy",
+    "team-battery-cost",
+    "team-battery-climax",
+    "team-battery-finale"
+  ]
+}

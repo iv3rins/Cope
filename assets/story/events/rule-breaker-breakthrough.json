@@ -1,0 +1,112 @@
+{
+  "id": "rule-breaker-breakthrough",
+  "worldlineId": "rule-breaker",
+  "title": "历史突破",
+  "description": "你的风格终于为弱势赛区带来了历史性的突破。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 98,
+  "options": [
+    {
+      "id": "push",
+      "label": "乘胜追击",
+      "description": "趁着势头继续冲击更高荣誉。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "整个赛区都在为你欢呼。"
+        ],
+        "failureMessages": [
+          "势头没能延续到下一站。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "pace",
+      "label": "保持节奏",
+      "description": "赢下历史性一战后稳住心态。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你平静地庆祝，然后回去训练。"
+        ],
+        "failureMessages": [
+          "有人觉得你不够兴奋。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 35
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 62
+        }
+      ]
+    }
+  ]
+}

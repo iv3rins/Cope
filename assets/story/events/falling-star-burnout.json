@@ -1,0 +1,130 @@
+{
+  "id": "falling-star-burnout",
+  "worldlineId": "falling-star",
+  "title": "心理衰竭",
+  "description": "太早到达顶峰之后，你对比赛失去了热情，训练变成煎熬。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 98,
+  "options": [
+    {
+      "id": "push-through",
+      "label": "硬撑下去",
+      "description": "告诉自己这是职业，必须打。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你机械地打完每一场。"
+        ],
+        "failureMessages": [
+          "burnout让你的操作完全变形。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "reset",
+      "label": "强制休息",
+      "description": "给自己放一个长假，离开赛场。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 7
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_STATUS",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你关掉了所有直播和训练软件。"
+        ],
+        "failureMessages": [
+          "缺席让队伍不得不找替补。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [
+    {
+      "type": "FLAG_ADD",
+      "flagId": "burnout",
+      "flag": {
+        "id": "burnout",
+        "name": "心理衰竭",
+        "category": "MENTAL",
+        "metadata": {
+          "trigger": "falling-star"
+        }
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 40
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 35
+        }
+      ]
+    }
+  ]
+}

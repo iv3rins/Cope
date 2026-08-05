@@ -46,6 +46,13 @@ export interface ForceContractTerminationEffect {
   readonly note: string;
 }
 
+export interface ContractRenewalEffect {
+  readonly type: 'CONTRACT_RENEWAL';
+  readonly lengthMonths: number;
+  readonly salaryMultiplier: number;
+  readonly buyoutMultiplier: number;
+}
+
 export interface ContractTerminationResult {
   readonly profile: PlayerProfile;
   readonly contract: PlayerContract;
@@ -89,7 +96,6 @@ export interface PlayerContractRepository {
 
 /** 合同服务只处理合同状态与选手离队状态，不负责 UI 弹窗或转会市场匹配。 */
 export interface PlayerContractService {
-  /** Current immutable contract view used by the save aggregate after an operation. */
   readonly snapshot: readonly PlayerContract[];
   /** 首次签约；已有 ACTIVE 合同时必须拒绝。 */
   sign(input: { readonly profile: PlayerProfile; readonly terms: ContractTerms; readonly occurredAt: string }): Promise<ContractOperationResponse>;

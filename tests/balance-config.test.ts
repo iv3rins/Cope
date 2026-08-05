@@ -41,18 +41,25 @@ function sampleInput(players: readonly MatchPlayerSnapshot[], randomRoll = 0.5):
 test('balance 配置 JSON 可加载并通过 schema 校验', async () => {
   const payload = JSON.parse(await readFile(join(root, 'assets/balance/performance.json'), 'utf8')) as unknown;
   const config = validateBalanceConfig(payload);
-  assert.equal(config.schemaVersion, 1);
+  assert.equal(config.schemaVersion, 2);
   assert.equal(config.prodigy.partialProbability, 0.001);
-  assert.equal(config.prodigy.almostAllProbability, 0.0005);
+  assert.equal(config.talent.geniusProbability, 0.5);
+  assert.equal(config.talent.genius.storylines.length, 8, '天才池应含 8 条故事线');
+  assert.equal(config.talent.ordinary.storylines.length, 8, '平凡池应含 8 条故事线');
+  assert.equal(config.talent.maxedStartContracts.T1.role, 'SUBSTITUTE');
+  assert.equal(config.talent.powerFantasyHighTierProbability, 0.25);
   assert.ok(config.rating.hotStreak.ceiling >= 1.5, '爆种上限应允许 1.5+ 的单场表现');
   assert.ok(config.rating.aggregateCeiling < config.rating.hotStreak.ceiling, '全年聚合上限应低于单场爆种上限');
 });
 
 test('balance 配置校验拒绝非法载荷', () => {
-  assert.throws(() => validateBalanceConfig({ schemaVersion: 2, rating: {}, prodigy: {} }), /schemaVersion/);
-  assert.throws(() => validateBalanceConfig({ schemaVersion: 1, rating: { ...DEFAULT_BALANCE_CONFIG.rating, base: 'x' }, prodigy: DEFAULT_BALANCE_CONFIG.prodigy }), /rating\.base/);
-  assert.throws(() => validateBalanceConfig({ schemaVersion: 1, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: { ...DEFAULT_BALANCE_CONFIG.prodigy, almostAllProbability: 0.9 } }), /almostAllProbability/);
-  assert.throws(() => validateBalanceConfig({ schemaVersion: 1, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: { ...DEFAULT_BALANCE_CONFIG.prodigy, almostAllAttributes: ['teamConflict'] } }), /unknown attribute/);
+  assert.throws(() => validateBalanceConfig({ schemaVersion: 1, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: DEFAULT_BALANCE_CONFIG.prodigy, talent: DEFAULT_BALANCE_CONFIG.talent }), /schemaVersion/);
+  assert.throws(() => validateBalanceConfig({ schemaVersion: 2, rating: { ...DEFAULT_BALANCE_CONFIG.rating, base: 'x' }, prodigy: DEFAULT_BALANCE_CONFIG.prodigy, talent: DEFAULT_BALANCE_CONFIG.talent }), /rating\.base/);
+  assert.throws(() => validateBalanceConfig({ schemaVersion: 2, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: { ...DEFAULT_BALANCE_CONFIG.prodigy, almostAllProbability: 0.9 }, talent: DEFAULT_BALANCE_CONFIG.talent }), /almostAllProbability/);
+  assert.throws(() => validateBalanceConfig({ schemaVersion: 2, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: { ...DEFAULT_BALANCE_CONFIG.prodigy, partialAttributeCount: 1, almostAllAttributes: ['teamConflict'] }, talent: DEFAULT_BALANCE_CONFIG.talent }), /unknown attribute/);
+  assert.throws(() => validateBalanceConfig({ schemaVersion: 2, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: DEFAULT_BALANCE_CONFIG.prodigy, talent: { ...DEFAULT_BALANCE_CONFIG.talent, geniusProbability: 2 } }), /geniusProbability/);
+  assert.throws(() => validateBalanceConfig({ schemaVersion: 2, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: DEFAULT_BALANCE_CONFIG.prodigy, talent: { ...DEFAULT_BALANCE_CONFIG.talent, maxedStartContracts: { ...DEFAULT_BALANCE_CONFIG.talent.maxedStartContracts, T1: { ...DEFAULT_BALANCE_CONFIG.talent.maxedStartContracts.T1, lengthMonths: 0 } } } }), /maxedStartContracts\.T1/);
+  assert.throws(() => validateBalanceConfig({ schemaVersion: 2, rating: DEFAULT_BALANCE_CONFIG.rating, prodigy: DEFAULT_BALANCE_CONFIG.prodigy, talent: { ...DEFAULT_BALANCE_CONFIG.talent, powerFantasyHighTierProbability: 2 } }), /powerFantasyHighTierProbability/);
 });
 
 test('爆种时单场 rating 可达 1.5 量级（突破正常上界，聚合上限仍封顶）', async () => {

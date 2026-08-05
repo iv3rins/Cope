@@ -1,0 +1,117 @@
+{
+  "id": "injury-warrior-pain",
+  "worldlineId": "injury-warrior",
+  "title": "疼痛回归",
+  "description": "每一场比赛后手腕都会剧烈疼痛，你的训练量必须减半。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 98,
+  "options": [
+    {
+      "id": "physio",
+      "label": "物理治疗",
+      "description": "把治疗当成训练的一部分。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -200
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你的行李箱里永远装着理疗仪。"
+        ],
+        "failureMessages": [
+          "治疗费用让钱包有些吃紧。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "grin-bear",
+      "label": "强忍训练",
+      "description": "疼就疼吧，比赛不等人。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FORM",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 11
+          }
+        ],
+        "successMessages": [
+          "你咬着牙完成了全部训练量。"
+        ],
+        "failureMessages": [
+          "当晚你疼得睡不着觉。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 50
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 40
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "description": "赛事表现与出生天赋平衡参数。调平衡只改本文件，无需改代码。",
+  "schemaVersion": 2,
+  "description": "赛事表现、开局天赋分层与故事线池。调平衡只改本文件，无需改代码。",
   "rating": {
     "base": 0.72,
     "abilityDivisor": 210,
@@ -9,23 +9,42 @@
     "clampMinimum": 0.55,
     "clampMaximum": 1.75,
     "aggregateCeiling": 1.35,
-    "hotStreak": {
-      "probability": 0.012,
-      "minimumBoost": 0.35,
-      "maximumBoost": 0.55,
-      "ceiling": 1.65
-    }
+    "hotStreak": { "probability": 0.012, "minimumBoost": 0.35, "maximumBoost": 0.55, "ceiling": 1.65 }
   },
   "prodigy": {
     "partialProbability": 0.001,
     "almostAllProbability": 0.0005,
     "partialAttributeCount": 2,
-    "almostAllAttributes": [
-      "aim",
-      "gameSense",
-      "leadership",
-      "clutch",
-      "consistency"
-    ]
+    "almostAllAttributes": ["aim", "gameSense", "leadership", "clutch", "consistency"]
+  },
+  "talent": {
+    "geniusProbability": 0.5,
+    "genius": {
+      "attributes": {
+        "ENTRY": { "aim": 76, "gameSense": 62, "leadership": 48, "clutch": 64, "consistency": 60, "teamConflict": 18 },
+        "AWP": { "aim": 78, "gameSense": 65, "leadership": 46, "clutch": 70, "consistency": 62, "teamConflict": 17 },
+        "IGL": { "aim": 68, "gameSense": 78, "leadership": 80, "clutch": 62, "consistency": 65, "teamConflict": 14 },
+        "SUPPORT": { "aim": 70, "gameSense": 72, "leadership": 58, "clutch": 60, "consistency": 76, "teamConflict": 13 },
+        "LURK": { "aim": 74, "gameSense": 75, "leadership": 50, "clutch": 72, "consistency": 66, "teamConflict": 16 }
+      },
+      "storylines": [{ "id": "lone-hero", "weight": 1 }, { "id": "young-guns", "weight": 1 }, { "id": "silent-ace", "weight": 1 }, { "id": "version-victim", "weight": 1 }, { "id": "crownless-king", "weight": 1 }, { "id": "falling-star", "weight": 1 }, { "id": "system-core", "weight": 1 }, { "id": "rule-breaker", "weight": 1 }]
+    },
+    "ordinary": {
+      "attributes": {
+        "ENTRY": { "aim": 50, "gameSense": 44, "leadership": 36, "clutch": 44, "consistency": 42, "teamConflict": 26 },
+        "AWP": { "aim": 52, "gameSense": 46, "leadership": 35, "clutch": 49, "consistency": 43, "teamConflict": 25 },
+        "IGL": { "aim": 45, "gameSense": 54, "leadership": 55, "clutch": 43, "consistency": 45, "teamConflict": 23 },
+        "SUPPORT": { "aim": 46, "gameSense": 50, "leadership": 42, "clutch": 42, "consistency": 52, "teamConflict": 21 },
+        "LURK": { "aim": 49, "gameSense": 52, "leadership": 38, "clutch": 51, "consistency": 46, "teamConflict": 24 }
+      },
+      "storylines": [{ "id": "late-bloomer", "weight": 1 }, { "id": "team-battery", "weight": 1 }, { "id": "cyber-cafe-hero", "weight": 1 }, { "id": "revenge-squad", "weight": 1 }, { "id": "region-guardian", "weight": 1 }, { "id": "grind-machine", "weight": 1 }, { "id": "tactical-captain", "weight": 1 }, { "id": "injury-warrior", "weight": 1 }]
+    },
+    "maxedStartTier": ["T2", "T1"],
+    "maxedStartContracts": {
+      "T1": { "salaryPerMonth": 18000, "buyoutAmount": 90000, "lengthMonths": 6, "role": "SUBSTITUTE", "expectedPlaytimePercentage": 35 },
+      "T2": { "salaryPerMonth": 3500, "buyoutAmount": 18000, "lengthMonths": 12, "role": "STARTER", "expectedPlaytimePercentage": 85 }
+    },
+    "powerFantasyGuaranteedMax": true,
+    "powerFantasyHighTierProbability": 0.25
   }
 }

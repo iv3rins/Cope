@@ -59,6 +59,12 @@ export class ConditionEvaluatorImpl implements ConditionEvaluator {
         const active = context.activeContract === undefined ? context.player.currentContractId !== null : context.activeContract !== null;
         return active === condition.expected;
       }
+      case 'CONTRACT_ENDS_WITHIN': {
+        const current = context.currentDate ? Date.parse(context.currentDate) : Number.NaN;
+        const ends = context.activeContract ? Date.parse(context.activeContract.endsAt) : Number.NaN;
+        const remainingDays = (ends - current) / 86400000;
+        return Number.isFinite(remainingDays) && remainingDays >= 0 && remainingDays <= condition.days;
+      }
       case 'FREE_AGENCY':
         return (context.player.currentTeamId === null || context.player.freeAgencyStatus === 'FREE_AGENT') === condition.expected;
       case 'TRANSFER_WINDOW':

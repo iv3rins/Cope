@@ -1,0 +1,112 @@
+{
+  "id": "crownless-king-crown",
+  "worldlineId": "crownless-king",
+  "title": "加冕或遗憾",
+  "description": "生涯尾声，那座奖杯依然近在咫尺又远在天涯。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 96,
+  "options": [
+    {
+      "id": "last-push",
+      "label": "最后一搏",
+      "description": "把一切都押在最后一场决赛。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 7
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你打出了生涯最好的决赛——这次没有失误。"
+        ],
+        "failureMessages": [
+          "奖杯擦肩而过。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "accept-fate",
+      "label": "接受无冕",
+      "description": "与心魔和解，承认自己的伟大不需要一座奖杯证明。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.75,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -2
+          }
+        ],
+        "successMessages": [
+          "你终于放下了那个执念。"
+        ],
+        "failureMessages": [
+          "深夜偶尔还是会梦见那个空枪。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 65
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 70
+        }
+      ]
+    }
+  ]
+}

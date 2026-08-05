@@ -56,6 +56,10 @@ const teams = JSON.parse(await readFile(join(root, 'assets/teams/teams.json'), '
 };
 const ranks = new Map(teams.teams.map((team) => [team.id, team.standings?.bestRank]));
 const regions: readonly CompetitionRegion[] = ['EUROPE', 'AMERICAS', 'ASIA', 'OCEANIA', 'MIDDLE_EAST', 'AFRICA'];
+const manifest = JSON.parse(await readFile(join(root, 'assets/story/manifest.json'), 'utf8')) as { worldlines: string[] };
+const startEventIds = new Set((await Promise.all(manifest.worldlines.map(async (file) => JSON.parse(
+  await readFile(join(root, 'assets/story/worldlines', file), 'utf8'),
+) as { startEventId: string }))).map((worldline) => worldline.startEventId));
 
 const create = (gameId: string, region: CompetitionRegion) => initCareerGame({
   gameId,
@@ -93,7 +97,7 @@ test('六区新档均立即持有 VRS 100 名外 T3 队伍的 ACTIVE 合同', as
     assert.equal(profile.currentTeamTier, 'T3');
     assert.equal(profile.freeAgencyStatus, 'SIGNED');
     assert.deepEqual(profile.career.teamHistory, [profile.currentTeamId]);
-    assert.equal(envelope.state.currentStoryEventId, 'rookie-team-entry');
+    assert.ok(startEventIds.has(envelope.state.currentStoryEventId ?? ''), `currentStoryEventId 应属于某个 worldline 的起始事件：${envelope.state.currentStoryEventId}`);
   }
 });
 

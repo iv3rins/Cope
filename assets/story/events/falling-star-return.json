@@ -1,0 +1,125 @@
+{
+  "id": "falling-star-return",
+  "worldlineId": "falling-star",
+  "title": "复出抉择",
+  "description": "你的状态在下滑，是接受降薪去二三线熬过寒冬，还是在黄金年龄退役？",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 97,
+  "options": [
+    {
+      "id": "demote",
+      "label": "降薪重来",
+      "description": "接受降薪，去二三线队伍重新证明自己。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "late-bloomer"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": -800
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "late-bloomer"
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你背起行囊，从头开始。"
+        ],
+        "failureMessages": [
+          "低级别赛场的节奏让你更加迷茫。"
+        ],
+        "successNextEventId": "late-bloomer-start",
+        "failureNextEventId": "late-bloomer-start"
+      }
+    },
+    {
+      "id": "retire-now",
+      "label": "急流勇退",
+      "description": "在还能留下体面的时候选择离开。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.65,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "退役公告里，你感谢了所有人。"
+        ],
+        "failureMessages": [
+          "深夜你反复问自己：真的甘心吗？"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": [],
+  "conditions": [
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 50
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FORM",
+          "maximum": 45
+        }
+      ]
+    }
+  ]
+}
