@@ -6,6 +6,7 @@ const role = $('#role');
 const helpDialog = $('#helpDialog');
 const retireDialog = $('#retireDialog');
 const top20Dialog = $('#top20Dialog');
+const restartDialog = $('#restartDialog');
 const regionServer = { 中国: '上海 / 35ms', 欧洲: '法兰克福 / 42ms', 北美: '芝加哥 / 55ms', 独联体: '华沙 / 47ms', 南美: '圣保罗 / 68ms', 亚太: '新加坡 / 39ms', 中东: '迪拜 / 48ms', 非洲: '约翰内斯堡 / 62ms' };
 const engineRegions = { 中国: 'ASIA', 欧洲: 'EUROPE', 北美: 'AMERICAS', 独联体: 'EUROPE', 南美: 'AMERICAS', 亚太: 'OCEANIA', 中东: 'MIDDLE_EAST', 非洲: 'AFRICA' };
 const roleData = {
@@ -22,6 +23,30 @@ let deterministicState = 2166136261;
 let teamDirectory = null;
 let careerContent = null;
 let marketContentPromise = null;
+let saveContentPromise = null;
+let restartGameId = null;
+let restartConfig = null;
+let sessionGeneration = 0;
+const pendingTimers = new Set();
+function scheduleSession(callback, delay) {
+  const generation = sessionGeneration;
+  const timer = window.setTimeout(async () => {
+    pendingTimers.delete(timer);
+    if (generation !== sessionGeneration) return;
+    await callback();
+  }, delay);
+  pendingTimers.add(timer);
+  return timer;
+}
+function sessionIsCurrent(generation) { return generation === sessionGeneration; }
+function assertSessionCurrent(generation) {
+  if (!sessionIsCurrent(generation)) throw new Error('当前生涯会话已被重开。');
+}
+function invalidateSession() {
+  sessionGeneration += 1;
+  for (const timer of pendingTimers) window.clearTimeout(timer);
+  pendingTimers.clear();
+}
 const playbackModeNode = $('#playbackMode');
 let tournamentPlaybackMode = localStorage.getItem('cope:tournament-playback') === 'FAST' ? 'FAST' : 'DETAIL';
 if (playbackModeNode) {
@@ -30,6 +55,63 @@ if (playbackModeNode) {
     tournamentPlaybackMode = playbackModeNode.value === 'FAST' ? 'FAST' : 'DETAIL';
     localStorage.setItem('cope:tournament-playback', tournamentPlaybackMode);
   });
+}
+
+async function loadSaveContent() {
+  if (saveContentPromise) return saveContentPromise;
+  saveContentPromise = fetch('assets/career/save-ui.json').then(async (response) => {
+    if (!response.ok) throw new Error('存档操作文案加载失败');
+    const payload = await response.json();
+    if (payload?.schemaVersion !== 1 || typeof payload?.restart?.title !== 'string') throw new Error('存档操作文案格式无效');
+    return payload;
+  });
+  return saveContentPromise;
+}
+
+function currentSetupConfig(gameId = callsign.value.trim()) {
+  return { gameId, realName: lastName.value.trim() || gameId, role: role.value, region: engineRegions[selectedRegion()], mode: selectedCareerMode };
+}
+
+async function openRestartDialog(gameId, config) {
+  const copy = (await loadSaveContent()).restart;
+  const normalizedId = String(gameId || '').trim();
+  if (!normalizedId) { renderStartupError(copy.missingId); return; }
+  const saves = await window.COPEEngine.listGames();
+  if (!saves.includes(normalizedId)) { renderStartupError(copy.missingSave); return; }
+  restartGameId = normalizedId;
+  restartConfig = config;
+  $('#restartEyebrow').textContent = copy.eyebrow;
+  $('#restartTitle').textContent = copy.title;
+  $('#restartDescription').textContent = copy.description.replace('{gameId}', normalizedId);
+  $('#cancelRestart').textContent = copy.cancelLabel;
+  $('#confirmRestart').textContent = copy.confirmLabel;
+  restartDialog.showModal();
+}
+
+async function restartCareer() {
+  const copy = (await loadSaveContent()).restart;
+  const gameId = restartGameId;
+  if (!gameId) throw new Error(copy.missingId);
+  const config = restartConfig ?? currentSetupConfig(gameId);
+  invalidateSession();
+  restartDialog.close();
+  restartGameId = null;
+  restartConfig = null;
+  callsign.value = gameId;
+  lastName.value = config.realName;
+  if (typeof window.COPEEngine.restartGame !== 'function') throw new Error('当前引擎不支持安全重开。');
+  await window.COPEEngine.restartGame(config);
+  const profile = await window.COPEEngine.getProfile();
+  const setup = $('#setup-page');
+  const dashboard = $('#dashboard-page');
+  setup.classList.remove('active');
+  setup.hidden = true;
+  dashboard.hidden = false;
+  dashboard.classList.add('active');
+  await renderProfile(profile);
+  await refreshVrsStatus();
+  await renderTournamentCalendar(profile);
+  await renderCurrentPeriod();
 }
 
 async function loadMarketContent() {
@@ -296,10 +378,14 @@ async function renderTournamentCalendar(profile) {
   return next;
 }
 async function simulateTournament(event, profile) {
+  const generation = sessionGeneration;
   await loadTournamentAssets();
+  assertSessionCurrent(generation);
   setSingleFlowStage();
   const calendar = await window.COPEEngine.startSeason();
+  assertSessionCurrent(generation);
   const next = await window.COPEEngine.getNextTournament();
+  assertSessionCurrent(generation);
   const completed = next ? Math.max(0, calendar.findIndex((item) => item.id === next.id)) : calendar.length;
   const trophy = tournamentAssetPath(event.seriesId);
   $('#eventPeriod').textContent = event.simulationMode === 'SWISS' ? 'MAJOR SWISS' : 'TOURNAMENT';
@@ -312,6 +398,7 @@ async function simulateTournament(event, profile) {
     const situation = ui.eliminationMatch ? '生死局' : ui.advancementMatch ? '晋级局' : `第 ${ui.round || 1} 轮`;
     $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage"><p class="eyebrow">${qualifier ? 'PUBLIC QUALIFIER' : swiss ? 'MAJOR SWISS' : 'FAST MODE'} · ${escapeHtml(event.tier)}</p><div class="tournament-hero"><div><h2>${escapeHtml(event.name)}</h2><p class="event-copy">${escapeHtml(qualificationCopy)} · ${escapeHtml(event.city || '线上赛')} · ${escapeHtml(event.format || 'BO3')} · ${qualifier ? '资格赛比赛过程与结果可见；地图与击杀计入生涯累计，但不计年度 TOP20。' : swiss ? `${situation}，3 胜晋级 / 3 败淘汰。` : '自动推进组赛、淘汰赛与决赛。'}</p>${swiss ? `<div class="swiss-score"><span>胜场 <b>${ui.wins || 0}</b></span><span>负场 <b>${ui.losses || 0}</b></span><strong>${situation}</strong></div>` : ''}</div>${trophy ? `<img class="tournament-mark tournament-trophy" src="${escapeHtml(trophy)}" alt="${escapeHtml(event.name)}赛事奖杯" />` : ''}</div><div class="tournament-run" id="singleTournamentRun"><strong>${qualifier ? '公开预选赛进行中' : swiss ? '等待推进下一轮' : '赛事模拟进行中'}</strong><span>${qualifier ? '晋级后下一步进入正赛；失败则跳过正赛' : swiss ? '每轮结果由统一比赛模拟器生成' : '比赛明细、赛事数据与荣誉将统一结算'}</span><i><em></em></i></div>${swiss ? '<button class="continue-schedule" id="advanceSwissBtn">推进下一轮 →</button>' : ''}</article>`;
   };
+  assertSessionCurrent(generation);
   renderRunning({ mode: event.simulationMode || (event.tier === 'MAJOR' ? 'SWISS' : 'FAST') });
   let advancing = false;
   const advance = async () => {
@@ -320,21 +407,24 @@ async function simulateTournament(event, profile) {
     $('#singleTournamentRun')?.classList.add('is-settling');
     try {
       const progress = await window.COPEEngine.advanceTournament(tournamentPlaybackMode === 'FAST' ? { mode: 'UNTIL_DECISION_OR_COMPLETE' } : { mode: 'NEXT_NODE' });
+      assertSessionCurrent(generation);
       const updated = await window.COPEEngine.getProfile();
+      assertSessionCurrent(generation);
       if (progress.uiData?.eventRequired) {
         const inTournamentEvent = await window.COPEEngine.findCareerEvent('SEASON_END');
+        assertSessionCurrent(generation);
         if (inTournamentEvent) { await renderEvent(inTournamentEvent); return; }
       }
       if (progress.uiData?.qualifier && progress.uiData?.qualified === true) {
         const qualifier = progress.uiData.qualifierPerformance;
         $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card outcome-stage"><p class="eyebrow">QUALIFIER OUTCOME / 预选赛结果</p><h2>${escapeHtml(event.name)}</h2><p class="event-copy">公开预选赛晋级成功。资格赛地图与击杀已计入生涯累计，但不计年度 TOP20，下一步进入正赛。</p><div class="result-grid"><div><span>地图</span><b>${qualifier?.maps ?? '—'}</b></div><div><span>Rating</span><b>${typeof qualifier?.rating === 'number' ? qualifier.rating.toFixed(2) : '—'}</b></div><div><span>击杀</span><b>${qualifier?.kills ?? '—'}</b></div><div><span>结果</span><b>晋级正赛</b></div></div><p class="flow-auto-next">1.5 秒后进入正赛</p></article>`;
-        window.setTimeout(renderCurrentPeriod, 1500);
+        scheduleSession(renderCurrentPeriod, 1500);
         return;
       }
       if (progress.status === 'QUALIFIER_EXIT') {
         const qualifier = progress.uiData?.qualifierPerformance;
         $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card outcome-stage qualification-failed"><p class="eyebrow">QUALIFIER OUTCOME / 预选赛结果</p><h2>${escapeHtml(event.name)}</h2><p class="event-copy">预选赛已经结束。比赛数据保留在资格赛档案中，地图与击杀计入生涯累计，但不计年度 TOP20。</p><div class="result-grid"><div><span>地图</span><b>${qualifier?.maps ?? '—'}</b></div><div><span>Rating</span><b>${typeof qualifier?.rating === 'number' ? qualifier.rating.toFixed(2) : '—'}</b></div><div><span>击杀</span><b>${qualifier?.kills ?? '—'}</b></div><div><span>结果</span><b>止步预选</b></div></div><p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
-        window.setTimeout(renderCurrentPeriod, 1500);
+        scheduleSession(renderCurrentPeriod, 1500);
         return;
       }
       if (progress.status === 'ONGOING') {
@@ -342,7 +432,7 @@ async function simulateTournament(event, profile) {
         advancing = false;
         const swissButton = $('#advanceSwissBtn');
         if (swissButton) swissButton.addEventListener('click', advance, { once: true });
-        else window.setTimeout(advance, tournamentPlaybackMode === 'FAST' ? 0 : 550);
+        else scheduleSession(advance, tournamentPlaybackMode === 'FAST' ? 0 : 550);
         return;
       }
       const result = progress.result;
@@ -351,23 +441,29 @@ async function simulateTournament(event, profile) {
       const rating = performance?.rating ?? 0;
       const honor = result.honors.find((item) => item.playerId === updated.id)?.type;
       const teams = await loadTeamDirectory().catch(() => new Map());
+      assertSessionCurrent(generation);
       const seriesRows = (result.seriesDetails || []).map((series) => `<div class="series-row"><span>${escapeHtml(series.stage)}</span><b>${escapeHtml(series.format)}</b><span>${escapeHtml(teams.get(series.opponentTeamId)?.name || '未知战队')} · ${escapeHtml((series.mapScores || []).join(' / '))}</span></div>`).join('');
       $('#eventContent').innerHTML = `${flowProgress(completed + 1, calendar.length)}<article class="single-flow-card tournament-stage outcome-stage"><p class="eyebrow">TOURNAMENT OUTCOME / 赛事结果</p>${trophy ? `<img class="outcome-trophy" src="${escapeHtml(trophy)}" alt="${escapeHtml(result.eventName)}赛事奖杯" />` : ''}<h2>${escapeHtml(result.eventName)}</h2><p class="event-copy">${escapeHtml(result.placement)} · Rating ${rating.toFixed(2)}${honor ? ` · ${escapeHtml(honor)}` : ''} · 赛事事实已归档。</p><div class="result-grid"><div><span>地图</span><b>${performance?.maps ?? 0}</b></div><div><span>Rating / ADR</span><b>${rating.toFixed(2)} / ${(performance?.adr ?? 0).toFixed(0)}</b></div><div><span>KAST</span><b>${(performance?.kast ?? 0).toFixed(1)}%</b></div><div><span>状态</span><b>${result.title ? '冠军' : '完赛'}</b></div></div>${seriesRows ? `<details class="series-details"><summary>查看比赛明细</summary>${seriesRows}</details>` : ''}<p class="flow-auto-next">1.5 秒后继续赛季流程</p></article>`;
       await renderProfile(updated);
-      window.setTimeout(async () => {
+      assertSessionCurrent(generation);
+      scheduleSession(async () => {
+        assertSessionCurrent(generation);
         const postEvent = await window.COPEEngine.findCareerEvent('POST_TOURNAMENT');
+        assertSessionCurrent(generation);
         if (postEvent) { await renderEvent(postEvent); return; }
         await renderTournamentCalendar(updated);
+        assertSessionCurrent(generation);
         await renderCurrentPeriod();
       }, tournamentPlaybackMode === 'FAST' ? 0 : 1500);
     } catch (error) {
+      if (!sessionIsCurrent(generation)) return;
       advancing = false;
       $('#eventContent').insertAdjacentHTML('beforeend', `<p class="event-result failure">${escapeHtml(error.message)}</p>`);
     }
   };
   const swissButton = $('#advanceSwissBtn');
   if (swissButton) swissButton.addEventListener('click', advance, { once: true });
-  else window.setTimeout(advance, tournamentPlaybackMode === 'FAST' ? 0 : 650);
+  else scheduleSession(advance, tournamentPlaybackMode === 'FAST' ? 0 : 650);
 }
 function renderStartupError(message) {
   const errorNode = $('#startupError');
@@ -386,7 +482,7 @@ async function renderNoEvent(message) {
   const tournament = await window.COPEEngine.getNextTournament();
   const profile = await window.COPEEngine.getProfile();
   if (tournament) {
-    window.setTimeout(() => simulateTournament(tournament, profile), 450);
+    scheduleSession(() => simulateTournament(tournament, profile), 450);
     return;
   }
   setSingleFlowStage();
@@ -538,7 +634,7 @@ async function renderCurrentPeriod(resultText = '') {
   if (!tournament) { await renderSeasonReport(); return; }
   renderNoEvent(resultText || '当前时期没有可用事件。');
 }
-async function startSimulation() {
+async function startSimulation(options = {}) {
   const button = $('#playBtn');
   button.disabled = true;
   $('#startupError').hidden = true;
@@ -547,10 +643,11 @@ async function startSimulation() {
     deterministicState = [...callsign.value.trim()].reduce((value, character) => (value * 31 + character.charCodeAt(0)) >>> 0, 2166136261);
     const gameId = callsign.value.trim();
     const savedGames = typeof window.COPEEngine.listGames === 'function' ? await window.COPEEngine.listGames() : [];
-    if (savedGames.includes(gameId) && typeof window.COPEEngine.loadGame === 'function') {
+    const createConfig = options.config ?? currentSetupConfig(gameId);
+    if (options.loadOnly || (!options.forceCreate && savedGames.includes(gameId) && typeof window.COPEEngine.loadGame === 'function')) {
       await window.COPEEngine.loadGame(gameId);
     } else {
-      await window.COPEEngine.createGame({ gameId, realName: lastName.value.trim() || gameId, role: role.value, region: engineRegions[selectedRegion()], mode: selectedCareerMode });
+      await window.COPEEngine.createGame(createConfig);
     }
     const profile = await window.COPEEngine.getProfile();
     const setup = $('#setup-page');
@@ -665,8 +762,26 @@ document.querySelectorAll('.season-tab').forEach((button) => button.remove());
 $('#helpBtn').addEventListener('click', () => helpDialog.showModal());
 $('#closeHelp').addEventListener('click', () => helpDialog.close());
 $('#continueBtn').addEventListener('click', () => $('#career').scrollIntoView({ behavior: 'smooth' }));
-$('#playBtn').addEventListener('click', startSimulation);
-$('#dialogPlay').addEventListener('click', startSimulation);
+$('#playBtn').addEventListener('click', () => startSimulation());
+$('#dialogPlay').addEventListener('click', () => startSimulation());
+$('#restartSetupBtn').addEventListener('click', () => openRestartDialog(callsign.value, currentSetupConfig()));
+$('#restartCareerBtn').addEventListener('click', async () => {
+  const profile = await window.COPEEngine.getProfile();
+  const roles = { ENTRY_FRAGGER: 'ENTRY', AWPER: 'AWP', IGL: 'IGL', SUPPORT: 'SUPPORT', LURKER: 'LURK' };
+  await openRestartDialog(profile.id, { gameId: profile.id, realName: profile.nationality || profile.id, role: roles[profile.role], region: profile.originRegion, mode: profile.difficultyMode });
+});
+$('#closeRestart').addEventListener('click', () => restartDialog.close());
+$('#cancelRestart').addEventListener('click', () => restartDialog.close());
+$('#confirmRestart').addEventListener('click', () => {
+  $('#confirmRestart').disabled = true;
+  restartCareer().catch(async (error) => {
+    const copy = (await loadSaveContent()).restart;
+    const message = copy.failure.replace('{message}', error instanceof Error ? error.message : String(error));
+    if ($('#dashboard-page').hidden) renderStartupError(message); else {
+      $('#eventContent').innerHTML = `<p class="event-result failure">${escapeHtml(message)}</p>`;
+    }
+  }).finally(() => { $('#confirmRestart').disabled = false; });
+});
 $('#closeTop20').addEventListener('click', () => top20Dialog.close());
 $('#retireBtn').addEventListener('click', () => retireDialog.showModal());
 $('#closeRetire').addEventListener('click', () => retireDialog.close());

@@ -30,6 +30,7 @@ import { AssetEventTriggerRuleRepository, EventTriggerServiceImpl } from './engi
 import { CareerGameImpl, CareerGameRuntimeServices } from './engine/impl/career-game';
 import { InMemoryStateRepository } from './engine/impl/in-memory-state-repository';
 import { LocalStorageStateRepository } from './engine/impl/local-storage-state-repository';
+import { SessionGuardedStateRepository } from './engine/impl/session-guarded-state-repository';
 import { PlayerProgressionServiceImpl } from './engine/impl/player-progression-service';
 import { RetirementSummaryServiceImpl } from './engine/impl/retirement-summary-service';
 import { StoryEngineImpl } from './engine/impl/story-engine';
@@ -292,10 +293,13 @@ function browserStateRepository(): import('./engine/save-state').CareerGameState
 
 let currentGame: BrowserCareerGame | null = null;
 let currentGateway: EngineHltvGateway | null = null;
+const sessionGenerations = new Map<string, number>();
+const sessionGeneration = (slotId: string): number => sessionGenerations.get(slotId) ?? 0;
+const supersedeSession = (slotId: string): number => { const next = sessionGeneration(slotId) + 1; sessionGenerations.set(slotId, next); return next; };
 
-async function composeCareerGame(config: BrowserCareerConfig, restoredState: CareerSaveEnvelope | null = null): Promise<BrowserCareerGame> {
+async function composeCareerGame(config: BrowserCareerConfig, restoredState: CareerSaveEnvelope | null = null, generation = sessionGeneration(config.gameId)): Promise<BrowserCareerGame> {
   if (!config.gameId.trim()) throw new Error('Game ID is required.');
-  const stateRepository = browserStateRepository();
+  const stateRepository = new SessionGuardedStateRepository(browserStateRepository(), config.gameId, generation, () => sessionGeneration(config.gameId));
   const progression = new PlayerProgressionServiceImpl(progressionRules);
   const unsignedPlayer = await progression.createProfile({ profile: createBaseProfile(config), difficultyMode: config.mode, originRule: ORIGIN_RULES[config.region], modeRule: MODE_RULES[config.mode] });
   const clock = new BrowserClock();
@@ -471,6 +475,24 @@ async function loadCareerGame(slotId: string): Promise<BrowserCareerGame> {
   return composeCareerGame({ gameId: slotId, realName: envelope.state.player.nationality, role: roleByPlayerRole[envelope.state.player.role], region: envelope.state.player.originRegion, mode: envelope.state.player.difficultyMode }, envelope);
 }
 
+async function restartCareerGame(config: BrowserCareerConfig): Promise<BrowserCareerGame> {
+  const repository = browserStateRepository();
+  const backup = await repository.load(config.gameId);
+  if (!backup) throw new Error(`Career save not found: ${config.gameId}.`);
+  const generation = supersedeSession(config.gameId);
+  await repository.delete(config.gameId);
+  currentGame = null;
+  currentGateway = null;
+  try {
+    return await composeCareerGame(config, null, generation);
+  } catch (error) {
+    const restoredGeneration = supersedeSession(config.gameId);
+    await repository.save(config.gameId, backup);
+    await composeCareerGame(config, backup, restoredGeneration).catch(() => undefined);
+    throw error;
+  }
+}
+
 async function deleteCareerGame(slotId: string): Promise<void> {
   await browserStateRepository().delete(slotId);
   if ((await currentGame?.getProfile())?.id === slotId) { currentGame = null; currentGateway = null; }
@@ -485,10 +507,11 @@ function requireGateway(): EngineHltvGateway {
   return currentGateway;
 }
 
-declare global { interface Window { COPEEngine: { createGame(config: BrowserCareerConfig): Promise<BrowserCareerGame>; loadGame(slotId: string): Promise<BrowserCareerGame>; listGames(): Promise<readonly string[]>; deleteGame(slotId: string): Promise<void>; getProfile(): Promise<PlayerProfile>; getTournamentSummary(): ReturnType<CareerGame['getTournamentSummary']>; startSeason(): ReturnType<CareerGame['startSeason']>; getNextTournament(): ReturnType<CareerGame['getNextTournament']>; getVrsStatus(): ReturnType<CareerGame['getVrsStatus']>; listStandInOffers(): Promise<readonly TournamentStandInOffer[]>; respondStandInOffer(offerId: string, response: 'ACCEPT' | 'REJECT' | 'WAIT'): ReturnType<CareerGame['respondStandInOffer']>; acceptStandInOffer(offerId: string): Promise<TournamentStandInAssignment>; listTransferTargets(): Promise<readonly TransferTargetView[]>; selectTransferTarget(teamId: string): ReturnType<CareerGame['selectTransferTarget']>; advanceTournament(input?: { readonly mode?: import('./engine/game').CareerTournamentAdvanceMode }): ReturnType<CareerGame['advanceTournament']>; finishSeason(): ReturnType<CareerGame['finishSeason']>; findTop20(season: number): Promise<Top20Ranking>; findCareerEvent(window: CareerEventWindow): ReturnType<CareerGame['findCareerEvent']>; advancePeriod(period: EventPeriod, randomRoll?: number): Promise<PlayerProfile>; getAvailableEvents(period: EventPeriod, randomRoll?: number): Promise<readonly StoryEvent[]>; chooseOption(decision: { readonly eventId: string; readonly optionId: string; readonly randomRoll: number }): ReturnType<CareerGame['chooseStoryOption']>; retire(reason?: string): Promise<PlayerProfile>; generateRetirementSummary(): ReturnType<CareerGame['generateRetirementSummary']>; }; } }
+declare global { interface Window { COPEEngine: { createGame(config: BrowserCareerConfig): Promise<BrowserCareerGame>; restartGame(config: BrowserCareerConfig): Promise<BrowserCareerGame>; loadGame(slotId: string): Promise<BrowserCareerGame>; listGames(): Promise<readonly string[]>; deleteGame(slotId: string): Promise<void>; getProfile(): Promise<PlayerProfile>; getTournamentSummary(): ReturnType<CareerGame['getTournamentSummary']>; startSeason(): ReturnType<CareerGame['startSeason']>; getNextTournament(): ReturnType<CareerGame['getNextTournament']>; getVrsStatus(): ReturnType<CareerGame['getVrsStatus']>; listStandInOffers(): Promise<readonly TournamentStandInOffer[]>; respondStandInOffer(offerId: string, response: 'ACCEPT' | 'REJECT' | 'WAIT'): ReturnType<CareerGame['respondStandInOffer']>; acceptStandInOffer(offerId: string): Promise<TournamentStandInAssignment>; listTransferTargets(): Promise<readonly TransferTargetView[]>; selectTransferTarget(teamId: string): ReturnType<CareerGame['selectTransferTarget']>; advanceTournament(input?: { readonly mode?: import('./engine/game').CareerTournamentAdvanceMode }): ReturnType<CareerGame['advanceTournament']>; finishSeason(): ReturnType<CareerGame['finishSeason']>; findTop20(season: number): Promise<Top20Ranking>; findCareerEvent(window: CareerEventWindow): ReturnType<CareerGame['findCareerEvent']>; advancePeriod(period: EventPeriod, randomRoll?: number): Promise<PlayerProfile>; getAvailableEvents(period: EventPeriod, randomRoll?: number): Promise<readonly StoryEvent[]>; chooseOption(decision: { readonly eventId: string; readonly optionId: string; readonly randomRoll: number }): ReturnType<CareerGame['chooseStoryOption']>; retire(reason?: string): Promise<PlayerProfile>; generateRetirementSummary(): ReturnType<CareerGame['generateRetirementSummary']>; }; } }
 
 window.COPEEngine = {
   createGame: initCareerGame,
+  restartGame: restartCareerGame,
   loadGame: loadCareerGame,
   listGames: () => browserStateRepository().listSlots(),
   deleteGame: deleteCareerGame,

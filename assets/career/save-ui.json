@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "restart": {
+    "setupLabel": "重开此 ID 的生涯",
+    "dashboardLabel": "重开生涯",
+    "eyebrow": "不可逆操作 / RESTART",
+    "title": "确认重开当前生涯？",
+    "description": "这会永久删除 {gameId} 的当前存档，并使用创建页中的赛区、位置和模式从头开始。",
+    "cancelLabel": "保留存档",
+    "confirmLabel": "删除并重开",
+    "missingId": "请先填写游戏 ID。",
+    "missingSave": "没有找到该游戏 ID 的生涯存档。",
+    "failure": "重开生涯失败：{message}"
+  }
+}
