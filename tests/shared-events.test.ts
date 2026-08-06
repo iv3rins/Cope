@@ -151,3 +151,21 @@ test('荣誉时刻：TOP20_RANK 上榜前不可见，上榜后按排名解锁', 
   const top3Events = await engine.findAvailableEvents({ profile: top3, period: 'NORMAL', randomRoll: 0.5 });
   assert.ok(top3Events.some((event) => event.id === 'honor-mvp-target'), '第 3 名应解锁研究你事件');
 });
+
+test('转会确认系统事件：短租/长约选项携带正确合同期限，decide 后效果落地', async () => {
+  const engine = await buildEngine();
+  const profile = sampleProfile({});
+  const events = await engine.findAvailableEvents({ profile, period: 'TRANSFER_WINDOW', randomRoll: 0.5 });
+  const confirm = events.find((event) => event.id === 'transfer-confirmation');
+  assert.ok(confirm, 'TRANSFER_WINDOW 应出现报价确认事件');
+  assert.equal(confirm.system, true);
+  assert.equal(confirm.consumesTransferOffer, true);
+  const shortEffect = confirm.options.find((option) => option.id === 'accept-short-term')?.outcome.successEffects.find((effect) => effect.type === 'TEAM_TRANSFER');
+  const longEffect = confirm.options.find((option) => option.id === 'accept-long-term')?.outcome.successEffects.find((effect) => effect.type === 'TEAM_TRANSFER');
+  assert.equal(shortEffect?.lengthMonths, 12, '短租应为 1 年（12 个月）');
+  assert.equal(longEffect?.lengthMonths, 36, '长约应为 3 年（36 个月）');
+  const shortResult = await engine.decide({ profile, decision: { eventId: 'transfer-confirmation', optionId: 'accept-short-term', randomRoll: 0.2 } });
+  assert.equal(shortResult.appliedEffects.find((effect) => effect.type === 'TEAM_TRANSFER')?.lengthMonths, 12);
+  const longResult = await engine.decide({ profile, decision: { eventId: 'transfer-confirmation', optionId: 'accept-long-term', randomRoll: 0.2 } });
+  assert.equal(longResult.appliedEffects.find((effect) => effect.type === 'TEAM_TRANSFER')?.lengthMonths, 36);
+});

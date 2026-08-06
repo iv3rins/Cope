@@ -44,6 +44,8 @@ export interface BrowserCareerConfig {
   readonly role: 'ENTRY' | 'AWP' | 'IGL' | 'SUPPORT' | 'LURK';
   readonly region: CompetitionRegion;
   readonly mode: GameDifficultyMode;
+  /** 初始合同期限：'SHORT' 短租 1 年 / 'LONG' 长约 3 年；缺省 1 年。 */
+  readonly contractTerm?: 'SHORT' | 'LONG';
 }
 
 export interface BrowserCareerGame extends CareerGame {
@@ -420,7 +422,8 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
   const contracts = new SaveContractService(initialContracts, new ConditionEvaluatorImpl(), (candidate) => ({ player: candidate, currentTeamId: candidate.currentTeamId, opponentTeamId: null, randomRoll: 0, difficultyMode: candidate.difficultyMode }), (teamId) => teamTiers.get(teamId), (_profile, terms) => !restoredState && highTierStart && startupCandidates.some((team) => team.teamId === terms.teamId));
   let player = restoredState?.state.player ?? playerWithProdigy;
   if (startingTeam) {
-    const endsAt = new Date(startedAt); endsAt.setUTCMonth(endsAt.getUTCMonth() + (startingTeam.contractLengthMonths ?? 12));
+    const termMonths = config.contractTerm === 'LONG' ? 36 : 12;
+    const endsAt = new Date(startedAt); endsAt.setUTCMonth(endsAt.getUTCMonth() + termMonths);
     const signed = await contracts.sign({ profile: playerWithProdigy, terms: { teamId: startingTeam.teamId, startedAt, endsAt: endsAt.toISOString(), salaryPerMonth: startingTeam.monthlySalary, buyoutAmount: startingTeam.buyoutAmount ?? 0, role: startingTeam.startingRole ?? 'STARTER', expectedPlaytimePercentage: startingTeam.expectedPlaytimePercentage ?? 75 }, occurredAt: startedAt });
     if (!('contract' in signed) || 'reason' in signed) throw new Error(`Unable to create initial contract for ${startingTeam.teamId}.`);
     player = signed.profile;

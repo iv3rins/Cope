@@ -39,6 +39,8 @@ export interface TeamTransferEffect {
   readonly offerRef?: 'CURRENT_TRANSFER_OFFER';
   readonly salaryPerMonth?: number;
   readonly endsAt?: string;
+  /** 新合同期限（月）；优先于 offer.contract.lengthMonths。短租 12（1 年）/ 长约 36（3 年）。 */
+  readonly lengthMonths?: number;
   readonly buyoutAmount?: number;
 }
 

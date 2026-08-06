@@ -251,7 +251,7 @@ export class CareerGameImpl implements CareerGame {
       ? eligibleEvents.filter((candidate) => candidate.system === true && candidate.consumesTransferOffer === true)
       : [];
     const quotaExempt = Boolean(forced) || transactional.length > 0;
-    if (!quotaExempt && (envelope.state.seasonNarrativeEventCount ?? envelope.state.storyEventsThisHalf ?? 0) >= 4) return null;
+    if (!quotaExempt && (envelope.state.seasonNarrativeEventCount ?? envelope.state.storyEventsThisHalf ?? 0) >= 2) return null;
     const event = (forced ? eligibleEvents.find((candidate) => candidate.id === forced.eventId) : undefined)
       ?? this.pickWeightedEvent(this.highestPriorityEvents(transactional), this.nextRoll())
       ?? (preferredEventId ? eligibleEvents.find((candidate) => candidate.id === preferredEventId) : undefined)
@@ -428,7 +428,7 @@ export class CareerGameImpl implements CareerGame {
     this.assertActive(envelope.state.player);
     const result = await story.decide({ profile: envelope.state.player, decision, facts: this.storyFacts(envelope.state) });
     const consumedOffer = result.consumedTransferOffer === true ? envelope.state.pendingTransferOffer ?? null : null;
-    if (decision.optionId === 'accept-offer' && consumedOffer && Date.parse(consumedOffer.expiresAt) <= Date.parse(envelope.state.currentDate)) throw new Error('Current transfer offer has expired.');
+    if (decision.optionId.startsWith('accept-') && consumedOffer && Date.parse(consumedOffer.expiresAt) <= Date.parse(envelope.state.currentDate)) throw new Error('Current transfer offer has expired.');
     const resume = envelope.state.eventResume;
     const nextPhase = resume?.mode === 'CONTINUE_REPORT' ? 'REPORT' : resume?.mode === 'CONTINUE_OFFSEASON' || resume?.mode === 'CONTINUE_TRANSFER_WINDOW' ? 'OFFSEASON' : resume ? 'ACTIVE' : envelope.state.seasonPhase;
     const repeatableEventHistory = result.profile.completedEventIds.includes(decision.eventId)
@@ -472,7 +472,7 @@ export class CareerGameImpl implements CareerGame {
       if (effect.offerRef === 'CURRENT_TRANSFER_OFFER' && (!offer || Date.parse(offer.expiresAt) <= Date.parse(now))) continue;
       const targetTeamId = effect.teamId ?? offer?.teamId;
       if (!targetTeamId) continue;
-      const endsAt = effect.endsAt ?? (offer?.contract ? this.contractEndDateByMonths(now, offer.contract.lengthMonths) : this.contractEndDate(now));
+      const endsAt = effect.endsAt ?? (effect.lengthMonths ? this.contractEndDateByMonths(now, effect.lengthMonths) : offer?.contract ? this.contractEndDateByMonths(now, offer.contract.lengthMonths) : this.contractEndDate(now));
       const terms: ContractTerms = { teamId: targetTeamId, startedAt: now, endsAt, salaryPerMonth: effect.salaryPerMonth ?? offer?.contract?.salaryPerMonth ?? offer?.salaryPerMonth ?? 0, buyoutAmount: effect.buyoutAmount ?? offer?.contract?.buyoutAmount ?? offer?.buyoutAmount ?? 0, ...(offer?.contract?.role ? { role: offer.contract.role } : {}), ...(offer?.contract?.expectedPlaytimePercentage !== undefined ? { expectedPlaytimePercentage: offer.contract.expectedPlaytimePercentage } : {}) };
       const currentContract = player.currentContractId
         ? contracts.find((contract) => contract.id === player.currentContractId && contract.status === 'ACTIVE') ?? null

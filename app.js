@@ -18,6 +18,7 @@ const roleData = {
 };
 const attributeLabels = { aim: '枪法', gameSense: '意识', leadership: '指挥', clutch: '残局', consistency: '稳定性', teamConflict: '团队冲突' };
 let selectedCareerMode = 'HARDCORE';
+let selectedContractTerm = 'SHORT';
 let activeEventId = null;
 let deterministicState = 2166136261;
 let deterministicCursor = 0;
@@ -88,7 +89,7 @@ async function loadSaveContent() {
 }
 
 function currentSetupConfig(gameId = callsign.value.trim()) {
-  return { gameId, realName: gameId, randomSeed: randomSeed.value.trim() || gameId, role: role.value, region: engineRegions[selectedRegion()], mode: selectedCareerMode };
+  return { gameId, realName: gameId, randomSeed: randomSeed.value.trim() || gameId, role: role.value, region: engineRegions[selectedRegion()], mode: selectedCareerMode, contractTerm: selectedContractTerm };
 }
 
 async function openRestartDialog(gameId, config) {
@@ -696,6 +697,7 @@ role.addEventListener('change', () => selectRole(role.value));
 document.querySelectorAll('.map-role').forEach((button) => button.addEventListener('click', () => selectRole(button.dataset.role)));
 document.querySelectorAll('.region').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.region').forEach((item) => item.classList.remove('selected')); button.classList.add('selected'); }));
 document.querySelectorAll('.pace').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.pace').forEach((item) => item.classList.remove('selected')); button.classList.add('selected'); selectedCareerMode = button.dataset.mode === 'power' ? 'POWER_FANTASY' : 'HARDCORE'; }));
+document.querySelectorAll('.contract-term').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.contract-term').forEach((item) => item.classList.remove('selected')); button.classList.add('selected'); selectedContractTerm = button.dataset.term === 'long' ? 'LONG' : 'SHORT'; }));
 async function renderCareerArchive(player) {
   const enumCopy = await loadEnumContent();
   await loadTournamentAssets();

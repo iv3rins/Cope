@@ -1,0 +1,88 @@
+{
+  "id": "transfer-confirmation",
+  "worldlineId": "shared",
+  "title": "报价确认",
+  "description": "对方俱乐部的正式报价已经递到经纪人手里。签字之前，经纪人问你：\"合同期限，签短租还是长约？\"",
+  "period": "TRANSFER_WINDOW",
+  "type": "CHOICE",
+  "system": true,
+  "consumesTransferOffer": true,
+  "repeatable": false,
+  "priority": 100,
+  "conditions": [],
+  "autoEffects": [],
+  "options": [
+    {
+      "id": "accept-short-term",
+      "label": "接受：短租 1 年",
+      "description": "一年后重新谈判，主动权在自己手里，薪水先按报价执行。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.8, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "TEAM_TRANSFER", "offerRef": "CURRENT_TRANSFER_OFFER", "lengthMonths": 12 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "STRESS", "delta": -2 }
+        ],
+        "failureEffects": [
+          { "type": "TEAM_TRANSFER", "offerRef": "CURRENT_TRANSFER_OFFER", "lengthMonths": 12 }
+        ],
+        "successMessages": [
+          "你签了 1 年短租。一年后，你的身价说了算。"
+        ],
+        "failureMessages": [
+          "签字的时候你犹豫了一下——一年过得比想象中快。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "accept-long-term",
+      "label": "接受：长约 3 年",
+      "description": "三年稳定保障，但薪水和身价都被锁死，转会要谈解约。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.8, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "TEAM_TRANSFER", "offerRef": "CURRENT_TRANSFER_OFFER", "lengthMonths": 36 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 3 }
+        ],
+        "failureEffects": [
+          { "type": "TEAM_TRANSFER", "offerRef": "CURRENT_TRANSFER_OFFER", "lengthMonths": 36 }
+        ],
+        "successMessages": [
+          "你签了 3 年长约。这三年，你属于这支队伍了。"
+        ],
+        "failureMessages": [
+          "签字的那一刻，你突然想起短租选项里那句话：主动权在自己手里。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "decline-offer",
+      "label": "拒绝这份报价",
+      "description": "条件不合适，留在现在的队伍。",
+      "requirements": [],
+      "successChance": { "baseChance": 0.9, "modifiers": [] },
+      "outcome": {
+        "successEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 3 },
+          { "type": "PLAYER_STAT_CHANGE", "stat": "MORALE", "delta": 2 }
+        ],
+        "failureEffects": [
+          { "type": "NARRATIVE_METRIC_CHANGE", "metric": "CLUB_FAVOR", "delta": 1 }
+        ],
+        "successMessages": [
+          "你回绝了报价。经纪人叹了口气，但没再劝。"
+        ],
+        "failureMessages": [
+          "你拒绝了，但那份报价的数字，在脑子里转了一整天。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "id": "shared-contract-extension",
   "worldlineId": "shared",
   "title": "续约谈判",
-  "description": "俱乐部主动找你谈续约，开出的条件比现在好，但也没好到哪去。",
+  "description": "俱乐部主动找你谈续约。经纪人把两份方案放在桌上：一份 1 年短租，薪水涨一截；一份 3 年长约，薪水略降但稳定，违约金也高。",
   "period": "TRANSFER_WINDOW",
   "type": "CHOICE",
   "repeatable": true,
@@ -17,9 +17,9 @@
   "autoEffects": [],
   "options": [
     {
-      "id": "sign",
-      "label": "签字",
-      "description": "安稳是职业选手的奢侈品。",
+      "id": "renew-short",
+      "label": "签 1 年短租",
+      "description": "薪水涨一成，一年后重新谈判——主动权在自己手里。",
       "requirements": [],
       "successChance": {
         "baseChance": 0.8,
@@ -27,6 +27,63 @@
       },
       "outcome": {
         "successEffects": [
+          {
+            "type": "CONTRACT_RENEWAL",
+            "lengthMonths": 12,
+            "salaryMultiplier": 1.1,
+            "buyoutMultiplier": 0.8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "BALANCE",
+            "delta": 300
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "CONTRACT_RENEWAL",
+            "lengthMonths": 12,
+            "salaryMultiplier": 1.05,
+            "buyoutMultiplier": 0.8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 1
+          }
+        ],
+        "successMessages": [
+          "你签了 1 年。签字时你盘算着：这一年打好了，明年谈个更大的。"
+        ],
+        "failureMessages": [
+          "你签了 1 年，但俱乐部高层眼神里写着'留不住人'。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "renew-long",
+      "label": "签 3 年长约",
+      "description": "三年安稳，但薪水略降、违约金高——想走就得谈解约。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.8,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "CONTRACT_RENEWAL",
+            "lengthMonths": 36,
+            "salaryMultiplier": 0.95,
+            "buyoutMultiplier": 1.5
+          },
           {
             "type": "PLAYER_STAT_CHANGE",
             "stat": "BALANCE",
@@ -40,16 +97,22 @@
         ],
         "failureEffects": [
           {
+            "type": "CONTRACT_RENEWAL",
+            "lengthMonths": 36,
+            "salaryMultiplier": 0.9,
+            "buyoutMultiplier": 1.5
+          },
+          {
             "type": "NARRATIVE_METRIC_CHANGE",
             "metric": "CLUB_FAVOR",
-            "delta": 1
+            "delta": 3
           }
         ],
         "successMessages": [
-          "你签了三年，心里踏实了。"
+          "你签了 3 年。这笔账，俱乐部算得很清楚，你也算得很清楚。"
         ],
         "failureMessages": [
-          "签字笔落下的瞬间，你有点不甘心。"
+          "你签了 3 年长约，签字笔落下的瞬间，你有点不甘心——三年，太长了。"
         ],
         "successNextEventId": null,
         "failureNextEventId": null

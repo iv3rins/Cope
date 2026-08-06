@@ -114,3 +114,22 @@ test('同一 seed 选择稳定，候选跌入 VRS 前 100 后会改选合规队�
   assert.notEqual(fallbackTeamId, 'alterego');
   assert.ok((ranks.get(fallbackTeamId ?? '') ?? 0) > 100);
 });
+
+test('新档初始合同按 contractTerm 选择期限：长约 3 年 / 短租 1 年', async () => {
+  const repository = InMemoryStateRepository.getInstance();
+  rankOverrides = new Map();
+  const longGame = await initCareerGame({ gameId: 'starting-contract-long', realName: 'starting-contract-long', role: 'AWP', region: 'EUROPE', mode: 'HARDCORE', contractTerm: 'LONG' });
+  const longProfile = await longGame.getProfile();
+  const longEnvelope = await repository.load('starting-contract-long');
+  const longContract = longEnvelope?.state.contracts.find((contract) => contract.playerId === longProfile.id && contract.status === 'ACTIVE');
+  const longMonths = (Date.parse(longContract?.endsAt ?? '') - Date.parse(longEnvelope?.state.currentDate ?? '')) / (1000 * 60 * 60 * 24 * 30.44);
+  assert.ok(Math.round(longMonths) >= 34 && Math.round(longMonths) <= 38, `长约应约 36 个月，实际 ${Math.round(longMonths)}`);
+
+  rankOverrides = new Map();
+  const shortGame = await initCareerGame({ gameId: 'starting-contract-short', realName: 'starting-contract-short', role: 'AWP', region: 'EUROPE', mode: 'HARDCORE', contractTerm: 'SHORT' });
+  const shortProfile = await shortGame.getProfile();
+  const shortEnvelope = await repository.load('starting-contract-short');
+  const shortContract = shortEnvelope?.state.contracts.find((contract) => contract.playerId === shortProfile.id && contract.status === 'ACTIVE');
+  const shortMonths = (Date.parse(shortContract?.endsAt ?? '') - Date.parse(shortEnvelope?.state.currentDate ?? '')) / (1000 * 60 * 60 * 24 * 30.44);
+  assert.ok(Math.round(shortMonths) >= 11 && Math.round(shortMonths) <= 13, `短租应约 12 个月，实际 ${Math.round(shortMonths)}`);
+});
