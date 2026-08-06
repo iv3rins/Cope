@@ -1,0 +1,149 @@
+{
+  "id": "golden-era-core-throne",
+  "worldlineId": "golden-era-core",
+  "title": "建队核心",
+  "description": "休赛期。管理层把你叫进办公室，说，你是建队核心，明年围绕你打。你把这句话记下了。训练第一天，队友看你站到了队伍中间。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "nod-and-stay",
+      "label": "点头，说听安排",
+      "description": "接住定位，队里关系稳。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你点头，说听安排。",
+          "管理层满意地走了。",
+          "第二天，战术板上有你的名字。"
+        ],
+        "failureMessages": [
+          "你点头，但话到嘴边又咽回去。",
+          "管理层多看了你一眼。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "promise-the-mvp",
+      "label": "说，明年我会拿 MVP",
+      "description": "把话放出去，压力自己扛。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.003,
+            "minimum": 55
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 5
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你说完，办公室里安静了一秒。",
+          "管理层说，这话我们记下了。",
+          "第二天训练，你比谁都早到。"
+        ],
+        "failureMessages": [
+          "你说完，管理层笑了笑，没接话。",
+          "你回到训练室，练了一晚上。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

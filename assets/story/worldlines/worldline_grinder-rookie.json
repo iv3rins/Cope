@@ -1,0 +1,18 @@
+{
+  "id": "grinder-rookie",
+  "name": "底层青训苦爹",
+  "description": "天赋平庸，靠死练往上爬。每一局都有人比你强，你比他们多练两小时。",
+  "startEventId": "grinder-rookie-drill",
+  "eventIds": [
+    "grinder-rookie-drill",
+    "grinder-rookie-debut",
+    "grinder-rookie-extra",
+    "grinder-rookie-gap",
+    "grinder-rookie-utility",
+    "grinder-rookie-trade",
+    "grinder-rookie-crossroads",
+    "grinder-rookie-chance",
+    "grinder-rookie-promotion",
+    "grinder-rookie-echo"
+  ]
+}

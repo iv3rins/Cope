@@ -1,0 +1,177 @@
+{
+  "id": "prodigy-debut-stage",
+  "worldlineId": "prodigy-debut",
+  "title": "首秀一战",
+  "description": "大赛首秀，图一。对面五个人，一半时间在找你。13 比 14，你残血守 B。队友全倒，对面三个人下包。观众席在喊你的 ID。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-debut-arrival"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "prodigy-debut"
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-bombsite",
+      "label": "架包点，等人来",
+      "description": "稳一手，首秀别翻车。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你打掉两个，拆了包。",
+          "耳机里有人轻轻松了口气。",
+          "赛后有人拍了拍你的肩。"
+        ],
+        "failureMessages": [
+          "你换掉一个，倒在地上。",
+          "弹幕刷屏，你扫了一眼，别开了视线。"
+        ],
+        "successNextEventId": "prodigy-debut-finale",
+        "failureNextEventId": "prodigy-debut-finale"
+      }
+    },
+    {
+      "id": "flash-out",
+      "label": "冲出去，先打闪",
+      "description": "首秀就要打得好看，赢了是明星，输了是流星。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 80
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "闪出去，三枪三个头。",
+          "全场炸了。",
+          "你放下鼠标，手还在抖。"
+        ],
+        "failureMessages": [
+          "闪出去，一颗没中。",
+          "你倒在地上，弹幕开始刷。",
+          "耳机里没人说话。"
+        ],
+        "successNextEventId": "prodigy-debut-finale",
+        "failureNextEventId": "prodigy-debut-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

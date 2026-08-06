@@ -1,0 +1,125 @@
+{
+  "id": "crownless-king-media",
+  "worldlineId": "crownless-king",
+  "title": "记者又来了",
+  "description": "媒体日，记者又问了那个问题，什么时候拿 Major。你答过很多次了。话筒递过来，全场安静。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "crownless-king"
+    },
+    {
+      "type": "NARRATIVE_METRIC",
+      "metric": "FAME",
+      "minimum": 55
+    }
+  ],
+  "options": [
+    {
+      "id": "standard-answer",
+      "label": "按惯例回答，快了",
+      "description": "官方口径，压力不动。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你按惯例答了。记者满意地点头。",
+          "你坐下，喝了口水。"
+        ],
+        "failureMessages": [
+          "你按惯例答了，但声音比平时低。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "tell-the-truth",
+      "label": "说实话，不知道",
+      "description": "实话，压力也来。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你说了实话。现场安静了一秒，然后有人鼓掌。"
+        ],
+        "failureMessages": [
+          "你说了实话，标题被截出来。",
+          "你关上手机。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

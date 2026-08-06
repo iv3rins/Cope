@@ -1,0 +1,142 @@
+{
+  "id": "arrogant-tyrant-challenger",
+  "worldlineId": "arrogant-tyrant",
+  "title": "挑战者",
+  "description": "青训队上来了一个新人，状态火热，训练赛压着你打。休息时，他问你能不能单挑。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "arrogant-tyrant"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 70
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 86
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "accept-the-duel",
+      "label": "应战，让他见识一下",
+      "description": "王座要自己守。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 4
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你单挑赢了。他点头，说，学到了。",
+          "你多看了他一眼。"
+        ],
+        "failureMessages": [
+          "你单挑输了。他多看了你一眼。",
+          "你坐着没动。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "decline-the-duel",
+      "label": "不接，训练要紧",
+      "description": "王座不用证明给新人看。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你没接。他回去自己练。",
+          "第二天，他主动跟你问好。"
+        ],
+        "failureMessages": [
+          "你没接，但训练的时候总想着那把单挑。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

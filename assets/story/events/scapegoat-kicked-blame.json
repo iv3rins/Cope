@@ -1,0 +1,139 @@
+{
+  "id": "scapegoat-kicked-blame",
+  "worldlineId": "scapegoat-kicked",
+  "title": "甩锅大会",
+  "description": "队伍连败，管理层开了个会，说要调整阵容。更衣室里，有人看了你一眼，有人没看。你坐在自己的位置，把数据翻出来看了一眼。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "take-the-blame",
+      "label": "把锅接住，说是我指挥的问题",
+      "description": "背下锅，保队伍，也保位置。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把锅接住，说是我指挥的问题。",
+          "管理层点了点头。",
+          "队友没说话，有人轻轻松了口气。"
+        ],
+        "failureMessages": [
+          "你把锅接住，没人接话。",
+          "会议散了，你最后走的。"
+        ],
+        "successNextEventId": "scapegoat-kicked-court",
+        "failureNextEventId": "scapegoat-kicked-court"
+      }
+    },
+    {
+      "id": "show-the-data",
+      "label": "把数据甩出来，说不是我",
+      "description": "数据摆出来，观众站你这边，管理层皱眉。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.003,
+            "minimum": 40
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把数据一条条念出来。",
+          "有人看了你一眼，没说话。",
+          "第二天，网上开始有人替你说话。"
+        ],
+        "failureMessages": [
+          "数据念到一半，教练打断了。",
+          "你说，那不是我。没人接。"
+        ],
+        "successNextEventId": "scapegoat-kicked-court",
+        "failureNextEventId": "scapegoat-kicked-court"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -9,6 +9,7 @@ const root = process.cwd();
 const originalFetch = globalThis.fetch;
 const originalWindow = (globalThis as typeof globalThis & { window?: unknown }).window;
 let balanceOverride: BalanceConfig | null = null;
+let simulationRulesOverride: unknown | null = null;
 
 (globalThis as unknown as { window: Record<string, unknown> }).window = {};
 globalThis.fetch = (async (input: string | URL | Request) => {
@@ -18,7 +19,9 @@ globalThis.fetch = (async (input: string | URL | Request) => {
     const content = await readFile(join(root, assetPath), 'utf8');
     const payload = assetPath === 'assets/balance/performance.json' && balanceOverride
       ? balanceOverride
-      : JSON.parse(content) as unknown;
+      : assetPath === 'assets/top20/simulation-rules.json' && simulationRulesOverride
+        ? simulationRulesOverride
+        : JSON.parse(content) as unknown;
     return new Response(JSON.stringify(payload), { status: 200, headers: { 'content-type': 'application/json' } });
   } catch {
     return new Response(null, { status: 404 });
@@ -27,6 +30,7 @@ globalThis.fetch = (async (input: string | URL | Request) => {
 
 after(() => {
   balanceOverride = null;
+  simulationRulesOverride = null;
   globalThis.fetch = originalFetch;
   if (originalWindow === undefined) delete (globalThis as typeof globalThis & { window?: unknown }).window;
   else (globalThis as typeof globalThis & { window?: unknown }).window = originalWindow;
@@ -141,6 +145,48 @@ test('强制天才与满天赋概率后，新档直接取得 T1/T2 合同，T1 �
   } finally {
     balanceOverride = null;
     await repository.delete(gameId);
+  }
+});
+
+test('TOP20 跨赛季按年龄淘汰老将并引入虚拟新秀，且同赛季结果确定', async () => {
+  const gameId = slot('top20-ecosystem');
+  try {
+    await initCareerGame({ gameId, realName: 'top20', role: 'AWP', region: 'EUROPE', mode: 'HARDCORE' });
+    const engine = (globalThis as unknown as { window: { COPEEngine: { findTop20(season: number): Promise<import('../src/hltv/top20').Top20Ranking> } } }).window.COPEEngine;
+    const baseline = await engine.findTop20(2026);
+    const future = await engine.findTop20(2040);
+    const repeated = await engine.findTop20(2040);
+    assert.ok(baseline.entries.some((entry) => entry.identity.playerId === 'real-zywoo'));
+    assert.equal(future.entries.some((entry) => entry.identity.playerId === 'real-zywoo'), false, '39 岁真实老将应退出 2040 榜单');
+    assert.ok(future.entries.some((entry) => entry.identity.source === 'VIRTUAL'), '未来榜单应出现虚拟新秀');
+    assert.notDeepEqual(future.entries.map((entry) => entry.identity.playerId), baseline.entries.map((entry) => entry.identity.playerId));
+    assert.deepEqual(repeated, future, '同一赛季投影必须确定且可重复');
+  } finally {
+    await repository.delete(gameId);
+  }
+});
+
+test('TOP20 simulation-rules 损坏或数值越界时启动即暴露配置错误', async () => {
+  const invalidRules = [
+    { schemaVersion: 1, honorPool: null },
+    { schemaVersion: 1, honorPool: { mvp: -1, evp: 1, vp: 1 }, evidenceProjection: {}, virtualGeneration: {}, realPlayerDecay: {} },
+    {
+      schemaVersion: 1,
+      honorPool: { mvp: 1, evp: 1, vp: 1 },
+      evidenceProjection: { ratingFloor: 0.55, adrBase: 70, adrRatingFactor: 15, kastBase: 65, kastRatingFactor: 15, playoffMapRatio: 1.1, top5MapRatio: 0.3, finalMapRatio: 0.1, minimumPlayoffMaps: 2.5, minimumTop5Maps: 3, minimumFinalMaps: 1 },
+      virtualGeneration: { baseProbability: 0.5, prodigyProbability: 0.5, prodigyPotential: 0.9, risingPotential: 0.8, baselinePotential: 0.7, annualDebutWindow: 4 },
+      realPlayerDecay: { peakThroughAge: 30, gradualDeclineEndAge: 27, gradualDeclinePerYear: 0.03, veteranBaseMultiplier: 0.9, veteranDeclinePerYear: 0.04, careerGraceYears: 4, careerDeclinePerYear: 0.01, careerDeclineCap: 0.1, minimumMultiplier: 0.5 },
+    },
+  ];
+  for (const [index, invalidRule] of invalidRules.entries()) {
+    const gameId = slot(`top20-invalid-rules-${index}`);
+    simulationRulesOverride = invalidRule;
+    try {
+      await assert.rejects(() => initCareerGame({ gameId, realName: 'invalid', role: 'AWP', region: 'EUROPE', mode: 'HARDCORE' }), /TOP20 simulation rules are invalid/);
+    } finally {
+      simulationRulesOverride = null;
+      await repository.delete(gameId);
+    }
   }
 });
 

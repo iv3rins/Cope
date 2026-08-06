@@ -1,0 +1,170 @@
+{
+  "id": "1v9-prison-stage",
+  "worldlineId": "1v9-prison",
+  "title": "一打四",
+  "description": "大赛淘汰赛，14 比 15。你守 A，队友全倒。报点声停了。对面四把枪推包点，脚步很整齐。你蹲在包点后，看了一眼怀里的闪。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "1v9-prison-cell"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "1v9-prison"
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-angle",
+      "label": "架最后一个，打回防",
+      "description": "稳一手，赢面小，但队伍不会崩。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你打掉最后两个，拆了包。",
+          "耳机里有人轻轻松了口气。"
+        ],
+        "failureMessages": [
+          "你换掉两个，倒在地上。",
+          "结算界面跳出来，对面赢了。"
+        ],
+        "successNextEventId": "1v9-prison-finale",
+        "failureNextEventId": "1v9-prison-finale"
+      }
+    },
+    {
+      "id": "rush-four",
+      "label": "冲出去，四枪全打",
+      "description": "硬碰硬，赢了就是名场面。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 80
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -4
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "四枪，四个头。",
+          "队友没人说话，有人别开了视线。",
+          "有人张了张嘴，没出声。"
+        ],
+        "failureMessages": [
+          "你倒在他们枪口下。",
+          "报点声又响了，这次是倒计时。"
+        ],
+        "successNextEventId": "1v9-prison-finale",
+        "failureNextEventId": "1v9-prison-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

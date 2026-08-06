@@ -1,0 +1,134 @@
+{
+  "id": "tactical-mastermind-patience",
+  "worldlineId": "tactical-mastermind",
+  "title": "老将的耐心",
+  "description": "比赛僵住了，对面在拖时间。队友急了，想冲。你按了按耳机，说，等。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "tactical-mastermind"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "AGE",
+          "minimum": 22
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 25
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "wait-them-out",
+      "label": "等，让他们先犯错",
+      "description": "耐心是战术的一部分。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "你等了三分钟，对面忍不住露了头。",
+          "你一口吃掉。"
+        ],
+        "failureMessages": [
+          "你等着，对面先动手，你慢了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "move-early",
+      "label": "提前动，打他们一个措手不及",
+      "description": "等不是唯一的选择。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你提前动了，对面没反应过来。"
+        ],
+        "failureMessages": [
+          "你提前动，对面正好等着你。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

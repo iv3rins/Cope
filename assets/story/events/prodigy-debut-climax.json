@@ -1,0 +1,176 @@
+{
+  "id": "prodigy-debut-climax",
+  "worldlineId": "prodigy-debut",
+  "title": "终极舞台",
+  "description": "终极舞台。决赛决胜图，你队 14 比 15。队友全倒，你 1v3。全场在喊你的名字，一声比一声大。你想起首秀那天，也是这个声音。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "prodigy-debut"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 65
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "steady-climax",
+      "label": "按部就班打",
+      "description": "稳一点，别在最大的舞台上犯傻。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你按部就班，打掉两个，拆了包。",
+          "观众席安静了一秒，然后炸了。"
+        ],
+        "failureMessages": [
+          "你按部就班，还是没接住。",
+          "你倒在地上，全场还在喊。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "signature-move",
+      "label": "打出标志性操作",
+      "description": "在最大的舞台上留下你的名字。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 80
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你闪出去，三枪三个头。",
+          "全场站起来。",
+          "你放下耳机，手还在抖。"
+        ],
+        "failureMessages": [
+          "标志性操作，变成了集锦里的失误。",
+          "你倒在地上，弹幕开始刷。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

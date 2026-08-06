@@ -1,0 +1,141 @@
+{
+  "id": "1v9-prison-drag",
+  "worldlineId": "1v9-prison",
+  "title": "猪队友",
+  "description": "队友连送三波。你听到有人叹气，有人摘了耳机。教练叫了暂停，没人说话。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "1v9-prison"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "TEAM_RELATIONSHIP",
+          "maximum": 45
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "TEAM_CONFLICT",
+          "minimum": 25
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-the-tongue",
+      "label": "忍住，下把再说",
+      "description": "话咽回去，气氛缓一点。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你忍住了，下把没提。",
+          "气氛缓了一点。"
+        ],
+        "failureMessages": [
+          "你忍住没说，但晚上越想越气。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "call-it-out",
+      "label": "开口，把话挑明",
+      "description": "说清楚，关系也裂了。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把话挑明，说了谁的问题。",
+          "有人点头，有人没看你。"
+        ],
+        "failureMessages": [
+          "你说到一半，有人摔了耳机。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

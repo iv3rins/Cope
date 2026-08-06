@@ -1,0 +1,131 @@
+{
+  "id": "tactical-mastermind-hole",
+  "worldlineId": "tactical-mastermind",
+  "title": "战术板上的洞",
+  "description": "复盘，你在战术板上画了一个圈。队友问，这里怎么打。你没说话，画了三条线。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "tactical-mastermind"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 62
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 58
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "explain-the-lines",
+      "label": "把三条线讲清楚",
+      "description": "战术讲透，队伍才会用。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你讲了三条线。",
+          "训练赛，对面按你画的线走，被吃掉两次。"
+        ],
+        "failureMessages": [
+          "你讲了三条线，队友听了一半。",
+          "比赛里，线断了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "keep-the-secret",
+      "label": "自己记住，比赛见分晓",
+      "description": "战术留一手，比赛里用。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你没讲完。",
+          "比赛里，你一个人按线打，对面懵了。"
+        ],
+        "failureMessages": [
+          "你没讲完，比赛里，队友没跟上。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

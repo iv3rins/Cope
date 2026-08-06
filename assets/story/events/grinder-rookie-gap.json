@@ -1,0 +1,136 @@
+{
+  "id": "grinder-rookie-gap",
+  "worldlineId": "grinder-rookie",
+  "title": "差的那一点",
+  "description": "你又练了一个月，手感还是差一点。教练说，别急。你点了点头，加练的时候多打了一组。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "grinder-rookie"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 20
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 60
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "listen-to-coach",
+      "label": "听教练的，别急",
+      "description": "放慢，让手感自己回来。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "你放慢了。",
+          "第二周，手感自己回来了。"
+        ],
+        "failureMessages": [
+          "你放慢了，但手指还在桌上敲。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "press-harder",
+      "label": "再压一压，把差的那点压出来",
+      "description": "用训练量把差距填上。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你压了一个月，差的那点补上了。",
+          "训练赛，你打出了最高 rating。"
+        ],
+        "failureMessages": [
+          "你压了一个月，还是差一点。",
+          "你坐在训练房，灯灭了才走。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,172 @@
+{
+  "id": "crownless-king-brink",
+  "worldlineId": "crownless-king",
+  "title": "就差一步",
+  "description": "大赛决赛，你队 2 比 0 领先，第三图 13 比 14。你 1v2，打赢就是冠军。你想起上届决赛，也是 2 比 0 领先。手放在鼠标上，没动。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "crownless-king-press"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "crownless-king"
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-position",
+      "label": "压住枪，等他们下包",
+      "description": "稳住，别自己送。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你打掉一个，另一个跑了。",
+          "队友拆了包。",
+          "有人喊了一声，稳的。"
+        ],
+        "failureMessages": [
+          "你换掉一个，倒在地上。",
+          "耳机里安静了。你想起上一届。"
+        ],
+        "successNextEventId": "crownless-king-finale",
+        "failureNextEventId": "crownless-king-finale"
+      }
+    },
+    {
+      "id": "take-both",
+      "label": "两个都打，打完就是冠军",
+      "description": "差一步，这次自己走完。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 80
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "第一个头，第二个头。",
+          "你摘下耳机，全场在喊。",
+          "你坐了一会儿，才站起来。"
+        ],
+        "failureMessages": [
+          "第二枪没中。",
+          "你倒在地上，手还搭在鼠标上。",
+          "领队过来，拍了拍你的肩，没说话。"
+        ],
+        "successNextEventId": "crownless-king-finale",
+        "failureNextEventId": "crownless-king-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

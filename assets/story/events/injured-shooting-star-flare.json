@@ -1,0 +1,182 @@
+{
+  "id": "injured-shooting-star-flare",
+  "worldlineId": "injured-shooting-star",
+  "title": "伤病发作",
+  "description": "联赛关键战，你手腕一阵剧痛。你在椅子上坐了一会儿，队医跑过来。你的手放在鼠标上，没动。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 85,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "injured-shooting-star-dawn"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "injured-shooting-star"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 30
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 55
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "surgery-now",
+      "label": "跟队医走，安排手术",
+      "description": "健康优先，赛季报销。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "FLAG_ADD",
+            "flagId": "injury-surgery",
+            "flag": {
+              "id": "injury-surgery",
+              "name": "手术归来",
+              "category": "EVENT"
+            }
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你跟着队医走了。",
+          "手术安排在两周后。",
+          "你在病房里，看了一眼天花板。"
+        ],
+        "failureMessages": [
+          "你跟着队医走，路上又停住了。",
+          "队医回头看你。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "grit-through",
+      "label": "打完这场再说",
+      "description": "硬扛，把赛季打完。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "FLAG_ADD",
+            "flagId": "injury-grit",
+            "flag": {
+              "id": "injury-grit",
+              "name": "硬扛赛季",
+              "category": "EVENT"
+            }
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你打完了这场，赢了。",
+          "赛后，你把手腕包了起来。"
+        ],
+        "failureMessages": [
+          "你打完了这场，输了。",
+          "手腕肿了一圈。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

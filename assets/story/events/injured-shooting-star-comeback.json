@@ -1,0 +1,199 @@
+{
+  "id": "injured-shooting-star-comeback",
+  "worldlineId": "injured-shooting-star",
+  "title": "复出之战",
+  "description": "复出第一场。全场鼓掌。你把手腕活动了一下，站到场上。对面是新科的冠军。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 85,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "injured-shooting-star-flare"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "injured-shooting-star"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "FLAG",
+          "flagId": "injury-surgery",
+          "expected": true
+        },
+        {
+          "type": "FLAG",
+          "flagId": "injury-grit",
+          "expected": true
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "careful-comeback",
+      "label": "保守打，先找状态",
+      "description": "复出稳一点，别急着证明。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你保守打完了，中规中矩。",
+          "赛后，队医给你手腕做了按摩。"
+        ],
+        "failureMessages": [
+          "你保守打，还是输了。",
+          "记者问，状态恢复了没。",
+          "你没回答。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "full-comeback",
+      "label": "全力打，告诉所有人我回来了",
+      "description": "复出就要打得漂亮。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 80
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.25,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.004,
+            "minimum": 75
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "comeback-triumph",
+            "flag": {
+              "id": "comeback-triumph",
+              "name": "复出封神",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "comeback-fall",
+            "flag": {
+              "id": "comeback-fall",
+              "name": "复出坠毁",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "你打出了复出后第一个五杀。",
+          "全场站起来。",
+          "你放下耳机，手还在抖。"
+        ],
+        "failureMessages": [
+          "你全力打，第二局手腕又疼了。",
+          "你打完，把自己关在休息室。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

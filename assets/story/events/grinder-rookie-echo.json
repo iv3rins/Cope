@@ -1,0 +1,132 @@
+{
+  "id": "grinder-rookie-echo",
+  "worldlineId": "grinder-rookie",
+  "title": "余波",
+  "description": "新赛季开始。训练馆的墙上，贴着你上赛季的海报。你站在海报前，看了一眼。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "grinder-rookie"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "FLAG",
+          "flagId": "grind-paid-off",
+          "expected": true
+        },
+        {
+          "type": "FLAG",
+          "flagId": "grind-eternal",
+          "expected": true
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "pack-the-poster",
+      "label": "把海报收好，继续打",
+      "description": "把过去卷起来，路还要走。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把海报卷起来。",
+          "训练，你第一个到。"
+        ],
+        "failureMessages": [
+          "你站在海报前，站了很久。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "write-the-grind",
+      "label": "把这段日子写下来",
+      "description": "让后来的人看到这条路。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你把练到熄灯的日子写成了话。",
+          "发出去，转发很高。",
+          "你关掉手机，去训练。"
+        ],
+        "failureMessages": [
+          "你写了一半，删了。",
+          "有些日子，只有训练房知道。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

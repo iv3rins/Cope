@@ -1,0 +1,117 @@
+{
+  "id": "major-choker-crossroads",
+  "worldlineId": "major-choker",
+  "title": "心魔夜",
+  "description": "决赛又输了一个。回酒店的路上，没人说话。你坐在床上，把决赛的录像打开，又关掉。窗外下雨了。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "major-choker-tremble"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "major-choker"
+    }
+  ],
+  "options": [
+    {
+      "id": "replay-tomorrow",
+      "label": "关灯，明天再看一遍录像",
+      "description": "把录像看完，接着打。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你关灯躺下。",
+          "第二天，你把录像从头看到尾。"
+        ],
+        "failureMessages": [
+          "录像看到一半，你又关掉了。",
+          "你盯着天花板，看了很久。"
+        ],
+        "successNextEventId": "major-choker-finale",
+        "failureNextEventId": "major-choker-finale"
+      }
+    },
+    {
+      "id": "delete-the-tape",
+      "label": "把录像删了，不再看",
+      "description": "放下录像，换一种活法。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "crownless-king"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把录像删了，手机放回桌上。",
+          "第二天，你把训练时间改到了晚上。"
+        ],
+        "failureMessages": [
+          "你按了删除，又取消了。",
+          "录像还在。"
+        ],
+        "successNextEventId": "crownless-king-press",
+        "failureNextEventId": "major-choker-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,211 @@
+{
+  "id": "grinder-rookie-promotion",
+  "worldlineId": "grinder-rookie",
+  "title": "苦尽甘来",
+  "description": "重要比赛决胜图，14 比 15。队友全倒，你 1v2。教练在耳机里说，慢慢打。你想起刚进队那两年，每天练到熄灯。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-rookie-debut"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "grinder-rookie"
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-calm",
+      "label": "稳住，等对面失误",
+      "description": "把胜负交给对面，体面收场。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "你稳住，对面试探了两下，没敢上。",
+          "比赛结束，你坐着没动。"
+        ],
+        "failureMessages": [
+          "你还是开了那枪，没中。",
+          "全场安静了一秒。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "worth-it-all",
+      "label": "打完这个残局，就什么都值了",
+      "description": "赢了就熬出头，输了就接着练。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 58
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 49
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.15,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.003,
+            "minimum": 50
+          },
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.002,
+            "minimum": 45
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 5
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "grind-paid-off",
+            "flag": {
+              "id": "grind-paid-off",
+              "name": "苦练出山",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "grind-eternal",
+            "flag": {
+              "id": "grind-eternal",
+              "name": "苦练未止",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "最后一个头。",
+          "你放下耳机，手有点抖。",
+          "教练只说了一句，明天继续练。",
+          "第二天，你早上七点又到了训练室。"
+        ],
+        "failureMessages": [
+          "第二枪空了。",
+          "你倒在地上，耳机里安静了。",
+          "你在椅子上坐了很久。",
+          "第二天，你早上七点又到了训练室。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

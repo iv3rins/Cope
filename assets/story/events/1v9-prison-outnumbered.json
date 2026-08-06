@@ -1,0 +1,161 @@
+{
+  "id": "1v9-prison-outnumbered",
+  "worldlineId": "1v9-prison",
+  "title": "一打多",
+  "description": "又是 1v3。队友全倒，报点声停了。观众席开始喊你的名字，从稀稀拉拉变成整齐。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "1v9-prison"
+    },
+    {
+      "type": "ATTRIBUTE",
+      "attribute": "CLUTCH",
+      "minimum": 70
+    }
+  ],
+  "options": [
+    {
+      "id": "steady-pick",
+      "label": "稳着打，一个个来",
+      "description": "一个个打掉，先赢下这局。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你一个个打掉，拆了包。",
+          "观众席安静了一秒，然后炸了。"
+        ],
+        "failureMessages": [
+          "你稳着打，还是没接住。",
+          "观众席的喊声停了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "the-highlight",
+      "label": "打成名场面",
+      "description": "让这一局被记住。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 80
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 5
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "你闪出去，一枪一个。",
+          "全场站起来。",
+          "你放下鼠标，手还在抖。"
+        ],
+        "failureMessages": [
+          "你想打名场面，送了。",
+          "弹幕开始刷。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

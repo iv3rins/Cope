@@ -1,0 +1,141 @@
+{
+  "id": "arrogant-tyrant-storm",
+  "worldlineId": "arrogant-tyrant",
+  "title": "更衣室风暴",
+  "description": "更衣室里，有人把耳机摔了。你的名字被提了两遍。教练说，都冷静。没人冷静。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "arrogant-tyrant"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "TEAM_CONFLICT",
+          "minimum": 25
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "TEAM_RELATIONSHIP",
+          "maximum": 45
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "cool-it-down",
+      "label": "压下去，先打完训练",
+      "description": "把火压住，气氛绷着。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": -5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你压下去，训练打完。",
+          "气氛像绷紧的弦。"
+        ],
+        "failureMessages": [
+          "你压下去，晚上又绷了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "stand-up",
+      "label": "站出来，说，不服的可以走",
+      "description": "把话放出去，关系也裂了。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你站出来说了。没人走。",
+          "有人低了头。"
+        ],
+        "failureMessages": [
+          "你说完，有人摔门走了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,220 @@
+{
+  "id": "1v9-prison-finale",
+  "worldlineId": "1v9-prison",
+  "title": "一打五",
+  "description": "决赛决胜图，你队 1 比 14。队友全倒，对面五个人从三个方向压过来。观众在喊你的 ID，一声比一声大。你看了眼记分板。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "1v9-prison-stage"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "1v9-prison"
+    }
+  ],
+  "options": [
+    {
+      "id": "stand-down",
+      "label": "站住不动，等人来杀",
+      "description": "输了不丢人，丢的是数据。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你放下枪，对面没补你。",
+          "赛后握手，有人多看了你一眼。"
+        ],
+        "failureMessages": [
+          "你还是开了那枪，一枪没中。",
+          "耳机里有人轻轻叹了口气。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "one-v-five",
+      "label": "一打五，打完这场",
+      "description": "赢了封神，输了就是罪人。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 86
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 66
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.15,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.004,
+            "minimum": 80
+          },
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.002,
+            "minimum": 66
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "prison-shattered",
+            "flag": {
+              "id": "prison-shattered",
+              "name": "破狱而出",
+              "category": "CAREER"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 20
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -5
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "prison-chained",
+            "flag": {
+              "id": "prison-chained",
+              "name": "铁窗未破",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "最后两颗子弹，两个头。",
+          "全场炸了。",
+          "你放下耳机，手还在抖。",
+          "领队过来只说了一句，明天加训。"
+        ],
+        "failureMessages": [
+          "第五个人把你架死在包点。",
+          "全场安静了一秒。",
+          "你在椅子上坐了很久。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

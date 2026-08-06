@@ -1,0 +1,116 @@
+{
+  "id": "crownless-king-crossroads",
+  "worldlineId": "crownless-king",
+  "title": "最后一页",
+  "description": "这个赛季还是没有冠军。颁奖仪式散场，你多看了一眼奖杯。回酒店，你把奖杯的照片收进了相册。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "crownless-king-brink"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "crownless-king"
+    }
+  ],
+  "options": [
+    {
+      "id": "close-the-album",
+      "label": "把相册合上，继续打",
+      "description": "再打一个赛季，等下一次决赛。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把相册合上，放在床头。",
+          "第二天，你照常训练。"
+        ],
+        "failureMessages": [
+          "相册合上又打开。",
+          "你看着那张照片，坐了很久。"
+        ],
+        "successNextEventId": "crownless-king-finale",
+        "failureNextEventId": "crownless-king-finale"
+      }
+    },
+    {
+      "id": "mail-the-album",
+      "label": "把相册寄回家里",
+      "description": "不带走这些，重新开始。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "major-choker"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把相册寄回家里。",
+          "第二天训练，你对着镜子看了很久。"
+        ],
+        "failureMessages": [
+          "你把相册装进箱子，又拿了出来。"
+        ],
+        "successNextEventId": "major-choker-tape",
+        "failureNextEventId": "crownless-king-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

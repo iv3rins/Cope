@@ -1,0 +1,116 @@
+{
+  "id": "scapegoat-kicked-crossroads",
+  "worldlineId": "scapegoat-kicked",
+  "title": "没说完的话",
+  "description": "赛季末，你又背了一次锅。队友没帮你说话。晚上，你坐在房间里，把那份背锅的会议记录看了两遍。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "scapegoat-kicked-court"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "scapegoat-kicked"
+    }
+  ],
+  "options": [
+    {
+      "id": "keep-the-record",
+      "label": "把记录存好，继续打",
+      "description": "留着记录，等有人问再看。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把记录存好。",
+          "第二天训练，你什么都没说。"
+        ],
+        "failureMessages": [
+          "你存了记录，又打开看了第三遍。"
+        ],
+        "successNextEventId": "scapegoat-kicked-call",
+        "failureNextEventId": "scapegoat-kicked-call"
+      }
+    },
+    {
+      "id": "delete-and-grind",
+      "label": "把记录删了，去练道具",
+      "description": "不解释了，先干活。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "support-slave"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把记录删了，去练了两个小时道具。",
+          "第二天，你把道具点位标了出来。"
+        ],
+        "failureMessages": [
+          "你删了记录，又想起来还有一段。",
+          "手机里空空荡荡。"
+        ],
+        "successNextEventId": "support-slave-give",
+        "failureNextEventId": "scapegoat-kicked-call"
+      }
+    }
+  ],
+  "autoEffects": []
+}

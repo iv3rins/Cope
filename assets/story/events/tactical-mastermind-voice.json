@@ -1,0 +1,129 @@
+{
+  "id": "tactical-mastermind-voice",
+  "worldlineId": "tactical-mastermind",
+  "title": "指挥的嗓子",
+  "description": "指挥了一下午，你的嗓子哑了。队友还在问，下把怎么打。你喝了口水，声音发不出来。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "tactical-mastermind"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 20
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 60
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "write-it-down",
+      "label": "写下来，让队友看",
+      "description": "嗓子哑了，脑子还能用。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把战术写在纸上。",
+          "队友看完，点了点头。"
+        ],
+        "failureMessages": [
+          "你写了，但比赛里没人看纸。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "roar-it-out",
+      "label": "吼出来，嗓子哑也要说",
+      "description": "指挥不能断，嗓子后面再说。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你吼出来，嗓子疼得厉害，但战术打成了。"
+        ],
+        "failureMessages": [
+          "你吼到一半，嗓子彻底哑了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

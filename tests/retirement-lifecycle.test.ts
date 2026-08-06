@@ -17,3 +17,15 @@ test('retirement preserves reason and summary exposes it', async () => {
   const summary = await new RetirementSummaryServiceImpl().generate({ player: retired });
   assert.equal(summary.player.reason, retired.retirementReason);
 });
+
+test('summary grade 阈值由数据驱动且默认规则兜底', async () => {
+  const retired = await new RetirementServiceImpl().retire({ player: { ...player(), tournamentArchive: [{ editionId: 'a', year: 2026, fullName: 'Major', organizerId: 'OTHER', level: 'MAJOR', placement: 'CHAMPION', rating: 1.35, mapsPlayed: 60, champion: true, mvp: 'MAJOR', trophyAssetId: 'OTHER' }] }, retiredAt: '2048-01-01T00:00:00.000Z' });
+  const service = new RetirementSummaryServiceImpl();
+
+  const defaultSummary = await service.generate({ player: retired });
+  assert.equal(defaultSummary.careerOverview.grade, 'S', '峰值 1.35 应命中默认 S 档');
+
+  const strictRules = [{ grade: 'S', minimumRating: 1.5 }, { grade: 'A', minimumRating: 1.4 }, { grade: 'B', minimumRating: 0 }, { grade: 'C', minimumRating: 0 }, { grade: 'D', minimumRating: 0 }];
+  const strictSummary = await service.generate({ player: retired, gradeRules: strictRules });
+  assert.equal(strictSummary.careerOverview.grade, 'B', '自定义规则应覆盖默认阈值');
+});

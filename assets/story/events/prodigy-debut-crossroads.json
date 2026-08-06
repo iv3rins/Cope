@@ -1,0 +1,119 @@
+{
+  "id": "prodigy-debut-crossroads",
+  "worldlineId": "prodigy-debut",
+  "title": "聚光灯外",
+  "description": "首秀赛季打完，采访排到了下个月。晚上，你坐在酒店房间，窗外的灯还亮着。经纪人发来消息，问明年怎么规划。你回了一句，再看。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-debut-stage"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "prodigy-debut"
+    }
+  ],
+  "options": [
+    {
+      "id": "stay-the-course",
+      "label": "回消息，说留下",
+      "description": "把规划接住，继续首秀的路。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你回了消息，说留下。",
+          "经纪人发了个笑脸。",
+          "第二天，采访你答得比平时稳。"
+        ],
+        "failureMessages": [
+          "你回消息，打了一半又删了。",
+          "经纪人问，怎么了。",
+          "你说，没事。"
+        ],
+        "successNextEventId": "prodigy-debut-finale",
+        "failureNextEventId": "prodigy-debut-finale"
+      }
+    },
+    {
+      "id": "turn-away",
+      "label": "把手机翻过去，看着窗外",
+      "description": "规划先放一放，看看窗外。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "major-choker"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把手机翻过去，看着窗外。",
+          "第二天，采访你只答了一个问题。"
+        ],
+        "failureMessages": [
+          "你把手机翻过去，又翻了回来。",
+          "经纪人连发了三条消息。"
+        ],
+        "successNextEventId": "major-choker-tape",
+        "failureNextEventId": "prodigy-debut-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

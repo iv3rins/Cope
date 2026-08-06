@@ -14,8 +14,8 @@ const snapshot = (rank: number): VrsInviteSnapshot => ({
 });
 
 const calendarReader = async () => ({ schemaVersion: 1 as const, organizers: { org: 'ORG' }, editions: [
-  { id: 't1', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T1', tier: 'T1' as const, honorClass: 'LARGE' as const, format: 'BO3' as const, prizePool: 1 },
-  { id: 't1-second', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T1 Second', tier: 'T1' as const, honorClass: 'LARGE' as const, format: 'BO3' as const, prizePool: 1 },
+  { id: 't1', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T1', tier: 'T1' as const, honorClass: 'SUPER_ELITE' as const, format: 'BO3' as const, prizePool: 1 },
+  { id: 't1-second', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T1 Second', tier: 'T1' as const, honorClass: 'ELITE' as const, format: 'BO3' as const, prizePool: 1 },
   { id: 't2', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'T2', tier: 'T2' as const, honorClass: 'MEDIUM' as const, format: 'BO3' as const, prizePool: 1, eligibleTeamTiers: ['T2', 'T3'] as const, fallbackQualificationSource: 'PUBLIC_QUALIFIER' as const },
   { id: 'major', half: 1 as const, organizerId: 'org', city: 'City', nameTemplate: 'Major', tier: 'MAJOR' as const, honorClass: 'MAJOR' as const, format: 'BO3' as const, prizePool: 1, directInviteMaxRank: 64, fallbackQualificationSource: 'PUBLIC_QUALIFIER' as const },
 ] });
@@ -60,10 +60,17 @@ test('ordinary T1 directly invites only top 12 while Major includes only snapsho
 test('T3 calendar keeps T2 events plus only one T1 qualifier and uses consistent qualifier nodes', async () => {
   const events = await service().createCalendar({ season: 2026, half: 1, teamId: 'career-team', snapshot: snapshot(33) });
   assert.equal(events.filter((event) => event.tier === 'T1').length, 1);
+  assert.equal(events.find((event) => event.tier === 'T1')?.seriesId, 't1');
   assert.equal(events.filter((event) => event.tier === 'T2').length, 1);
   assert.ok(events.filter((event) => event.qualificationSource === 'PUBLIC_QUALIFIER').every((event) => event.node === 'QUALIFIER' && event.qualificationStatus === 'QUALIFIER_PENDING'));
 });
 
+test('T2 calendar keeps all T2 direct-path events and caps ordinary T1 qualification at one', async () => {
+  const events = await service().createCalendar({ season: 2026, half: 1, teamId: 'career-team', snapshot: snapshot(13) });
+  assert.equal(events.filter((event) => event.tier === 'T2').length, 1);
+  assert.ok(events.filter((event) => event.tier === 'T1').length <= 1);
+  assert.ok(events.filter((event) => event.tier === 'T1').every((event) => event.qualificationSource === 'PUBLIC_QUALIFIER'));
+});
 test('series projection uses mapsWon as series score and keeps optional cumulative rounds', async () => {
   const simulated: MatchSimulationResult = {
     matchId: 'match', stage: 'GROUP', winnerTeamId: 'career-team', loserTeamId: 'opponent',

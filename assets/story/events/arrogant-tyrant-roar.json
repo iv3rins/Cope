@@ -1,0 +1,140 @@
+{
+  "id": "arrogant-tyrant-roar",
+  "worldlineId": "arrogant-tyrant",
+  "title": "训练赛吼声",
+  "description": "训练赛打完，你 30 杀，1.5 rating，还是输。队友语音里在互相甩锅。你摘下耳机，有人还在说。教练说，都少说两句。你看了眼记分板。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "swallow-it",
+      "label": "把话咽回去，继续打",
+      "description": "咽下话，队内气氛缓和，个人节奏被压住。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": -1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把话咽回去，继续打。",
+          "语音里安静了。",
+          "教练没看你，多看了一眼训练安排。"
+        ],
+        "failureMessages": [
+          "咽回去的话，晚上又冒出来。",
+          "你躺下，看了一眼天花板。"
+        ],
+        "successNextEventId": "arrogant-tyrant-rift",
+        "failureNextEventId": "arrogant-tyrant-rift"
+      }
+    },
+    {
+      "id": "lash-out",
+      "label": "说，别拖我后腿",
+      "description": "当众立威，枪法更放得开，队内关系崩。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.003,
+            "minimum": 70
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "说完，没人接话。",
+          "后面几枪全中。",
+          "第二天训练，你坐的位置空了半个。"
+        ],
+        "failureMessages": [
+          "说完，有人把耳机摘了。",
+          "训练提前结束。",
+          "你一个人留在训练房，多练了一小时。"
+        ],
+        "successNextEventId": "arrogant-tyrant-rift",
+        "failureNextEventId": "arrogant-tyrant-rift"
+      }
+    }
+  ],
+  "autoEffects": []
+}

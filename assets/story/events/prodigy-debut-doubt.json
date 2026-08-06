@@ -1,0 +1,138 @@
+{
+  "id": "prodigy-debut-doubt",
+  "worldlineId": "prodigy-debut",
+  "title": "质疑声",
+  "description": "有人把你首秀的高光剪成集锦，也有人说你是数据刷子。评论区两边都在刷。你划着手机，多看了两秒。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "prodigy-debut"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 60
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAN_REPUTATION",
+          "maximum": 45
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "stay-quiet",
+      "label": "不回应，用比赛说话",
+      "description": "让数据替你说。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你没回应。",
+          "下一场比赛，你打出了同样的数据。",
+          "评论区换了一批话。"
+        ],
+        "failureMessages": [
+          "你没回应，但训练的时候，你总在想评论区。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "hit-back",
+      "label": "在采访里回应",
+      "description": "流量和压力一起来。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你在采访里回了一句。",
+          "转发破了十万。",
+          "你放下手机，去训练。"
+        ],
+        "failureMessages": [
+          "你回了一句，被截出来，吵得更凶。",
+          "你把手机反扣在桌上。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

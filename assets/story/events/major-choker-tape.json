@@ -1,0 +1,129 @@
+{
+  "id": "major-choker-tape",
+  "worldlineId": "major-choker",
+  "title": "决赛录像",
+  "description": "常规赛打完，你 30 杀，又是全场第一。赛后采访，记者问你决赛的事。你说，先打好眼前。回训练室，教练说，决赛录像发你了。你看了眼手机。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "watch-with-team",
+      "label": "跟着看录像，跟队友讨论",
+      "description": "集体复盘，压力有人分担。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "录像看到一半，有人开始讲笑话。",
+          "你跟着笑了两声。",
+          "第二天，你手没那么沉了。"
+        ],
+        "failureMessages": [
+          "讨论到一半，有人吵起来了。",
+          "你关掉录像，看了一眼窗外。"
+        ],
+        "successNextEventId": "major-choker-tremble",
+        "failureNextEventId": "major-choker-tremble"
+      }
+    },
+    {
+      "id": "watch-alone",
+      "label": "说想自己看，先走",
+      "description": "一个人反复看决赛失误，预瞄练到位，压力也在涨。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.003,
+            "minimum": 70
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "录像看了三遍。",
+          "预瞄的点记住了。",
+          "第二天训练，后面几枪全中。"
+        ],
+        "failureMessages": [
+          "录像看到一半，你关了。",
+          "喝了口水，又打开。"
+        ],
+        "successNextEventId": "major-choker-tremble",
+        "failureNextEventId": "major-choker-tremble"
+      }
+    }
+  ],
+  "autoEffects": []
+}

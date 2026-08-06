@@ -1,0 +1,18 @@
+{
+  "id": "crownless-king",
+  "name": "无冕之王",
+  "description": "统治了一个时代，冠军差一步。所有人都在等他的最后一舞。",
+  "startEventId": "crownless-king-press",
+  "eventIds": [
+    "crownless-king-press",
+    "crownless-king-brink",
+    "crownless-king-dominance",
+    "crownless-king-one-step",
+    "crownless-king-media",
+    "crownless-king-veteran",
+    "crownless-king-crossroads",
+    "crownless-king-puzzle",
+    "crownless-king-finale",
+    "crownless-king-echo"
+  ]
+}

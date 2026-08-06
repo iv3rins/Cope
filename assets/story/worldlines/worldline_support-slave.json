@@ -1,0 +1,12 @@
+{
+  "id": "support-slave",
+  "name": "极致绿叶",
+  "description": "吃最脏的活，发最好的枪。数据垫底，队伍离不开你。",
+  "startEventId": "support-slave-give",
+  "eventIds": [
+    "support-slave-give",
+    "support-slave-pistol",
+    "support-slave-crossroads",
+    "support-slave-seen"
+  ]
+}

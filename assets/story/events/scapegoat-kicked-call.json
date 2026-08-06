@@ -1,0 +1,232 @@
+{
+  "id": "scapegoat-kicked-call",
+  "worldlineId": "scapegoat-kicked",
+  "title": "二选一",
+  "description": "转会窗。管理层找你谈话，说阵容要调整，你的合同还有时间，他们想提前解约。桌子对面放着一份文件。你看了眼窗外，又看了眼文件。",
+  "period": "TRANSFER_WINDOW",
+  "phase": "POST_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "scapegoat-kicked-court"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "scapegoat-kicked"
+    }
+  ],
+  "options": [
+    {
+      "id": "sign-the-paper",
+      "label": "坐下，把文件签了",
+      "description": "接受解约，不再争了。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "FORCE_CONTRACT_TERMINATION",
+            "requirements": [],
+            "reason": "TEAM_DECISION",
+            "note": "管理层认定阵容需要重建，背锅侠成为第一个被调整的对象。"
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "scapegoat-ousted",
+            "flag": {
+              "id": "scapegoat-ousted",
+              "name": "背锅离队",
+              "category": "MENTAL"
+            }
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你签了字。",
+          "经理说了句，不是你的问题。",
+          "你走出大楼，回头看了一眼。"
+        ],
+        "failureMessages": [
+          "你拿起笔，又放下。",
+          "经理问，还有什么问题。",
+          "你签了。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "prove-them-wrong",
+      "label": "不签，用最后的时间证明自己",
+      "description": "舆论、数据、心气都在，留下。",
+      "requirements": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAN_REPUTATION",
+          "minimum": 60
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 48
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.2,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.005,
+            "minimum": 40
+          },
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.002,
+            "minimum": 40
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "scapegoat-cleared",
+            "flag": {
+              "id": "scapegoat-cleared",
+              "name": "锅被掀翻",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "FORCE_CONTRACT_TERMINATION",
+            "requirements": [],
+            "reason": "TEAM_DECISION",
+            "note": "用表现也没能留下，管理层仍然选择调整阵容。"
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "scapegoat-ousted",
+            "flag": {
+              "id": "scapegoat-ousted",
+              "name": "背锅离队",
+              "category": "MENTAL"
+            }
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -5
+          }
+        ],
+        "successMessages": [
+          "你在最后一个月打出了全队最好的数据。",
+          "经理把你叫进去，把那份文件撕了。",
+          "你出门的时候，走廊里有人喊了你的名字。"
+        ],
+        "failureMessages": [
+          "你打出来了，但文件还是递了过来。",
+          "这次你没看窗外。",
+          "你签了字，手很稳。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

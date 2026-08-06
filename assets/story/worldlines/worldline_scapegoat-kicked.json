@@ -1,0 +1,12 @@
+{
+  "id": "scapegoat-kicked",
+  "name": "宫斗背锅侠",
+  "description": "队伍成绩差，数据不是你的事。管理层第一个找的是你。",
+  "startEventId": "scapegoat-kicked-blame",
+  "eventIds": [
+    "scapegoat-kicked-blame",
+    "scapegoat-kicked-court",
+    "scapegoat-kicked-crossroads",
+    "scapegoat-kicked-call"
+  ]
+}

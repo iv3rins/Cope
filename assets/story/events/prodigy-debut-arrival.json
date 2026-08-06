@@ -1,0 +1,129 @@
+{
+  "id": "prodigy-debut-arrival",
+  "worldlineId": "prodigy-debut",
+  "title": "首秀前夜",
+  "description": "入队第一周。训练赛 32 杀，教练说今天到这。你起身，队友路过，看了一眼你的屏幕。明天有采访。弹幕在刷你的 ID，一条接一条。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "dinner-with-vets",
+      "label": "跟老将去吃饭",
+      "description": "听老将讲怎么扛压，队内关系回暖，精力被占走。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "饭桌上聊的都是以前的事。",
+          "有人说，新人别急。",
+          "第二天采访，你照着老将说的念了一遍。"
+        ],
+        "failureMessages": [
+          "饭吃到一半，有人接了个电话先走。",
+          "你回到房间，看了一眼手机。"
+        ],
+        "successNextEventId": "prodigy-debut-stage",
+        "failureNextEventId": "prodigy-debut-stage"
+      }
+    },
+    {
+      "id": "late-night-practice",
+      "label": "说约了训练房，先走",
+      "description": "加练到半夜，手感在涨，压力也在涨。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.003,
+            "minimum": 70
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "训练房灯还亮着。",
+          "后面几枪全中。",
+          "第二天采访，你答得比预想的好。"
+        ],
+        "failureMessages": [
+          "打到两点，手感还是没回来。",
+          "你擦了擦手心，关灯走了。"
+        ],
+        "successNextEventId": "prodigy-debut-stage",
+        "failureNextEventId": "prodigy-debut-stage"
+      }
+    }
+  ],
+  "autoEffects": []
+}

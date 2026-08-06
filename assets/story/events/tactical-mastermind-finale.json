@@ -1,0 +1,222 @@
+{
+  "id": "tactical-mastermind-finale",
+  "worldlineId": "tactical-mastermind",
+  "title": "极致大脑",
+  "description": "决赛决胜图，14 比 15。你的战术把对面骗到了 B 点，队友按位置站好。对面识破了，队友全倒。你 1v2。队友在耳机里说，听你的。你想起画过的每一张战术板。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "tactical-mastermind-call"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "tactical-mastermind"
+    }
+  ],
+  "options": [
+    {
+      "id": "call-the-finale",
+      "label": "让队友打，你报点",
+      "description": "把最后一分交给队友，战术你来想。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你报完最后一个点，队友没打中。",
+          "比赛结束，你坐着没动。",
+          "教练过来，拍了拍你的肩。"
+        ],
+        "failureMessages": [
+          "你还是自己开了枪，没中。",
+          "全场安静了一秒。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "prove-it-all",
+      "label": "自己打完，赢下这局",
+      "description": "战术和枪，今天都要兑现。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 63
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 62
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "TEAM_RELATIONSHIP",
+          "minimum": 45
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.2,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.004,
+            "minimum": 55
+          },
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.002,
+            "minimum": 55
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 4
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "strategy-vindicated",
+            "flag": {
+              "id": "strategy-vindicated",
+              "name": "战术自证",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "strategy-questioned",
+            "flag": {
+              "id": "strategy-questioned",
+              "name": "战术受疑",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "你打了两个提前枪，全中。",
+          "你放下耳机，手还在抖。",
+          "队友围过来，有人说了句，脑子是真的好。",
+          "第二天，战术板上的点被人截图发到了网上。"
+        ],
+        "failureMessages": [
+          "你按套路打，对面没上当。",
+          "你倒在地上，耳机里安静了。",
+          "你在椅子上坐了很久。",
+          "第二天，有人问，战术呢。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

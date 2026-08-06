@@ -1,0 +1,166 @@
+{
+  "id": "grinder-rookie-debut",
+  "worldlineId": "grinder-rookie",
+  "title": "第一次首发",
+  "description": "第一次打正式比赛，你队 12 比 14。队友全倒，残局剩你 1v2。观众席稀稀拉拉，但有人在喊你的名字。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-rookie-drill"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "grinder-rookie"
+    }
+  ],
+  "options": [
+    {
+      "id": "wait-reinforce",
+      "label": "保守，等队友回防",
+      "description": "稳一点，把残局交给队伍。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你压住枪，等来了回防。",
+          "队友拆了包。",
+          "有人拍了拍你的肩。"
+        ],
+        "failureMessages": [
+          "你等到队友回防，还是输了。",
+          "耳机里安静了。"
+        ],
+        "successNextEventId": "grinder-rookie-promotion",
+        "failureNextEventId": "grinder-rookie-promotion"
+      }
+    },
+    {
+      "id": "finish-clutch",
+      "label": "冲出去，把残局打完",
+      "description": "残局自己打，赢了就是出头。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 56
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.35,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 50
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你打掉一个，第二个对枪你赢了。",
+          "你摘下耳机，手还在抖。",
+          "观众席有人在喊你的名字。"
+        ],
+        "failureMessages": [
+          "你冲出去，第二枪没中。",
+          "你倒在地上，耳边是队友的报点声。"
+        ],
+        "successNextEventId": "grinder-rookie-promotion",
+        "failureNextEventId": "grinder-rookie-promotion"
+      }
+    }
+  ],
+  "autoEffects": []
+}

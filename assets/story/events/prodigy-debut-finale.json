@@ -1,0 +1,221 @@
+{
+  "id": "prodigy-debut-finale",
+  "worldlineId": "prodigy-debut",
+  "title": "万众瞩目",
+  "description": "决赛决胜图，12 比 15。队友全倒，四个人从两个方向压过来，第五个在包点下包。全场在喊你的 ID，一声比一声大。你看了眼记分板。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "prodigy-debut-stage"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "prodigy-debut"
+    }
+  ],
+  "options": [
+    {
+      "id": "save-gun",
+      "label": "保枪，等下一局",
+      "description": "保枪，数据别太难看。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你放下枪，对面没补你。",
+          "赛后握手，有人多看了你一眼。"
+        ],
+        "failureMessages": [
+          "你还是开了那枪，没中。",
+          "观众席安静了一秒。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "clutch-finale",
+      "label": "一打四，打完这场",
+      "description": "赢了封神，输了就是流星。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 86
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 66
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.15,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.004,
+            "minimum": 80
+          },
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.002,
+            "minimum": 66
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "star-risen",
+            "flag": {
+              "id": "star-risen",
+              "name": "新星升起",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 20
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -5
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "star-fallen",
+            "flag": {
+              "id": "star-fallen",
+              "name": "流星坠落",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "最后一个头，全场炸了。",
+          "你放下耳机，手还在抖。",
+          "领队过来只说了一句，明天加训。",
+          "第二天，弹幕还在刷你的 ID。"
+        ],
+        "failureMessages": [
+          "第五个人把你架死在包点。",
+          "全场安静了一秒。",
+          "你在椅子上坐了很久。",
+          "第二天，弹幕换了一批人刷。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

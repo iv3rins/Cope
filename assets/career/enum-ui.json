@@ -49,6 +49,7 @@
   },
   "eventTypes": {
     "CHOICE": "生涯抉择",
+    "MANDATORY": "自动发生",
     "AUTO": "生涯事件"
   },
   "levels": {

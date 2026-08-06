@@ -1,0 +1,117 @@
+{
+  "id": "emotional-leader-crossroads",
+  "worldlineId": "emotional-leader",
+  "title": "吼声之外",
+  "description": "赛季末，队伍还是没进季后赛。你吼了一整个赛季，嗓子哑了。晚上，你坐在台阶上，看着训练室的门。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "emotional-leader-roar"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "emotional-leader"
+    }
+  ],
+  "options": [
+    {
+      "id": "roar-tomorrow",
+      "label": "明天接着吼",
+      "description": "嗓子哑了也接着吼。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你喝了口水，对着墙吼了一声。",
+          "回声还在。第二天，你接着吼。"
+        ],
+        "failureMessages": [
+          "你吼了一声，嗓子疼得厉害。",
+          "你坐下，没再出声。"
+        ],
+        "successNextEventId": "emotional-leader-finale",
+        "failureNextEventId": "emotional-leader-finale"
+      }
+    },
+    {
+      "id": "write-it-down",
+      "label": "不吼了，把话写下来",
+      "description": "换个方式说话。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "scapegoat-kicked"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把想说的话写下来。",
+          "第二天，管理层开会，你没说话。"
+        ],
+        "failureMessages": [
+          "你写了半页，又撕了。",
+          "纸团扔了一地。"
+        ],
+        "successNextEventId": "scapegoat-kicked-blame",
+        "failureNextEventId": "emotional-leader-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

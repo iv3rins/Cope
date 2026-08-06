@@ -1,0 +1,140 @@
+{
+  "id": "crownless-king-veteran",
+  "worldlineId": "crownless-king",
+  "title": "老将",
+  "description": "年纪上来了。训练完，你的手腕比去年酸。队医说，恢复要慢一点了。你活动了一下，没说话。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "crownless-king"
+    },
+    {
+      "type": "ALL",
+      "conditions": [
+        {
+          "type": "AGE",
+          "minimum": 22
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 80
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "listen-to-doctor",
+      "label": "调整训练量，听队医的",
+      "description": "科学训练，状态稳住。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -4
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你调整了训练量。恢复快了一点。",
+          "第二天，状态没掉。"
+        ],
+        "failureMessages": [
+          "你调整了，但训练少了，手感有点生。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "train-as-usual",
+      "label": "照旧练，别让年龄看出来",
+      "description": "硬扛年龄，数据不掉。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你照旧练，数据没掉。",
+          "队医多看了你一眼。"
+        ],
+        "failureMessages": [
+          "你照旧练，手腕疼了一晚上。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

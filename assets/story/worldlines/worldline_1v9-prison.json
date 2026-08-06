@@ -1,0 +1,18 @@
+{
+  "id": "1v9-prison",
+  "name": "院长坐牢",
+  "description": "天才被困在垫底队，每一局都在一打多。赢不了，也走不了。",
+  "startEventId": "1v9-prison-cell",
+  "eventIds": [
+    "1v9-prison-cell",
+    "1v9-prison-stage",
+    "1v9-prison-carry",
+    "1v9-prison-drag",
+    "1v9-prison-offer",
+    "1v9-prison-cellblock",
+    "1v9-prison-crossroads",
+    "1v9-prison-outnumbered",
+    "1v9-prison-finale",
+    "1v9-prison-echo"
+  ]
+}

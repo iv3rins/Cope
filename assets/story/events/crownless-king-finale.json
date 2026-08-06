@@ -1,0 +1,222 @@
+{
+  "id": "crownless-king-finale",
+  "worldlineId": "crownless-king",
+  "title": "最后一舞",
+  "description": "最后一届决赛，决胜图，14 比 15。队友全倒，对面两个人下包。解说在说你的名字。你想起职业生涯每一届决赛，都差最后一步。你把手放在鼠标上。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "crownless-king-brink"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "crownless-king"
+    },
+    {
+      "type": "AGE",
+      "minimum": 24
+    }
+  ],
+  "options": [
+    {
+      "id": "lay-down-mouse",
+      "label": "放下鼠标，接受结局",
+      "description": "有些冠军，等不到就算了。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你放下鼠标。",
+          "比赛结束，观众还是给你鼓掌了。",
+          "你站起来，多看了两秒记分板。"
+        ],
+        "failureMessages": [
+          "你还是开了那枪，没中。",
+          "全场安静了一秒。",
+          "你在椅子上坐了很久。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "final-dance",
+      "label": "打完这场，赢了就圆满了",
+      "description": "最后一舞，赢了圆梦，输了就是无冕之王。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 86
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 66
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.15,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.004,
+            "minimum": 80
+          },
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.002,
+            "minimum": 66
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 4
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "king-crowned",
+            "flag": {
+              "id": "king-crowned",
+              "name": "终于加冕",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 20
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -5
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "forever-crownless",
+            "flag": {
+              "id": "forever-crownless",
+              "name": "无冕终身",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "最后一个头。",
+          "你放下耳机，全场在喊你的名字。",
+          "队友把你举起来，你多看了两秒奖杯。",
+          "第二天，媒体标题换了。"
+        ],
+        "failureMessages": [
+          "最后一枪，空了。",
+          "你放下耳机，掌声还在。",
+          "你在椅子上坐了很久。",
+          "第二天，稿子还是那个标题。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

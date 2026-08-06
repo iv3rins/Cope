@@ -1,0 +1,217 @@
+{
+  "id": "emotional-leader-finale",
+  "worldlineId": "emotional-leader",
+  "title": "最后一吼",
+  "description": "决赛决胜图，13 比 15。中场休息，队友没说话。你站起来，吼了一句，最后一局，赢了就是冠军。队友跟着吼了一声。开局，队友全倒，你 1v2。全场在喊你的名字。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "emotional-leader-roar"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "emotional-leader"
+    }
+  ],
+  "options": [
+    {
+      "id": "calm-finale",
+      "label": "稳住，正常打完",
+      "description": "最后一份稳着收，情绪收住。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你稳住打完，比赛结束。",
+          "观众还是鼓掌了。",
+          "你坐下，没说话。"
+        ],
+        "failureMessages": [
+          "你还是开了那枪，没中。",
+          "全场安静了一秒。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "last-roar",
+      "label": "吼完最后一嗓子，打完这局",
+      "description": "吼声就是你的枪。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 65
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 60
+        },
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAN_REPUTATION",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.2,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.004,
+            "minimum": 50
+          },
+          {
+            "attribute": "MORALE",
+            "perPoint": 0.002,
+            "minimum": 50
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "emotion-champion",
+            "flag": {
+              "id": "emotion-champion",
+              "name": "吼出冠军",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -4
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "emotion-silenced",
+            "flag": {
+              "id": "emotion-silenced",
+              "name": "吼声沉寂",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "你吼着打掉第一个，吼着打掉第二个。",
+          "你放下耳机，嗓子是哑的。",
+          "队友把你举起来，你在喊，喊的是冠军。",
+          "第二天，你吼的那句被剪成了语音包。"
+        ],
+        "failureMessages": [
+          "你吼完最后一嗓子，枪没中。",
+          "你倒在地上，全场安静了。",
+          "你在椅子上坐了很久。",
+          "第二天，俱乐部叫你谈谈。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

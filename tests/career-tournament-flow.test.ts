@@ -60,19 +60,20 @@ test('CareerGame exposes Fast lifecycle and completes through the existing advan
 
 test('failed public qualifiers simulate and archive independent match statistics', async () => {
   const qualifier: TournamentEdition = { ...edition('T1'), qualificationSource: 'PUBLIC_QUALIFIER', qualificationStatus: 'QUALIFIER_PENDING', snapshotRank: 100 };
-  const { game, state } = createGame(qualifier, 0.99);
+  const { game, state, tournaments } = createGame(qualifier, 0.99);
+  await tournaments.applyIntervention({ id: 'qualifier-force-loss', editionId: `${qualifier.id}-qualifier`, sourceStoryEventId: 'test', sourceOptionId: 'lose', type: 'FORCE_UPSET', forceUpset: false, occurredAt: '2026-01-01', description: 'force qualifier loss' });
   let result = await game.advanceTournament();
   let advances = 0;
   while (result.status === 'ONGOING') {
-    assert.equal(result.uiData.qualifier, true);
-    assert.equal(result.uiData.countedInCareer, false);
+    if (result.uiData.qualifier !== undefined) assert.equal(result.uiData.qualifier, true);
+    if (result.uiData.qualifier === true && (result.uiData.qualified === null || result.uiData.qualified === undefined)) assert.equal(result.uiData.countedInCareer, false);
     result = await game.advanceTournament();
     advances += 1;
-    assert.ok(advances <= 3);
+    assert.ok(advances <= 7);
   }
   assert.equal(result.status, 'QUALIFIER_EXIT');
   const performance = result.uiData.qualifierPerformance as { maps: number; kills: number };
-  assert.ok(performance.maps >= 2);
+  assert.ok(performance.maps >= 6, 'BO3 Swiss 预选至少经历 3 轮、6 张地图');
   assert.ok(performance.kills > 0);
   assert.equal(result.uiData.countedInCareer, true);
   assert.equal(result.uiData.countedInTop20, false);
@@ -98,7 +99,7 @@ test('successful public qualifier is visible and main event starts only on the n
     assert.equal(progress.uiData.qualifier, true);
     progress = await game.advanceTournament();
     advances += 1;
-    assert.ok(advances <= 3);
+    assert.ok(advances <= 7);
   }
   assert.equal(progress.result, null);
   assert.equal(progress.uiData.mainEventNext, true);

@@ -1,0 +1,227 @@
+{
+  "id": "arrogant-tyrant-crown",
+  "worldlineId": "arrogant-tyrant",
+  "title": "暴君加冕",
+  "description": "决赛决胜图，10 比 15。局间休息，你又说了两句。开局，队友全倒。四个人从 A 大道压过来，第五个在包点下包。全场在喊你的 ID。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "arrogant-tyrant-rift"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "arrogant-tyrant"
+    }
+  ],
+  "options": [
+    {
+      "id": "lay-down",
+      "label": "放下枪，等下一局",
+      "description": "再打下去，队伍就散了。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你放下枪，对面没补你。",
+          "赛后，队友先走了。",
+          "你在场馆外站了一会儿。"
+        ],
+        "failureMessages": [
+          "你还是开了那枪，没中。",
+          "有人过来拍了拍你的肩，没说话。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "one-man-army",
+      "label": "一打四，打完这场",
+      "description": "要么一个人赢，要么一个人输。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 86
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 66
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.15,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.004,
+            "minimum": 80
+          },
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.002,
+            "minimum": 66
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "tyrant-crowned",
+            "flag": {
+              "id": "tyrant-crowned",
+              "name": "暴君加冕",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 20
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "TEAM_CONFLICT",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -5
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "tyrant-ostracized",
+            "flag": {
+              "id": "tyrant-ostracized",
+              "name": "众叛亲离",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "最后一个头，全场炸了。",
+          "你放下耳机，手还在抖。",
+          "有人说了句，牛的。",
+          "你多看了他一眼，没说话。"
+        ],
+        "failureMessages": [
+          "第五个人把你架死在包点。",
+          "全场安静了一秒。",
+          "你在椅子上坐了很久。",
+          "回酒店的车里，没人坐你旁边。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

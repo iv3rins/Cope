@@ -1,0 +1,117 @@
+{
+  "id": "1v9-prison-crossroads",
+  "worldlineId": "1v9-prison",
+  "title": "孤岛",
+  "description": "赛季结束，转会窗开了。队友在聊下家，没人问你。你一个人打完最后一把排位，把战绩截图存了下来。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "1v9-prison-stage"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "1v9-prison"
+    }
+  ],
+  "options": [
+    {
+      "id": "keep-the-proof",
+      "label": "存好截图，等俱乐部安排",
+      "description": "等着，看看下赛季什么安排。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把截图存好。",
+          "第二天，俱乐部发了训练通知。"
+        ],
+        "failureMessages": [
+          "你存了截图，又删了。",
+          "手机亮着，没人找你。"
+        ],
+        "successNextEventId": "1v9-prison-finale",
+        "failureNextEventId": "1v9-prison-finale"
+      }
+    },
+    {
+      "id": "grind-alone",
+      "label": "把截图删了，约了个单练的人",
+      "description": "不存了，换个打法。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "arrogant-tyrant"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把截图删了。",
+          "单练打完，对面问你，要不要打训练赛。"
+        ],
+        "failureMessages": [
+          "你删了截图，又翻了一遍回收站。",
+          "战绩已经没了。"
+        ],
+        "successNextEventId": "arrogant-tyrant-roar",
+        "failureNextEventId": "1v9-prison-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

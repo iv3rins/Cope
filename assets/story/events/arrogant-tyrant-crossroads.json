@@ -1,0 +1,117 @@
+{
+  "id": "arrogant-tyrant-crossroads",
+  "worldlineId": "arrogant-tyrant",
+  "title": "空椅子",
+  "description": "赛季末，训练室只剩你一个人。队友走得走，散得散。你打了一晚上排位，赢了，没人看。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "arrogant-tyrant-rift"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "arrogant-tyrant"
+    }
+  ],
+  "options": [
+    {
+      "id": "wait-for-roster",
+      "label": "继续打，等新人来",
+      "description": "留在训练室，等队伍重新组。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你继续打，打到天亮。",
+          "第二天，训练室来了两个人。"
+        ],
+        "failureMessages": [
+          "你打到两点，还是没人来。",
+          "你关灯走了。"
+        ],
+        "successNextEventId": "arrogant-tyrant-crown",
+        "failureNextEventId": "arrogant-tyrant-crown"
+      }
+    },
+    {
+      "id": "fold-the-jersey",
+      "label": "把灯关了，把队服叠好",
+      "description": "把这一页翻过去。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "1v9-prison"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把灯关了，把队服叠好放进柜子。",
+          "第二天，你比谁都早到训练室，开始看录像。"
+        ],
+        "failureMessages": [
+          "你关了灯，又打开。",
+          "队服还在椅子上。"
+        ],
+        "successNextEventId": "1v9-prison-cell",
+        "failureNextEventId": "arrogant-tyrant-crown"
+      }
+    }
+  ],
+  "autoEffects": []
+}

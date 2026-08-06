@@ -1,0 +1,12 @@
+{
+  "id": "emotional-leader",
+  "name": "激情领袖",
+  "description": "枪法一般，嗓门最大。每一场都是吼出来的。",
+  "startEventId": "emotional-leader-cry",
+  "eventIds": [
+    "emotional-leader-cry",
+    "emotional-leader-roar",
+    "emotional-leader-crossroads",
+    "emotional-leader-finale"
+  ]
+}

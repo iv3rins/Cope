@@ -1,0 +1,18 @@
+{
+  "id": "arrogant-tyrant",
+  "name": "赛场暴君",
+  "description": "枪法无敌，队友全怕。赢了没人说话，输了也没人说话。",
+  "startEventId": "arrogant-tyrant-roar",
+  "eventIds": [
+    "arrogant-tyrant-roar",
+    "arrogant-tyrant-rift",
+    "arrogant-tyrant-alpha",
+    "arrogant-tyrant-storm",
+    "arrogant-tyrant-drain",
+    "arrogant-tyrant-highlight",
+    "arrogant-tyrant-crossroads",
+    "arrogant-tyrant-challenger",
+    "arrogant-tyrant-crown",
+    "arrogant-tyrant-echo"
+  ]
+}

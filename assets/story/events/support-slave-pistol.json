@@ -1,0 +1,176 @@
+{
+  "id": "support-slave-pistol",
+  "worldlineId": "support-slave",
+  "title": "无甲手枪",
+  "description": "大赛淘汰赛，你队 12 比 13。你把 M4 发给了队友，自己一把手枪，没买甲。队友全倒，残局剩你 1v2。你握着手枪，看了一眼地上的 M4。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "support-slave-give"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "support-slave"
+    }
+  ],
+  "options": [
+    {
+      "id": "pistol-patience",
+      "label": "等对面失误，手枪慢慢打",
+      "description": "手枪对长枪，稳一点。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "对面露了半身，你手枪两发带走一个。",
+          "另一个退了。",
+          "你松了口气，手稳了一点。"
+        ],
+        "failureMessages": [
+          "手枪对不过长枪。",
+          "你倒在地上，手里的 M4 还是队友的。"
+        ],
+        "successNextEventId": "support-slave-seen",
+        "failureNextEventId": "support-slave-seen"
+      }
+    },
+    {
+      "id": "pistol-rush",
+      "label": "手枪拉出去，先打一个",
+      "description": "绿叶也有一颗输出的心。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 55
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 55
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.35,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.004,
+            "minimum": 50
+          },
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.002,
+            "minimum": 50
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你拉出去，第一枪就打掉了下包的。",
+          "第二个被你追着点掉了。",
+          "你放下手枪，手还在抖。"
+        ],
+        "failureMessages": [
+          "手枪三发，一发没中。",
+          "你倒在地上，弹夹是空的。"
+        ],
+        "successNextEventId": "support-slave-seen",
+        "failureNextEventId": "support-slave-seen"
+      }
+    }
+  ],
+  "autoEffects": []
+}

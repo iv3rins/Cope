@@ -1,0 +1,133 @@
+{
+  "id": "grinder-rookie-drill",
+  "worldlineId": "grinder-rookie",
+  "title": "练到熄灯",
+  "description": "队里训练室。你早上七点到，练了两个小时道具。队友十点才来，热身五分钟就能压着你打。教练说，多练。你点了点头。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "learn-with-team",
+      "label": "跟队友一起练，学他们的打法",
+      "description": "学意识、融入队伍，枪法练得少。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你跟着他们练，学了两个新道具。",
+          "有人教你切枪的位置。",
+          "第二天，教练多看了你一眼。"
+        ],
+        "failureMessages": [
+          "练到一半，他们开始聊别的。",
+          "你站在旁边，多听了一会儿。"
+        ],
+        "successNextEventId": "grinder-rookie-debut",
+        "failureNextEventId": "grinder-rookie-debut"
+      }
+    },
+    {
+      "id": "grind-till-dark",
+      "label": "加练枪法和道具，练到熄灯",
+      "description": "枪法在涨，精力在掉，压力也在涨。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.003,
+            "minimum": 45
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "练到熄灯，你数了一下，比昨天多打了三百发。",
+          "第二天，你比队友早到了两个小时。"
+        ],
+        "failureMessages": [
+          "练到熄灯，准星还是飘。",
+          "你擦了擦手心，明天再来。"
+        ],
+        "successNextEventId": "grinder-rookie-debut",
+        "failureNextEventId": "grinder-rookie-debut"
+      }
+    }
+  ],
+  "autoEffects": []
+}

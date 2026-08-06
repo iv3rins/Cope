@@ -1,0 +1,171 @@
+{
+  "id": "major-choker-tremble",
+  "worldlineId": "major-choker",
+  "title": "手还在抖",
+  "description": "大赛半决赛，你队 11 比 12。你 1v3，前两枪空了，第三枪打中。你赢下这局，摘下耳机，手还在抖。队友没说话。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "major-choker-tape"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "major-choker"
+    }
+  ],
+  "options": [
+    {
+      "id": "pass-clutch",
+      "label": "下一局让队友接",
+      "description": "退一步，压力小一点。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "队友接住了残局。",
+          "你松了口气，手稳了一点。"
+        ],
+        "failureMessages": [
+          "队友没接住。",
+          "耳机里安静了。你搓了搓手心。"
+        ],
+        "successNextEventId": "major-choker-finale",
+        "failureNextEventId": "major-choker-finale"
+      }
+    },
+    {
+      "id": "take-clutch",
+      "label": "自己接，打完再说",
+      "description": "残局自己打，赢了就是半只脚进决赛。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 80
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你打完最后一个，手还在抖。",
+          "队友没说话，有人别开了视线。",
+          "你在椅子上多坐了一会儿。"
+        ],
+        "failureMessages": [
+          "第三枪又空了。",
+          "你倒在地上，手还在抖。",
+          "弹幕开始刷你的外号。"
+        ],
+        "successNextEventId": "major-choker-finale",
+        "failureNextEventId": "major-choker-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

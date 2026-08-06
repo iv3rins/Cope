@@ -1,0 +1,116 @@
+{
+  "id": "golden-era-core-crossroads",
+  "worldlineId": "golden-era-core",
+  "title": "加冕之后",
+  "description": "颁奖季结束。晚上，你坐在酒店走廊的台阶上，把今年的奖牌摸了摸。手机里有几条未读消息。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "golden-era-core-mvp"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "golden-era-core"
+    }
+  ],
+  "options": [
+    {
+      "id": "wear-the-medal",
+      "label": "把奖牌戴好，明年继续",
+      "description": "王朝继续，等下一次加冕。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把奖牌戴好，回了消息。",
+          "第二天训练，你第一个到。"
+        ],
+        "failureMessages": [
+          "你把奖牌放回盒子。",
+          "手机还亮着，你没回。"
+        ],
+        "successNextEventId": "golden-era-core-reign",
+        "failureNextEventId": "golden-era-core-reign"
+      }
+    },
+    {
+      "id": "box-the-medal",
+      "label": "把奖牌收进箱底",
+      "description": "不戴了，翻篇。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "crownless-king"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把奖牌收进箱底，把箱子推到床下。",
+          "第二天，你换了套训练计划。"
+        ],
+        "failureMessages": [
+          "你把奖牌拿出来，又放回去。"
+        ],
+        "successNextEventId": "crownless-king-press",
+        "failureNextEventId": "golden-era-core-reign"
+      }
+    }
+  ],
+  "autoEffects": []
+}

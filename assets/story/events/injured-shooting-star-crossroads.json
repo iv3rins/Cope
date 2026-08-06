@@ -1,0 +1,116 @@
+{
+  "id": "injured-shooting-star-crossroads",
+  "worldlineId": "injured-shooting-star",
+  "title": "养伤期间",
+  "description": "赛季末，你在做康复。训练馆里，年轻人在加练。你坐在场边，看着他们。手机里，经纪人问明年怎么安排。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "injured-shooting-star-dawn"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "injured-shooting-star"
+    }
+  ],
+  "options": [
+    {
+      "id": "follow-the-plan",
+      "label": "按部就班，慢慢来",
+      "description": "按康复计划走，明年再说。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把康复计划做完。",
+          "第二天，训练馆开门，你第一个到。"
+        ],
+        "failureMessages": [
+          "你把计划做完，又加了一组。",
+          "队医说，别急。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "new-plan",
+      "label": "换个活法，不等了",
+      "description": "不按老计划来了。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "crownless-king"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把康复计划翻了一页，画了几个新动作。",
+          "第二天，你练的东西不一样了。"
+        ],
+        "failureMessages": [
+          "你把计划翻了页，又翻了回去。"
+        ],
+        "successNextEventId": "crownless-king-press",
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

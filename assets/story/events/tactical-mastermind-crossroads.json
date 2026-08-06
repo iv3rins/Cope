@@ -1,0 +1,116 @@
+{
+  "id": "tactical-mastermind-crossroads",
+  "worldlineId": "tactical-mastermind",
+  "title": "嗓子",
+  "description": "赛季末，你的战术赢了几场，也输了几场。队友听你讲战术的时候，有人在打哈欠。你把战术板擦了，又画了一遍。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "tactical-mastermind-call"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "tactical-mastermind"
+    }
+  ],
+  "options": [
+    {
+      "id": "draw-again",
+      "label": "画完最后一遍，等下次比赛",
+      "description": "把战术讲下去，等战术兑现。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把战术板画完，拍了个照片存起来。",
+          "第二天，你接着画。"
+        ],
+        "failureMessages": [
+          "画到一半，你停下来。",
+          "队友已经散了。"
+        ],
+        "successNextEventId": "tactical-mastermind-finale",
+        "failureNextEventId": "tactical-mastermind-finale"
+      }
+    },
+    {
+      "id": "open-the-mouth",
+      "label": "把战术板收起来，开口说话",
+      "description": "不讲战术了，先开口。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "emotional-leader"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把战术板收起来。",
+          "训练赛开场，你吼了一声。"
+        ],
+        "failureMessages": [
+          "你收好战术板，张了张嘴，没出声。"
+        ],
+        "successNextEventId": "emotional-leader-cry",
+        "failureNextEventId": "tactical-mastermind-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

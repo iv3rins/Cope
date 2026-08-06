@@ -42,13 +42,13 @@ test('自由球员场外安排文案外置并提供直播与休息', async () =>
   assert.ok(payload.freeAgent.actionFallbacks.rest);
 });
 
-test('自由球员不再自动生成替补邀请而是执行场外安排并直达赛季报告', async () => {
+test('自由球员统一展示替补邀请、正式市场与场外安排', async () => {
   const source = await readFile(appPath, 'utf8');
   assert.match(source, /const event = await window\.COPEEngine\.findCareerEvent\('PRE_TOURNAMENT'\);[\s\S]*if \(event\)[\s\S]*const tournament = await window\.COPEEngine\.getNextTournament\(\);[\s\S]*if \(tournament\)[\s\S]*if \(!profile\.currentTeamId && profile\.freeAgencyStatus === 'FREE_AGENT'\)/);
   assert.match(source, /listDailyActions\('NORMAL'\)/);
   assert.match(source, /action\.id === 'stream' \|\| action\.id === 'rest'/);
   assert.match(source, /executeDailyAction\(button\.dataset\.dailyAction/);
-  assert.match(source, /await renderSeasonReport\(\)/);
-  assert.doesNotMatch(source, /window\.COPEEngine\.listStandInOffers\(\)/);
-  assert.doesNotMatch(source, /data-stand-in-response/);
+  assert.match(source, /window\.COPEEngine\.listStandInOffers\(\)/);
+  assert.match(source, /window\.COPEEngine\.acceptStandInOffer/);
+  assert.match(source, /renderTransferMarket/);
 });

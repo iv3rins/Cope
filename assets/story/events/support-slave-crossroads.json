@@ -1,0 +1,116 @@
+{
+  "id": "support-slave-crossroads",
+  "worldlineId": "support-slave",
+  "title": "手和枪",
+  "description": "赛季末，你的道具扔得越来越准，rating 还是垫底。队友说，有你真好。晚上，你看着自己的手，又看了看自己的枪。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "support-slave-pistol"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "support-slave"
+    }
+  ],
+  "options": [
+    {
+      "id": "keep-utility",
+      "label": "放下枪，明天继续扔道具",
+      "description": "把手上的活干到底。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你放下枪。",
+          "第二天，道具点位你又标了两个。"
+        ],
+        "failureMessages": [
+          "你放下枪，又拿起来。",
+          "灯还亮着。"
+        ],
+        "successNextEventId": "support-slave-seen",
+        "failureNextEventId": "support-slave-seen"
+      }
+    },
+    {
+      "id": "pick-up-the-rifle",
+      "label": "拿起枪，开始练准星",
+      "description": "不扔道具了，练自己的枪。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "grinder-rookie"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你拿起枪，练到熄灯。",
+          "第二天，你比平时早到了一小时。"
+        ],
+        "failureMessages": [
+          "你拿起枪，打了两个弹夹，又放下了。"
+        ],
+        "successNextEventId": "grinder-rookie-drill",
+        "failureNextEventId": "support-slave-seen"
+      }
+    }
+  ],
+  "autoEffects": []
+}

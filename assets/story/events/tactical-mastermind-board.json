@@ -1,0 +1,134 @@
+{
+  "id": "tactical-mastermind-board",
+  "worldlineId": "tactical-mastermind",
+  "title": "战术板",
+  "description": "队伍连败，训练室里没人说话。你画了一晚上战术板。队友说，光画没用，要枪法。你看了眼战术板，没接话。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "put-board-away",
+      "label": "收好战术板，去练枪",
+      "description": "放下战术，练枪，队里关系回暖。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你把战术板收进包里，去练了三个小时枪。",
+          "回来的时候，队友在等你开黑。",
+          "第二天，没人再提战术板的事。"
+        ],
+        "failureMessages": [
+          "练到一半，你想起战术板上那个点。",
+          "你关了游戏，看了一眼战术板。"
+        ],
+        "successNextEventId": "tactical-mastermind-call",
+        "failureNextEventId": "tactical-mastermind-call"
+      }
+    },
+    {
+      "id": "push-the-board",
+      "label": "把战术板推给教练，说按这个打",
+      "description": "坚持自己的战术，脑子在涨，精力在掉。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.003,
+            "minimum": 50
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "教练看了十分钟，说，试试。",
+          "第二天训练赛，你的战术赢了。",
+          "队友多看了你一眼。"
+        ],
+        "failureMessages": [
+          "教练看了十分钟，说，先放放。",
+          "你收好战术板，没说话。"
+        ],
+        "successNextEventId": "tactical-mastermind-call",
+        "failureNextEventId": "tactical-mastermind-call"
+      }
+    }
+  ],
+  "autoEffects": []
+}

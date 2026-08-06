@@ -1,11 +1,15 @@
-# COPE 生涯叙事设计（v2）
+# COPE 生涯叙事设计（v3）
 
 > 本文档是事件包的设计蓝本。事件 JSON 必须能追溯到本文档中的设计条目；
 > 新增事件时先在这里补设计，再落地 JSON。
+>
+> **v3 变更**：主线体系从旧的 16 条蓝图更新为 20 条候选线（天才 10 + 凡人 10）。
+> 当前已实现 12 条（天才 7 + 凡人 5），每条 10 事件（4 链 + 6 可选）。
+> 未实现的 8 条候选线与全部支线/老将/荣誉事件为待办蓝图。
 
 ## 一、叙事哲学
 
-1. **生涯是一张网，不是一条线。** 主线（16 条故事线）决定玩家的"命运底色"，支线（FLAG 体系）制造戏剧冲突，日常事件让赛季有呼吸感。三者按赛季节奏编排。
+1. **生涯是一张网，不是一条线。** 主线（20 条候选线）决定玩家的"命运底色"，支线（FLAG 体系）制造戏剧冲突，日常事件让赛季有呼吸感。三者按赛季节奏编排。
 2. **戏剧冲突 > 情感煽情。** 这是 CS 职业选手生涯模拟器，玩家要看的是对抗、反转、背叛、羞辱、黑幕、打脸。事件以冲突为骨架，情感只是冲突的余波——占比不超过两成，且必须是"赢回来之后"才配抒情。
 3. **冲突要有代价，代价要看得见。** 站队、背刺、硬刚、认怂——每个选项改变队内关系/俱乐部信任/公众形象/金钱中的至少两项，且后果在后续事件里兑现（FLAG 记录）。
 4. **玩家视角的合理性。** 年龄、属性、处境决定事件何时出现：16 岁新人不会"巅峰期伤病"，FAME 不够不会收到豪门报价，STRESS 爆表才会触发倦怠。
@@ -15,159 +19,123 @@
 
 | 层 | 性质 | 数量 | 节奏 |
 |---|---|---|---|
-| 主线 | 16 条线 × 8 事件，性格弧 | 128 | 每年最多 1-2 个（AGE 门控） |
-| 支线 | FLAG 驱动的跨线冲突线 | 11 | 获得 FLAG 后触发，1 条线 2-3 个节点 |
-| 日常 | 无 FLAG 的赛季填充 | 21 | 赛季中随机，同赛季去重 |
+| 主线 | 20 条候选线 × 10 事件（4 链 + 6 可选） | 当前已实现 12 条 / 90 事件 | 链事件按序推进，可选事件按条件触发 |
+| 支线 | FLAG 驱动的跨线冲突线 | 11（蓝图，待实现） | 获得 FLAG 后触发，1 条线 2-3 个节点 |
+| 日常 | 无 FLAG 的赛季填充 | 21（蓝图，待实现） | 赛季中随机，同赛季去重 |
 
-## 三、主线（16 条线弧表）
+## 三、主线（20 条候选线）
 
-每条线 8 事件：start → 2 → 3 → 4（命运岔口，可跨线转换）→ 5 → cost（代价）→ climax（高潮）→ finale（终局）。
+### 3.1 事件结构：10 事件骨架（4 链 + 6 可选）
 
-| 线 | 主题 | 弧线 | 命运岔口（事件 4） |
+每条线固定 10 个事件，分为两部分：
+
+**链事件（4 个，强链推进）**：`start`（必触发）→ `stage`（赛中）→ `crossroads`（命运岔口）→ `finale`（终局）。前一个完成后经 `nextEventId` 指向下一个。
+
+**可选事件（6 个，条件门控）**：在链事件的间隙按窗口出现在候选池，**不满足事件级 `conditions` 的玩家看不到该事件**——事件不是人人都会触发。门控条件类型（按文案对齐选择）：
+- `ATTRIBUTE`（属性门槛，如 AIM/CLUTCH/GAME_SENSE/CONSISTENCY/LEADERSHIP）
+- `PLAYER_STAT`（状态门槛，如 STRESS/ENERGY/MORALE）
+- `NARRATIVE_METRIC`（声望/关系门槛，如 FAME/FAN_REPUTATION/TEAM_RELATIONSHIP/CLUB_FAVOR）
+- `FLAG`（结局/状态 FLAG 门控，如 finale 结局后才解锁"余波"事件）
+- `AGE`（年龄门控，如"老将""最后一舞"）
+- `PLAYER_ROLE`（角色门控）
+- 复合 `ANY` / `ALL`
+
+**门控与文案对齐原则**：文案里出现的每个系统状态声称（成名、透支、队内关系破裂、年龄）都必须有对应条件；条件不满足的事件不出现，玩家感知为"命运不同"而非"事件缺失"。
+
+### 3.2 候选线清单（用户定稿 20 条，标注实现状态）
+
+**天才基调 10 条**：
+
+| 线 | 主题 | 状态 | 10 事件状态 |
 |---|---|---|---|
-| lone-hero | 孤勇 | 独C→透支→终极独奏→和解 | 留守孤胆 → **crownless-king** |
-| young-guns | 年少轻狂 | 出道→流量→蜕变→定义时代 | 服从纪律 → **system-core** |
-| silent-ace | 沉默天才 | 数据说话→隔阂→开口→禅意 | 把天赋交给体系 → **system-core** |
-| version-victim | 版本之子 | 称王→版本更迭→转型→重定义 | —（同基调终局） |
-| crownless-king | 无冕之王 | 统治→心魔→终极决赛→加冕/释然 | —（留守型终局） |
-| falling-star | 流星坠落 | 巅峰→崩塌→谷底→复出→余韵 | —（同基调终局） |
-| system-core | 体系核心 | 精密→警报→王朝→传承 | —（王朝型终局） |
-| rule-breaker | 反叛者 | 成名→反噬→最狂一战→开宗立派 | —（同基调终局） |
-| late-bloomer | 大器晚成 | 被低估→爆发→引路人→迟来巅峰 | —（后发终局） |
-| team-battery | 队魂电池 | 牺牲→被消耗→忠诚→觉醒 | 转指挥 → **tactical-captain** |
-| cyber-cafe-hero | 网吧少年 | 草根→省吃俭用→预选赛→被看见 | —（逆袭终局） |
-| revenge-squad | 复仇者 | 背叛→聚队→宿怨→抉择 | 放下恩怨 → **region-guardian** |
-| region-guardian | 赛区守望 | 家乡→天花板→邀约→留守 | —（同基调终局） |
-| grind-machine | 苦练成神 | 首秀→自律→社交隔离→习惯成自然 | —（同基调终局） |
-| tactical-captain | 战术大脑 | 转型→负担→信任→大将军 | —（主帅终局） |
-| injury-warrior | 伤病斗士 | 受伤→手术→硬扛→最后一舞 | —（悲壮终局） |
+| `prodigy-debut` | 天降紫微星（m0NESY/ZywOo） | ✅ 已实现 | 4 链 + 6 可选 |
+| `1v9-prison` | 院长坐牢（s1mple） | ✅ 已实现 | 4 链 + 6 可选 |
+| `arrogant-tyrant` | 赛场暴君（早期 s1mple/NiKo） | ✅ 已实现 | 4 链 + 6 可选 |
+| `major-choker` | 大赛软脚虾（NiKo） | ✅ 已实现 | 4 链 + 6 可选 |
+| `crownless-king` | 无冕之王（GuardiaN） | ✅ 已实现 | 4 链 + 6 可选 |
+| `golden-era-core` | 王朝核心（dev1ce/s1mple） | ✅ 已实现 | 4 链（含 FLAG/ANY 门控可选化） |
+| `injured-shooting-star` | 伤病流星（olofmeister/dev1ce） | ✅ 已实现 | 4 链（伤病状态门控） |
+| `mercenary-god` | 顶级雇佣兵（Twistzz/Magisk） | ⏳ 候选 | — |
+| `washed-up-star` | 巅峰陨落（kennyS/coldzera） | ⏳ 候选 | — |
+| `second-spring` | 老树盘根（f0rest） | ⏳ 候选 | — |
 
-跨线转换共 5 条（见上表箭头），由玩家在岔口的选择触发，**且只在同一天赋基调内部流动**（天才线 ↔ 天才线 / 平凡线 ↔ 平凡线）。天赋基调是出身属性——凡人再努力也成不了天才，天才陨落也只是天才的陨落，不会变成凡人。**转换不是瞬间切换，而是经过一个专属过渡事件**（`{源线}-to-{目标线}`，归属目标线，记录人物转变的戏剧时刻）再进入目标线事件 1。转换后保留全部 FLAG 与数值——命运可变，记忆延续。
+**凡人基调 10 条**：
 
-## 四、支线设计（FLAG 体系）
+| 线 | 主题 | 状态 | 10 事件状态 |
+|---|---|---|---|
+| `grinder-rookie` | 底层青训苦爹（drop/b1t） | ✅ 已实现 | 4 链 + 6 可选 |
+| `tactical-mastermind` | 极致大脑（karrigan/HooXi） | ✅ 已实现 | 4 链 + 6 可选 |
+| `support-slave` | 极致绿叶（Sanji/interz） | ✅ 已实现 | 4 链（PLAYER_ROLE 门控） |
+| `emotional-leader` | 激情领袖（cadiaN/apEX） | ✅ 已实现 | 4 链（FAN_REPUTATION 门控） |
+| `scapegoat-kicked` | 宫斗背锅侠（Aleksib） | ✅ 已实现 | 4 链（含 FORCE_CONTRACT_TERMINATION） |
+| `revenge-arc` | 复仇者（Aleksib/cadiaN） | ⏳ 候选 | — |
+| `toxic-environment` | 内讧绞肉机（法国宫斗） | ⏳ 候选 | — |
+| `t2-gatekeeper` | T2 皇帝（BIG/syrsoN） | ⏳ 候选 | — |
+| `cinderella-run` | 灰姑娘爆种（Zeus/Jame） | ⏳ 候选 | — |
+| `veteran-mentor` | 老将带新（Snappi/FalleN） | ⏳ 候选 | — |
+
+## 四、命运岔口与跨线转换
+
+**实现方式（v3 定稿）**：岔口事件（`{线}-crossroads`）在 stage 后、finale 前出现。A 选项留在原线（`nextEventId` = 本线 finale）；B 选项成功触发 **`WORLDLINE_CHANGE` + `nextEventId` = 目标线 start**，玩家从目标线事件 1 重新走链。**转换是后台静默的**——文案只写外部动作选择（删录像/收奖牌/换训练计划），绝不写"世界线变更/换线"字样；玩家只看到选择，不知道命运在后台换了轨道。
+
+**基调限制**：只允许同天赋基调内部流动（天才 ↔ 天才 / 凡人 ↔ 凡人）。天赋基调是出身属性——凡人再努力成不了天才，天才陨落也只是天才的陨落。
+
+**已实现 12 条的转换映射**：
+
+```
+天才环：
+  prodigy-debut  ⇄  major-choker  ⇄  crownless-king
+  1v9-prison    ⇄  arrogant-tyrant
+  golden-era-core → crownless-king（单向）
+  injured-shooting-star → crownless-king（单向）
+凡人链：
+  grinder-rookie → tactical-mastermind → emotional-leader → scapegoat-kicked → support-slave → grinder-rookie
+```
+
+**属性带入**：WORLDLINE_CHANGE 只改 worldlineId，属性/FLAG/指标全部保留——能否走目标线的硬核路线取决于原线积累；走不了就走目标线 A 选项保底，永不卡链。
+
+## 五、可选事件门控约束（引擎事实）
+
+1. **start 事件（SEASON_START 窗口）不能加依赖赛季中数据快照的条件**：`TEAM_VRS_RANK` / `RATING_STREAK` 等条件在开局时 fail-closed（VRS 快照尚未冻结），加了会导致开局主线丢失（story-pack 测试强制 SEASON_START 返回 start 事件）。这类条件只能放事件 2/3 的选项级（A 选项无条件保底）。
+2. **事件级条件不满足 = 事件不出现**（非报错）；链事件靠 `currentStoryEventId` + `nextEventId` 推进，可选事件靠候选池 priority 抽取。
+3. **选项级门槛必须保证至少一个选项可用**（A 选项轻门槛/无条件保底），否则 0 选项事件会被过滤导致链断。
+4. `FLAG` 条件常用双结局闭环：finale 种下结局 FLAG → "余波"事件 `ANY [结局A FLAG, 结局B FLAG]` 门控，终局后按结局解锁。
+
+## 六、支线设计（FLAG 体系，蓝图待实现）
 
 支线的规则：**每个支线有"起点事件"（种下 FLAG）→ 1-2 个中期节点（FLAG + 数值/年龄门控）→ 终局节点（收束冲突）**。支线事件不归属任何故事线（worldlineId: 'shared'），任何玩家获得对应 FLAG 后都能进入。
 
-### 4.3 宿敌（rivalry）
+| 支线 | 起点 | 节点 | 终局 |
+|---|---|---|---|
+| 宿敌（rivalry） | `shared-rival-duel` | `rival-rematch`（AGE≥19） | `rival-handshake`（AGE≥22+FAME≥45） |
+| 健康（health） | `shared-burnout-warning` | `health-checkup`（ENERGY≤45） | — |
+| 队友（teammate） | `teammate-depart` | — | `teammate-reunion`（AGE≥20+FAME≥30） |
+| 老板（owner） | `owner-talk`（FAME≥25 或 TEAM_STATUS≥30） | `owner-crisis`（TEAM_STATUS≤30） | — |
+| 媒体（media） | `media-interview`（FAME≥20） | `media-backlash`（FAME≥35） | — |
+| 宫斗（locker-room） | `locker-room-friction` | `locker-room-blowup`（TEAM_STATUS≤40） | `locker-room-ultimatum`（AGE≥20） |
+| 转会背刺（transfer-drama） | `transfer-approach`（FAME≥20） | `transfer-leak`（CLUB_FAVOR≤40） | `transfer-backstab`（AGE≥21） |
+| 舆论风暴（scandal） | `scandal-rumor`（FAME≥30） | `scandal-hearing`（AGE≥19） | `scandal-verdict`（AGE≥20） |
+| 黑马羞辱（upset） | `upset-trash-talk` | `upset-favorites`（FAME≥25） | `upset-revenge`（AGE≥20+决赛周期） |
 
-起点：`shared-rival-duel`（与宿敌 1v1，种下 `rivalry`）
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 中期 | `rival-rematch` | rivalry + AGE≥19 | 大赛半决赛再遇，他进步了 | 你们互相逼出了更好的自己 |
-| 终局 | `rival-handshake` | rivalry + AGE≥22 + FAME≥45 | 决赛后他在领奖台等你握手 | 对手是最懂你的人 |
-
-### 4.4 健康线（health）
-
-起点：`shared-burnout-warning`（倦怠预警，种下 `health-warning`）
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 中期 | `health-checkup` | health-warning + ENERGY≤45 | 体检报告亮黄灯 | 医生看着你的手腕摇头 |
-
-### 4.5 队友线（teammate）
-
-起点：`teammate-depart`（并肩两年的队友转会，种下 `teammate`）。起点无门槛——职业赛场人来人往，这是第一课。
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 终局 | `teammate-reunion` | teammate + AGE≥20 + FAME≥30 + 决赛周期 | 决赛重逢，他站在对面 | 赛前他走过来：别手软，不然看不起你 |
-
-### 4.6 老板线（owner）
-
-起点：`owner-talk`（老板单独谈话"你是建队核心"，种下 `owner`）。门控：FAME≥25 或 TEAM_STATUS≥30。
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 低潮 | `owner-crisis` | owner + TEAM_STATUS≤30 | 连败后老板开会，目光扫过你 | 他问的不是战绩，是你还想不想打 |
-
-### 4.7 媒体线（media）
-
-起点：`media-interview`（官方专访，种下 `media`）。门控：FAME≥20。
-
-| 节点 | 事件 | 门控 | 内容 | 情感落点 |
-|---|---|---|---|---|
-| 中期 | `media-backlash` | media + FAME≥35 | 你的采访被剪辑成"嚣张" | 弹幕和评论区同时开火 |
-
-### 4.8 队内宫斗线（locker-room）
-
-职业队更衣室是高压锅。FLAG：`locker-room`。
-
-| 节点 | 事件 | 门控 | 内容 | 戏剧冲突 |
-|---|---|---|---|---|
-| 起点 | `locker-room-friction` | 无门槛 | 训练赛你和指挥在战术板上吵起来，队友分成两派 | 谁都不让谁，训练赛提前解散 |
-| 爆发 | `locker-room-blowup` | locker-room + TEAM_STATUS≤40 | 连败后，你们互喷的语音被"无意"外泄到网上 | 全网吃瓜，俱乐部公关紧急灭火 |
-| 摊牌 | `locker-room-ultimatum` | locker-room + AGE≥20 | 管理层二选一："要么你走，要么他走" | 站队还是低头，你选 |
-
-### 4.9 转会背刺线（transfer-drama）
-
-转会窗是修罗场。FLAG：`transfer-drama`。
-
-| 节点 | 事件 | 门控 | 内容 | 戏剧冲突 |
-|---|---|---|---|---|
-| 起点 | `transfer-approach` | FAME≥20 | 死敌俱乐部经理约你"喝咖啡" | 薪水翻倍的诱惑摆在桌上 |
-| 泄露 | `transfer-leak` | transfer-drama + CLUB_FAVOR≤40 | 你们见面的照片被拍到，教练把你按在替补席 | 俱乐部怀疑你吃里扒外 |
-| 反噬 | `transfer-backstab` | transfer-drama + AGE≥21 | 窗口最后一天，对方突然压价，经纪人两头吃回扣 | 你被当成了讨价还价的筹码 |
-
-### 4.10 舆论风暴线（scandal）
-
-名声是最脆弱的资产。FLAG：`scandal`。
-
-| 节点 | 事件 | 门控 | 内容 | 戏剧冲突 |
-|---|---|---|---|---|
-| 起点 | `scandal-rumor` | FAME≥30 | 一段被剪辑的"疑似开挂"旧录像开始传播 | 评论区一夜之间全是"实锤" |
-| 听证 | `scandal-hearing` | scandal + AGE≥19 | 官方调查组约谈你的关键比赛操作 | 录像逐帧播放，全场沉默 |
-| 裁决 | `scandal-verdict` | scandal + AGE≥20 | 结果二选一：自证清白，或禁赛三个月 | 清白或社死，反转拉满 |
-
-### 4.11 黑马羞辱线（upset）
-
-竞技世界最爽的剧本是打脸。FLAG：`upset`。
-
-| 节点 | 事件 | 门控 | 内容 | 戏剧冲突 |
-|---|---|---|---|---|
-| 起点 | `upset-trash-talk` | 无门槛 | 对面队伍赛前采访点名你："没听说过" | 垃圾话直接怼脸 |
-| 爆冷 | `upset-favorites` | upset + FAME≥25 | 你们是夺冠热门，小组赛被无名队爆冷 | 全网嘲讽铺天盖地 |
-| 复仇 | `upset-revenge` | upset + AGE≥20 + 决赛周期 | 淘汰赛再遇那支队伍 | 血洗，或再次被羞辱 |
-
-## 五、赛季节奏编排
+## 七、赛季节奏编排
 
 ```
-SEASON_START     主线事件（若 AGE 解锁）或 赛季目标（日常）
-赛季中 (NORMAL)  支线节点（FLAG 触发）> 主线 > 日常
-SEASON_END       决战热身 / 支线大赛节点（rival-handshake 等）
-OFFSEASON        夏训营 / 休假 / 赛季总结（日常）
-TRANSFER_WINDOW  接触试探 / 续约谈判（日常）
+SEASON_START     主线 start（必触发）
+赛季中 (NORMAL)  主线可选事件（条件门控）> 支线节点 > 日常
+SEASON_END       主线 stage / crossroads / finale（链推进）
+TRANSFER_WINDOW  转会类主线事件（如 scapegoat-kicked-call）
 ```
 
-编排原则：一个赛季最多 4 个事件；主线事件只在 AGE 解锁后出现（16 岁只见事件 1）；支线事件按 FLAG + 数值门控分散在多个赛季，避免"一赛季把一条支线走完"。
+编排原则：链事件每年最多推进 1-2 个；可选事件按条件自然散落在多个赛季；支线事件按 FLAG + 数值门控分散，避免"一赛季把一条支线走完"。
 
-## 六、落地规则
+## 八、落地规则
 
 1. 事件 JSON 与本文档条目一一对应（`id` 可反查 DESIGN.md 章节）。
-2. 支线事件 `worldlineId: 'shared'`、`repeatable: false`（每条支线一生一次）、`priority` 高于日常、低于主线。
-3. 所有 FLAG 在 `assets/story/events/*.json` 的 `FLAG_ADD` 中定义，`flag.id` 全局唯一（kebab-case）。
+2. 链事件 `worldlineId` = 线 id；支线事件 `worldlineId: 'shared'`、`repeatable: false`。
+3. 所有 FLAG 在事件 JSON 的 `FLAG_ADD` 中定义，`flag.id` 全局唯一（kebab-case）。
 4. 修改故事体系先改本文档，再改事件 JSON。
+5. **条件与文案对齐**：文案中的系统状态声称必须有对应条件；条件数值与初始属性档位匹配（天才线门槛 80+，凡人线门槛 45-65）。
 
-## 六、生涯后期与荣誉时刻
+## 九、生涯后期与荣誉时刻（蓝图待实现）
 
-主线 finale（事件 8，AGE≥24）之后，生涯并未结束——25 岁后进入老将阶段，由状态驱动的 shared 事件继续推进，直到玩家选择退役。这一阶段的核心冲突：**被后浪挑战、状态下滑、俱乐部施压、舆论造"最后一舞"**。
-
-### 6.1 老将阶段（AGE 门控，repeatable，冲突向）
-
-| 事件 | 门控 | 内容 | 戏剧冲突 |
-|---|---|---|---|
-| `veteran-youth-challenge` | AGE≥25 | 队里 17 岁新秀训练赛对位打爆你，公开喊话"前辈该让位了" | 当着全队下你的面子 |
-| `veteran-slump` | AGE≥26 + FORM≤45 | 数据下滑，网上开始算"退役倒计时" | 每个失误都被慢放 |
-| `veteran-last-contract` | AGE≥26 + 转会窗 | 俱乐部递来最后一份合同，只有一年 | 一年之后，你还能去哪？ |
-| `veteran-farewell-tour` | AGE≥27 + FAME≥50 | 媒体开始造"最后一舞"的舆论，你还没说要退役 | 所有人都在替你告别 |
-| `veteran-legend` | AGE≥28 + FAME≥60 | 解说叫你"传奇"——传奇，就是该退了的另一种说法 | 接住称号，还是拒绝？ |
-
-### 6.2 荣誉时刻（TOP20_RANK 门控，一生一次）
-
-| 事件 | 门控 | 内容 | 戏剧冲突 |
-|---|---|---|---|
-| `honor-first-top20` | TOP20_RANK 首次 | 第一次进年度 TOP20 榜单 | 榜单放大了你的每个名字，也放大了质疑 |
-| `honor-top10-controversy` | TOP20_RANK 1-10 | 进了 TOP10，却被说"数据刷子" | 你的排名成了争议中心 |
-| `honor-mvp-target` | TOP20_RANK 1-5 | 年度 TOP5，成了全联盟研究的对象 | 对手的录像师比你还了解你 |
-
-> 老将与荣誉事件都属于 shared 池，priority 60（高于日常、低于主线）。荣誉时刻一生一次（repeatable: false），老将事件可重复（repeatable: true）。
+主线 finale（终局，如 crownless-king AGE≥24）之后，生涯进入老将阶段，由状态驱动的 shared 事件继续推进，直到退役。核心冲突：被后浪挑战、状态下滑、俱乐部施压、舆论造"最后一舞"。荣誉时刻由 TOP20_RANK 门控（首次上榜 / TOP10 / TOP5 逐级解锁）。此阶段全部事件待实现。

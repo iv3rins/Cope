@@ -1,0 +1,18 @@
+{
+  "id": "major-choker",
+  "name": "大赛软脚虾",
+  "description": "平时无敌，决赛隐身。所有空枪，观众都替你记着。",
+  "startEventId": "major-choker-tape",
+  "eventIds": [
+    "major-choker-tape",
+    "major-choker-tremble",
+    "major-choker-practice",
+    "major-choker-eve",
+    "major-choker-shake",
+    "major-choker-loop",
+    "major-choker-crossroads",
+    "major-choker-clutchproof",
+    "major-choker-finale",
+    "major-choker-echo"
+  ]
+}

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COPE // 事件包编辑器</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="editor.css" />
+</head>
+<body class="event-editor">
+  <div class="editor-shell">
+    <header class="editor-topbar">
+      <a class="brand" href="../../index.html"><span class="brand-mark">C</span><span>COPE<span class="brand-dim"> // 内容工作室</span></span></a>
+      <div class="editor-actions">
+        <button class="outline-button" id="openFolderBtn">打开事件包文件夹</button>
+        <label class="outline-button file-import">兼容模式导入<input id="folderInput" type="file" webkitdirectory multiple /></label>
+        <button class="play-button compact" id="saveAllBtn" disabled>保存全部 <span>↓</span></button>
+      </div>
+    </header>
+
+    <section class="editor-statusbar">
+      <span><i class="red-dot"></i><b id="packName">尚未导入事件包</b></span>
+      <span id="saveMode">请选择包含 manifest.json 的 assets/story 文件夹</span>
+    </section>
+
+    <main class="editor-layout">
+      <aside class="asset-sidebar">
+        <div class="sidebar-head">
+          <p class="eyebrow">事件规范 / 版本 1</p>
+          <h1>事件包</h1>
+        </div>
+        <div class="asset-tabs" role="tablist">
+          <button class="active" data-kind="event">事件 <b id="eventCount">0</b></button>
+          <button data-kind="worldline">世界线 <b id="worldlineCount">0</b></button>
+          <button data-kind="quote">TOP20 评语 <b id="quoteCount">0</b></button>
+        </div>
+        <div class="asset-tools">
+          <input id="assetSearch" type="search" placeholder="搜索 ID / 标题" />
+          <button class="add-button" id="addAssetBtn" disabled>＋ 新建事件</button>
+        </div>
+        <nav class="asset-list" id="assetList" aria-label="内容资产列表">
+          <p class="empty-hint">打开本地事件包后开始编辑。</p>
+        </nav>
+      </aside>
+
+      <section class="workspace">
+        <div id="welcomeView" class="welcome-view">
+          <span class="welcome-index">01</span>
+          <p class="eyebrow">本地优先 / 不上传</p>
+          <h2>把内容留在你的电脑上</h2>
+          <p>优先选择 <code>assets</code> 文件夹，以便同时编辑 <code>story</code> 与 <code>top20_quotes</code>。也可只选择 <code>assets/story</code>；Chrome / Edge 可直接保存回原 JSON，兼容模式可读取文件夹并下载修改后的文件。</p>
+          <ol>
+            <li>导入 <code>assets</code>，或包含 <code>manifest.json</code>、<code>events/</code>、<code>worldlines/</code> 的 <code>assets/story</code> 目录</li>
+            <li>创建或修改事件、世界线、选项、概率公式与 TOP20 评语</li>
+            <li>查看实时校验，保存回目录或下载修改文件</li>
+          </ol>
+        </div>
+
+        <div id="editorView" hidden>
+          <header class="document-header">
+            <div>
+              <p class="eyebrow" id="documentType">剧情事件</p>
+              <h2 id="documentTitle">未选择内容</h2>
+              <span id="documentPath"></span>
+            </div>
+            <div class="document-actions">
+              <button class="outline-button" id="duplicateBtn">复制</button>
+              <button class="outline-button danger" id="deleteBtn">删除</button>
+              <button class="play-button compact" id="saveCurrentBtn">保存全部关联 <span>→</span></button>
+            </div>
+          </header>
+          <div class="validation-summary" id="validationSummary" aria-live="polite"></div>
+          <form id="documentForm" autocomplete="off"></form>
+        </div>
+      </section>
+
+      <aside class="inspector">
+        <section>
+          <p class="eyebrow">实时检查</p>
+          <h2>检查结果</h2>
+          <div id="validationList" class="validation-list"><p class="empty-hint">导入后将检查引用与 EVENT_API 字段。</p></div>
+        </section>
+        <section class="formula-preview" id="formulaPreview" hidden>
+          <p class="eyebrow">成功概率</p>
+          <h3>概率公式预览</h3>
+          <div id="formulaContent"></div>
+        </section>
+        <section class="api-help">
+          <p class="eyebrow">快速参考</p>
+          <details open><summary>触发周期</summary><p>常规阶段 / 决赛决定时刻 / 转会窗 / 休赛期 / 年度前二十公布后</p></details>
+          <details><summary>概率公式</summary><p><code>基础概率 + Σ(属性值 × 每点加成)</code>，最终概率由引擎限制在 0~1。</p></details>
+          <details><summary>复合条件</summary><p>使用「全部满足 / 任一满足 / 均不满足」后，可在条件卡片内继续添加子条件。</p></details>
+          <a href="../story/EVENT_API.md" target="_blank">打开事件规范文档 ↗</a>
+        </section>
+      </aside>
+    </main>
+  </div>
+  <dialog id="confirmDialog">
+    <button class="dialog-close" id="closeConfirmBtn" type="button">×</button>
+    <p class="eyebrow">确认操作</p>
+    <h2 id="confirmTitle">确认操作</h2>
+    <p id="confirmMessage"></p>
+    <div class="dialog-actions"><button class="outline-button" id="cancelConfirmBtn" type="button">取消</button><button class="play-button danger-button" id="acceptConfirmBtn" type="button">确认</button></div>
+  </dialog>
+  <div class="toast" id="toast" hidden></div>
+  <script src="visual-fields.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

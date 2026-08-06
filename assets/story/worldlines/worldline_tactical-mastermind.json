@@ -1,0 +1,18 @@
+{
+  "id": "tactical-mastermind",
+  "name": "极致大脑",
+  "description": "枪法最软，脑子最好。每一分都是画出来的。",
+  "startEventId": "tactical-mastermind-board",
+  "eventIds": [
+    "tactical-mastermind-board",
+    "tactical-mastermind-call",
+    "tactical-mastermind-hole",
+    "tactical-mastermind-voice",
+    "tactical-mastermind-paper",
+    "tactical-mastermind-discipline",
+    "tactical-mastermind-crossroads",
+    "tactical-mastermind-patience",
+    "tactical-mastermind-finale",
+    "tactical-mastermind-echo"
+  ]
+}

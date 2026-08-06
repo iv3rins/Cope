@@ -1,0 +1,129 @@
+{
+  "id": "crownless-king-press",
+  "worldlineId": "crownless-king",
+  "title": "还差一个",
+  "description": "媒体日。记者问你，什么时候拿 Major。你答了一遍，答完自己都笑了。回训练室，队友在聊转会。你看了眼自己的鼠标。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "answer-again",
+      "label": "笑着再答一遍",
+      "description": "维持体面，队内关系回暖。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你笑着又答了一遍。",
+          "记者满意地走了。",
+          "第二天，稿子上还是那个问题。"
+        ],
+        "failureMessages": [
+          "答到一半，你顿了一下。",
+          "记者多看了你一眼。"
+        ],
+        "successNextEventId": "crownless-king-brink",
+        "failureNextEventId": "crownless-king-brink"
+      }
+    },
+    {
+      "id": "leave-to-train",
+      "label": "说自己训练，先走",
+      "description": "继续练，冠军差一步的焦虑也在涨。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.003,
+            "minimum": 70
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "训练房只有你一个人。",
+          "后面几枪全中。",
+          "回宿舍的时候，天快亮了。"
+        ],
+        "failureMessages": [
+          "练到一半，手停下来。",
+          "你看了眼排名，又看了眼日历。"
+        ],
+        "successNextEventId": "crownless-king-brink",
+        "failureNextEventId": "crownless-king-brink"
+      }
+    }
+  ],
+  "autoEffects": []
+}

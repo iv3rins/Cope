@@ -85,19 +85,19 @@
       },
       "storylines": [
         {
-          "id": "lone-hero",
+          "id": "prodigy-debut",
           "weight": 1
         },
         {
-          "id": "young-guns",
+          "id": "1v9-prison",
           "weight": 1
         },
         {
-          "id": "silent-ace",
+          "id": "arrogant-tyrant",
           "weight": 1
         },
         {
-          "id": "version-victim",
+          "id": "major-choker",
           "weight": 1
         },
         {
@@ -105,15 +105,11 @@
           "weight": 1
         },
         {
-          "id": "falling-star",
+          "id": "golden-era-core",
           "weight": 1
         },
         {
-          "id": "system-core",
-          "weight": 1
-        },
-        {
-          "id": "rule-breaker",
+          "id": "injured-shooting-star",
           "weight": 1
         }
       ]
@@ -163,35 +159,23 @@
       },
       "storylines": [
         {
-          "id": "late-bloomer",
+          "id": "grinder-rookie",
           "weight": 1
         },
         {
-          "id": "team-battery",
+          "id": "tactical-mastermind",
           "weight": 1
         },
         {
-          "id": "cyber-cafe-hero",
+          "id": "support-slave",
           "weight": 1
         },
         {
-          "id": "revenge-squad",
+          "id": "emotional-leader",
           "weight": 1
         },
         {
-          "id": "region-guardian",
-          "weight": 1
-        },
-        {
-          "id": "grind-machine",
-          "weight": 1
-        },
-        {
-          "id": "tactical-captain",
-          "weight": 1
-        },
-        {
-          "id": "injury-warrior",
+          "id": "scapegoat-kicked",
           "weight": 1
         }
       ]

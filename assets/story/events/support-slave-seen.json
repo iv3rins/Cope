@@ -1,0 +1,223 @@
+{
+  "id": "support-slave-seen",
+  "worldlineId": "support-slave",
+  "title": "被看见",
+  "description": "决赛决胜图，14 比 15。你的道具把对面逼出了掩体，队友跟上打掉两个。队友全倒，残局剩你 1v1。全场在喊，喊的是队友的名字。你握着手枪。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "support-slave-pistol"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "support-slave"
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-the-corner",
+      "label": "稳住，等对面露头",
+      "description": "把最后一分交给对面失误。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "对面没露头，时间到了。",
+          "比赛结束，你坐着没动。",
+          "有人说了句，道具扔得是真好。"
+        ],
+        "failureMessages": [
+          "你还是开了那枪，没中。",
+          "全场安静了一秒。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "prove-the-leaf",
+      "label": "自己打完，就这一次",
+      "description": "绿叶的身份，今天自己证明一次。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 60
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 60
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 55
+        },
+        {
+          "type": "PLAYER_ROLE",
+          "roles": [
+            "SUPPORT"
+          ]
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.2,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.004,
+            "minimum": 50
+          },
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.002,
+            "minimum": 50
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "sacrifice-seen",
+            "flag": {
+              "id": "sacrifice-seen",
+              "name": "绿叶被看见",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "sacrifice-forgotten",
+            "flag": {
+              "id": "sacrifice-forgotten",
+              "name": "付出被忘",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "你打掉最后一个，全场安静了一秒，然后喊你的名字。",
+          "你放下耳机，手还在抖。",
+          "有人说了句，那把道具是你扔的吧。",
+          "第二天，你发枪的时候，队友多看了你一眼。"
+        ],
+        "failureMessages": [
+          "手枪子弹打空了。",
+          "你倒在地上，全场喊的还是队友的名字。",
+          "你在椅子上坐了很久。",
+          "第二天，你照常把 M4 发给了队友。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

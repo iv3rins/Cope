@@ -1,0 +1,134 @@
+{
+  "id": "support-slave-give",
+  "worldlineId": "support-slave",
+  "title": "发枪的手",
+  "description": "比赛赢了。你的 rating 垫底，道具扔得比谁都准。赛后采访，记者问了四个人，没问你。你坐在旁边，看了一眼自己的手。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "join-the-talk",
+      "label": "接话，说下把继续这样打",
+      "description": "把话接住，队里关系回暖。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你接了一句，下把继续这样打。",
+          "队友回头，多看了你一眼。",
+          "回训练室，有人把外卖分了你一份。"
+        ],
+        "failureMessages": [
+          "你接了一句，没人接。",
+          "你坐下，看了一眼手机。"
+        ],
+        "successNextEventId": "support-slave-pistol",
+        "failureNextEventId": "support-slave-pistol"
+      }
+    },
+    {
+      "id": "practice-utility",
+      "label": "说去练道具，先走",
+      "description": "继续练道具和拉枪线，绿叶更绿，精力在掉。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.003,
+            "minimum": 45
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 5
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          }
+        ],
+        "successMessages": [
+          "训练房灯还亮着。",
+          "道具点位又练熟了两个。",
+          "第二天，你照常把 M4 发给了队友。"
+        ],
+        "failureMessages": [
+          "练到一半，准星还是飘。",
+          "你擦了擦手心，把灯关了。"
+        ],
+        "successNextEventId": "support-slave-pistol",
+        "failureNextEventId": "support-slave-pistol"
+      }
+    }
+  ],
+  "autoEffects": []
+}

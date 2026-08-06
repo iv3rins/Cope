@@ -1,0 +1,148 @@
+{
+  "id": "1v9-prison-cellblock",
+  "worldlineId": "1v9-prison",
+  "title": "坐牢的滋味",
+  "description": "你躺在床上，把比赛复盘了第五遍。每一遍都一样，你数据第一，队伍输了。天快亮了。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "1v9-prison"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "STRESS",
+          "minimum": 28
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "maximum": 55
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "put-the-phone-down",
+      "label": "把复盘关掉，睡觉",
+      "description": "先睡，明天再说。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 2
+          }
+        ],
+        "successMessages": [
+          "你把手机扣过去，睡了。",
+          "第二天，精神好了一点。"
+        ],
+        "failureMessages": [
+          "你关了手机，又打开。",
+          "第五遍变成了第六遍。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "grind-till-dawn",
+      "label": "起来打排位，打到天亮",
+      "description": "发泄，也练枪。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "ENERGY",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "successMessages": [
+          "你打排位，一路连胜。",
+          "天亮的时候，你关掉电脑，多看了一眼战绩。"
+        ],
+        "failureMessages": [
+          "你打排位，连跪三把。",
+          "天亮的时候，你比睡前更累。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,139 @@
+{
+  "id": "prodigy-debut-spotlight",
+  "worldlineId": "prodigy-debut",
+  "title": "聚光灯下",
+  "description": "首秀之后，采访排到了下个月。代言合同堆在桌上。经纪人问你，接哪个。你看了眼日程表，又看了眼训练安排。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "prodigy-debut"
+    },
+    {
+      "type": "NARRATIVE_METRIC",
+      "metric": "FAME",
+      "minimum": 55
+    }
+  ],
+  "options": [
+    {
+      "id": "take-the-media",
+      "label": "接住采访，配合宣传",
+      "description": "流量与俱乐部满意，精力被占走。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "你接了三个采访，一个代言。",
+          "俱乐部很满意。",
+          "晚上，你训练的时间少了一个小时。"
+        ],
+        "failureMessages": [
+          "采访接得太多，训练落下了。",
+          "教练多看了你一眼。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "skip-the-media",
+      "label": "推掉采访，专注训练",
+      "description": "专注，但流量和俱乐部都会不满。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -5
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": -3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          }
+        ],
+        "successMessages": [
+          "你把采访推了，去了训练房。",
+          "后面几枪全中。",
+          "经纪人发消息，说下次再约。"
+        ],
+        "failureMessages": [
+          "你把采访推了，训练也没练进去。",
+          "你坐在训练房，看了一眼手机。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

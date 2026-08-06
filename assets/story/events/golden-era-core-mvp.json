@@ -1,0 +1,192 @@
+{
+  "id": "golden-era-core-mvp",
+  "worldlineId": "golden-era-core",
+  "title": "奖杯之争",
+  "description": "赛季末，你进了 MVP 候选名单。记者把话筒递过来，问你最想对评委说什么。你看了眼计分板上的数据，又看了眼队友。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "golden-era-core-throne"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "golden-era-core"
+    },
+    {
+      "type": "ANY",
+      "conditions": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAME",
+          "minimum": 55
+        },
+        {
+          "type": "TOP20_RANK",
+          "maximum": 10
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "give-it-away",
+      "label": "把机会让给队友",
+      "description": "团队优先，奖杯让出去。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你说，MVP 是他。",
+          "队友看了你一眼，没说话。"
+        ],
+        "failureMessages": [
+          "你话说到一半，队友摇头。",
+          "你说，当我没说。"
+        ],
+        "successNextEventId": "golden-era-core-crossroads",
+        "failureNextEventId": "golden-era-core-crossroads"
+      }
+    },
+    {
+      "id": "claim-the-trophy",
+      "label": "说，这个奖我要了",
+      "description": "稳定即统治，奖杯自己拿。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 63
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.005,
+            "minimum": 55
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "MVP",
+            "delta": 1
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 10
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "dynasty-mvp",
+            "flag": {
+              "id": "dynasty-mvp",
+              "name": "MVP 加身",
+              "category": "EVENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "颁奖夜，念到你的名字。",
+          "你站起来，多看了两秒奖杯。"
+        ],
+        "failureMessages": [
+          "你拿了第二名。",
+          "记者围过来，你说了句，明年再来。"
+        ],
+        "successNextEventId": "golden-era-core-crossroads",
+        "failureNextEventId": "golden-era-core-crossroads"
+      }
+    }
+  ],
+  "autoEffects": []
+}

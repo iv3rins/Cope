@@ -1,0 +1,139 @@
+{
+  "id": "prodigy-debut-pressure",
+  "worldlineId": "prodigy-debut",
+  "title": "压力测试",
+  "description": "万众瞩目下，你连续两把空枪。弹幕开始刷屏。教练喊了暂停，问你，要不要换人。你摇了摇头。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 75,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "prodigy-debut"
+    },
+    {
+      "type": "PLAYER_STAT",
+      "stat": "STRESS",
+      "minimum": 25
+    }
+  ],
+  "options": [
+    {
+      "id": "slow-down",
+      "label": "放慢节奏，调整呼吸",
+      "description": "先稳住，再找手感。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你放慢节奏，打回来了两把。",
+          "弹幕安静了一点。"
+        ],
+        "failureMessages": [
+          "你放慢节奏，还是没找到手感。",
+          "耳机里没人说话。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "push-harder",
+      "label": "打得更凶，压回去",
+      "description": "压回去，压力也跟着涨。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 66
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你压回去，打出了三个头。",
+          "全场炸了。",
+          "你坐下，手还在抖。"
+        ],
+        "failureMessages": [
+          "你压得太凶，送了。",
+          "弹幕又开始刷。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

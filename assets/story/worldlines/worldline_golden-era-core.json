@@ -1,0 +1,12 @@
+{
+  "id": "golden-era-core",
+  "name": "王朝核心",
+  "description": "稳定即统治。每一届 MVP 都在同一个名字下面。",
+  "startEventId": "golden-era-core-throne",
+  "eventIds": [
+    "golden-era-core-throne",
+    "golden-era-core-mvp",
+    "golden-era-core-crossroads",
+    "golden-era-core-reign"
+  ]
+}

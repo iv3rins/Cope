@@ -1,0 +1,12 @@
+{
+  "id": "injured-shooting-star",
+  "name": "伤病流星",
+  "description": "巅峰期，手腕先撑不住了。每一场都在赌身体。",
+  "startEventId": "injured-shooting-star-dawn",
+  "eventIds": [
+    "injured-shooting-star-dawn",
+    "injured-shooting-star-flare",
+    "injured-shooting-star-comeback",
+    "injured-shooting-star-crossroads"
+  ]
+}

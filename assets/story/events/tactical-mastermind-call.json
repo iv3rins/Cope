@@ -1,0 +1,175 @@
+{
+  "id": "tactical-mastermind-call",
+  "worldlineId": "tactical-mastermind",
+  "title": "听我指挥",
+  "description": "大赛淘汰赛，你队 12 比 13。你开局的枪空了，但战术打出来了。队友按你的指挥站好位，对面被骗进了包点。残局剩你 1v1，队友在耳机里说，听你的。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "tactical-mastermind-board"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "tactical-mastermind"
+    }
+  ],
+  "options": [
+    {
+      "id": "call-for-teammate",
+      "label": "让队友打，你报点",
+      "description": "枪软就让队友接，战术你来想。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你报点，队友按你的位置打掉了最后一个人。",
+          "你松了口气，手稳了一点。"
+        ],
+        "failureMessages": [
+          "队友没接住。",
+          "耳机里安静了。你搓了搓手心。"
+        ],
+        "successNextEventId": "tactical-mastermind-finale",
+        "failureNextEventId": "tactical-mastermind-finale"
+      }
+    },
+    {
+      "id": "own-the-clutch",
+      "label": "自己打，按预演的套路",
+      "description": "战术是你画的，残局也你来打。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "GAME_SENSE",
+          "minimum": 60
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 58
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.35,
+        "modifiers": [
+          {
+            "attribute": "GAME_SENSE",
+            "perPoint": 0.004,
+            "minimum": 55
+          },
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.002,
+            "minimum": 55
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你按预演的套路，骗对面换弹，一枪带走。",
+          "队友没说话，有人别开了视线。",
+          "你在椅子上多坐了一会儿。"
+        ],
+        "failureMessages": [
+          "套路是好的，你枪没跟上。",
+          "你倒在地上，耳机里安静了。"
+        ],
+        "successNextEventId": "tactical-mastermind-finale",
+        "failureNextEventId": "tactical-mastermind-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,170 @@
+{
+  "id": "scapegoat-kicked-court",
+  "worldlineId": "scapegoat-kicked",
+  "title": "赛后会议",
+  "description": "大赛小组赛，你队三连败出局，排名还在五十名开外。赛后管理层又开了会，这次有人提了你的名字。你坐在会议室外，听见里面提到你的数据。门开了，经理说，进来聊聊。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "scapegoat-kicked-blame"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "scapegoat-kicked"
+    }
+  ],
+  "options": [
+    {
+      "id": "silent-hearing",
+      "label": "进去，沉默听他们说",
+      "description": "沉默是金，等他们说完。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你听他们说完，没反驳。",
+          "经理多看了你一眼。",
+          "出门的时候，有人拍了拍你的肩。"
+        ],
+        "failureMessages": [
+          "他们说的和你没关系，你还是听完了。",
+          "你走回房间，看了一眼手机。"
+        ],
+        "successNextEventId": "scapegoat-kicked-call",
+        "failureNextEventId": "scapegoat-kicked-call"
+      }
+    },
+    {
+      "id": "speak-up",
+      "label": "进去，把话说清楚",
+      "description": "舆论站在你这边，当面说清。",
+      "requirements": [
+        {
+          "type": "NARRATIVE_METRIC",
+          "metric": "FAN_REPUTATION",
+          "minimum": 55
+        },
+        {
+          "type": "TEAM_VRS_RANK",
+          "minimum": 51
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.35,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.005,
+            "minimum": 40
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 5
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "CLUB_FAVOR",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你把话说完，会议室安静了。",
+          "经理没说留，也没说走。",
+          "你出门，走廊里有人多看了你一眼。"
+        ],
+        "failureMessages": [
+          "你说到一半，经理打断说，先回去。",
+          "你关门的声音，比说话的声音大。"
+        ],
+        "successNextEventId": "scapegoat-kicked-call",
+        "failureNextEventId": "scapegoat-kicked-call"
+      }
+    }
+  ],
+  "autoEffects": []
+}

@@ -1,0 +1,135 @@
+{
+  "id": "emotional-leader-cry",
+  "worldlineId": "emotional-leader",
+  "title": "吼起来",
+  "description": "训练赛连输两把，队友都蔫了。你把耳机一摘，吼了一句，起来。没人动。你又吼了一句，这把我带。有人抬起了头。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "swallow-it",
+      "label": "把话咽回去，正常训练",
+      "description": "不吼了，队里关系回暖，情绪憋着。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你把话咽回去，正常打完训练。",
+          "队友拍了下你的肩，说，辛苦了。",
+          "晚上，你对着镜子练了两遍吼声。"
+        ],
+        "failureMessages": [
+          "你憋了一晚上。",
+          "回宿舍，你吼了两声，没人听见。"
+        ],
+        "successNextEventId": "emotional-leader-roar",
+        "failureNextEventId": "emotional-leader-roar"
+      }
+    },
+    {
+      "id": "roar-it-up",
+      "label": "吼起来，把士气吼回来",
+      "description": "情绪带动全队，也在消耗自己。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.003,
+            "minimum": 45
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          }
+        ],
+        "successMessages": [
+          "你吼完，训练赛赢了一把。",
+          "有人跟着你吼了一声。",
+          "教练多看了你一眼，没说话。"
+        ],
+        "failureMessages": [
+          "你吼到嗓子哑。",
+          "队友没接。",
+          "你喝了口水，又吼了一句。"
+        ],
+        "successNextEventId": "emotional-leader-roar",
+        "failureNextEventId": "emotional-leader-roar"
+      }
+    }
+  ],
+  "autoEffects": []
+}

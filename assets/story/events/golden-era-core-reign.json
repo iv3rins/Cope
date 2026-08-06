@@ -1,0 +1,214 @@
+{
+  "id": "golden-era-core-reign",
+  "worldlineId": "golden-era-core",
+  "title": "卫冕王朝",
+  "description": "卫冕之路。决赛对手换了血，年轻，手热。你站在舞台一边，观众在喊你的名字。记者问，王朝还能撑多久。你看了眼对手，又看了眼奖杯。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "golden-era-core-mvp"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "golden-era-core"
+    },
+    {
+      "type": "FLAG",
+      "flagId": "dynasty-mvp",
+      "expected": true
+    },
+    {
+      "type": "ATTRIBUTE",
+      "attribute": "CONSISTENCY",
+      "minimum": 63
+    }
+  ],
+  "options": [
+    {
+      "id": "hold-the-dynasty",
+      "label": "稳着打，保王朝",
+      "description": "保住现有的，稳一点。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.55,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -4
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 2
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          }
+        ],
+        "successMessages": [
+          "你稳着打完。",
+          "赛后，记者的问题没换。",
+          "你答了和去年一样的答案。"
+        ],
+        "failureMessages": [
+          "你稳着打，还是输了。",
+          "记者围过来，你没说话。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    },
+    {
+      "id": "rule-the-final",
+      "label": "打满全场，统治到底",
+      "description": "统治就是每一次都赢。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CONSISTENCY",
+          "minimum": 68
+        },
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 60
+        },
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "CLUTCH",
+          "minimum": 68
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.2,
+        "modifiers": [
+          {
+            "attribute": "CONSISTENCY",
+            "perPoint": 0.004,
+            "minimum": 60
+          },
+          {
+            "attribute": "CLUTCH",
+            "perPoint": 0.002,
+            "minimum": 60
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "TROPHY_CHANGE",
+            "trophy": "S_TIER",
+            "delta": 1
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CONSISTENCY",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -15
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 5
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "dynasty-established",
+            "flag": {
+              "id": "dynasty-established",
+              "name": "王朝确立",
+              "category": "ACHIEVEMENT"
+            }
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 18
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -15
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": -4
+          },
+          {
+            "type": "FLAG_ADD",
+            "flagId": "dynasty-cracked",
+            "flag": {
+              "id": "dynasty-cracked",
+              "name": "王朝裂缝",
+              "category": "MENTAL"
+            }
+          }
+        ],
+        "successMessages": [
+          "决赛打完，你站着等颁奖。",
+          "第二年，记者的问题换了一个。"
+        ],
+        "failureMessages": [
+          "你打满全场，还是输了。",
+          "记者问，王朝是不是到头了。",
+          "你没回答。"
+        ],
+        "successNextEventId": null,
+        "failureNextEventId": null
+      }
+    }
+  ],
+  "autoEffects": []
+}

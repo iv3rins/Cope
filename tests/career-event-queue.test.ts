@@ -51,14 +51,35 @@ function storyEngine(): StoryEngine {
   };
 }
 
-function game(state: MemoryState): CareerGameImpl {
+function game(state: MemoryState, narrative = { maxEventsPerSeason: 2, minimumTournamentGap: 1 }): CareerGameImpl {
   const dependencies = {
     playerId: 'player-1', difficultyMode: 'HARDCORE', stateRepository: state,
     hltv: {} as CareerGameDependencies['hltv'], progression: {} as CareerGameDependencies['progression'], dailyActions: {} as CareerGameDependencies['dailyActions'], economy: {} as CareerGameDependencies['economy'], triggers: {} as CareerGameDependencies['triggers'], retirement: {} as CareerGameDependencies['retirement'], retirementSummary: {} as CareerGameDependencies['retirementSummary'],
   } satisfies CareerGameDependencies;
-  return new CareerGameImpl(dependencies, { story: storyEngine(), random: { next: () => 0.2 } });
+  return new CareerGameImpl(dependencies, { story: storyEngine(), random: { next: () => 0.2 }, narrative });
 }
 
+test('配置化配额和赛事间隔阻止连续普通事件', async () => {
+  const value = envelope();
+  const state = new MemoryState({ ...value, state: { ...value.state, seasonNarrativeEventCount: 0, pendingSystemEvents: [], tournamentCursor: 0 } });
+  const career = game(state, { maxEventsPerSeason: 2, minimumTournamentGap: 1 });
+  assert.equal((await career.findCareerEvent('PRE_TOURNAMENT'))?.id, preEvent.id);
+  state.value = { ...state.value, state: { ...state.value.state, seasonPhase: 'ACTIVE', eventResume: null } };
+  assert.equal(await career.findCareerEvent('PRE_TOURNAMENT'), null, '同一赛事游标不能连续弹出第二个普通事件');
+  state.value = { ...state.value, state: { ...state.value.state, tournamentCursor: 1 } };
+  assert.equal(await career.findCareerEvent('PRE_TOURNAMENT'), null, '至少完整间隔一场赛事');
+  state.value = { ...state.value, state: { ...state.value.state, tournamentCursor: 2 } };
+  assert.equal((await career.findCareerEvent('PRE_TOURNAMENT'))?.id, preEvent.id);
+  assert.equal(state.value.state.seasonNarrativeEventCount, 2);
+  state.value = { ...state.value, state: { ...state.value.state, seasonPhase: 'ACTIVE', eventResume: null, tournamentCursor: 4 } };
+  assert.equal(await career.findCareerEvent('PRE_TOURNAMENT'), null, '达到配置上限后不再弹出普通事件');
+});
+
+test('零配额直接禁用普通事件', async () => {
+  const value = envelope();
+  const state = new MemoryState({ ...value, state: { ...value.state, seasonNarrativeEventCount: 0, pendingSystemEvents: [] } });
+  assert.equal(await game(state, { maxEventsPerSeason: 0, minimumTournamentGap: 0 }).findCareerEvent('PRE_TOURNAMENT'), null);
+});
 test('incompatible windows retain queued system events and exhausted narrative quota blocks random events', async () => {
   const state = new MemoryState(envelope());
   const career = game(state);

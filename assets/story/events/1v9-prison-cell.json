@@ -1,0 +1,141 @@
+{
+  "id": "1v9-prison-cell",
+  "worldlineId": "1v9-prison",
+  "title": "院长坐牢",
+  "description": "你进队第二个月。训练赛 28 杀，1.4 rating，还是输。赛后没人提那几把残局。语音里在分夜宵。教练说今天到这。你盯着记分板，多看了两秒。",
+  "period": "NORMAL",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [],
+  "options": [
+    {
+      "id": "stay-review",
+      "label": "跟着复盘到十二点",
+      "description": "队内关系回暖，训练时间被占走。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "复盘到一半开始聊转会。",
+          "你听着，偶尔接一句。",
+          "散的时候有人拍了你一下。",
+          "第二天训练，没人提昨晚那把。"
+        ],
+        "failureMessages": [
+          "复盘到十二点，大半时间在聊别的。",
+          "你回到房间，看了一眼时间。"
+        ],
+        "successNextEventId": "1v9-prison-stage",
+        "failureNextEventId": "1v9-prison-stage"
+      }
+    },
+    {
+      "id": "faceit-grind",
+      "label": "说约了 FACEIT，先走",
+      "description": "高强度对局练手感，队内关系会冷。",
+      "requirements": [],
+      "successChance": {
+        "baseChance": 0.6,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.003,
+            "minimum": 70
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -8
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "后面几枪全中。",
+          "回房的时候，走廊灯灭了。",
+          "第二天训练，队友没叫你。"
+        ],
+        "failureMessages": [
+          "连跪三把。",
+          "你擦了擦手心。",
+          "睡的时候天快亮了。"
+        ],
+        "successNextEventId": "1v9-prison-stage",
+        "failureNextEventId": "1v9-prison-stage"
+      }
+    }
+  ],
+  "autoEffects": []
+}

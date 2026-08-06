@@ -1,0 +1,117 @@
+{
+  "id": "grinder-rookie-crossroads",
+  "worldlineId": "grinder-rookie",
+  "title": "换条路",
+  "description": "赛季结束，你练了一个月，手感还是那样。教练说，你够努力，就是差一点。晚上，你看着训练计划，划掉了一项。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "grinder-rookie-debut"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "grinder-rookie"
+    }
+  ],
+  "options": [
+    {
+      "id": "cut-the-rest",
+      "label": "划掉的是休息时间",
+      "description": "再练一个月，把差的那点补上。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.85,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -4
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -3
+          }
+        ],
+        "successMessages": [
+          "你把休息时间划掉，填上了加练。",
+          "第二天，你比平时早到了半小时。"
+        ],
+        "failureMessages": [
+          "你划掉休息，又画了回去。",
+          "计划表上涂了两层。"
+        ],
+        "successNextEventId": "grinder-rookie-promotion",
+        "failureNextEventId": "grinder-rookie-promotion"
+      }
+    },
+    {
+      "id": "swap-to-film",
+      "label": "划掉枪法训练，换成看录像",
+      "description": "枪练不动，换脑子练。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 40
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.7,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "WORLDLINE_CHANGE",
+            "worldlineId": "tactical-mastermind"
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 3
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          }
+        ],
+        "successMessages": [
+          "你把枪法训练划掉，换成了录像课。",
+          "第二天，你带了个本子去训练。"
+        ],
+        "failureMessages": [
+          "你划掉又写回去。",
+          "录像课没去成。"
+        ],
+        "successNextEventId": "tactical-mastermind-board",
+        "failureNextEventId": "grinder-rookie-promotion"
+      }
+    }
+  ],
+  "autoEffects": []
+}

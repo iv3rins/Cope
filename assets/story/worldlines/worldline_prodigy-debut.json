@@ -1,0 +1,18 @@
+{
+  "id": "prodigy-debut",
+  "name": "天降紫微星",
+  "description": "初入豪门，万众瞩目。每一声欢呼都在等你的下一枪。",
+  "startEventId": "prodigy-debut-arrival",
+  "eventIds": [
+    "prodigy-debut-arrival",
+    "prodigy-debut-stage",
+    "prodigy-debut-spotlight",
+    "prodigy-debut-pressure",
+    "prodigy-debut-crossroads",
+    "prodigy-debut-doubt",
+    "prodigy-debut-cost",
+    "prodigy-debut-climax",
+    "prodigy-debut-finale",
+    "prodigy-debut-legacy"
+  ]
+}

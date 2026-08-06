@@ -1,0 +1,181 @@
+{
+  "id": "arrogant-tyrant-rift",
+  "worldlineId": "arrogant-tyrant",
+  "title": "边打边骂",
+  "description": "大赛淘汰赛，你队 11 比 13。你 1v3 残局，队友报点慢了一拍。你打掉两个，第三个把你架死。你摘下耳机，说了两句。语音里没人接。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "arrogant-tyrant-roar"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "arrogant-tyrant"
+    }
+  ],
+  "options": [
+    {
+      "id": "win-first",
+      "label": "打完这局再说",
+      "description": "先赢下来，话放后面说。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你打掉两个，拆了包。",
+          "语音里有人轻轻松了口气。",
+          "你忍住了，没再说。"
+        ],
+        "failureMessages": [
+          "你换掉一个，倒在地上。",
+          "报点的人没再说话。"
+        ],
+        "successNextEventId": "arrogant-tyrant-crown",
+        "failureNextEventId": "arrogant-tyrant-crown"
+      }
+    },
+    {
+      "id": "roar-clutch",
+      "label": "边打边骂，打出气势",
+      "description": "气势压过去，名场面吸流量，队内裂痕也在加深。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "AIM",
+          "minimum": 84
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.3,
+        "modifiers": [
+          {
+            "attribute": "AIM",
+            "perPoint": 0.005,
+            "minimum": 80
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "CLUTCH",
+            "delta": 6
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "AIM",
+            "delta": 2
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAME",
+            "delta": 6
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -6
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 14
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "TEAM_RELATIONSHIP",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -10
+          }
+        ],
+        "successMessages": [
+          "骂完最后一句，你打掉了最后一个。",
+          "全场炸了。",
+          "队友没说话，有人别开了视线。"
+        ],
+        "failureMessages": [
+          "你倒在地上，话还挂在嘴边。",
+          "语音里安静了，没人说可惜。"
+        ],
+        "successNextEventId": "arrogant-tyrant-crown",
+        "failureNextEventId": "arrogant-tyrant-crown"
+      }
+    }
+  ],
+  "autoEffects": []
+}

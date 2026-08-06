@@ -1,0 +1,171 @@
+{
+  "id": "emotional-leader-roar",
+  "worldlineId": "emotional-leader",
+  "title": "吼住残局",
+  "description": "大赛淘汰赛，你队 6 比 12，中场休息。队友低着头。你把水杯一放，吼了一句，还有六个回合，全打回来。有人抬起了头，有人握紧了鼠标。下半场，你开局 1v3 残局。",
+  "period": "FINAL_DECISIVE_MOMENT",
+  "phase": "IN_TOURNAMENT",
+  "type": "CHOICE",
+  "priority": 80,
+  "weight": 1,
+  "conditions": [
+    {
+      "type": "COMPLETED_EVENT",
+      "eventId": "emotional-leader-cry"
+    },
+    {
+      "type": "WORLDLINE",
+      "worldlineId": "emotional-leader"
+    }
+  ],
+  "options": [
+    {
+      "id": "calm-call",
+      "label": "正常指挥，不吼了",
+      "description": "冷静指挥，稳妥，情绪收着。",
+      "requirements": [
+        {
+          "type": "PLAYER_STAT",
+          "stat": "MORALE",
+          "minimum": 30
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.5,
+        "modifiers": []
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 8
+          },
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "GAME_SENSE",
+            "delta": 3
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -6
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 10
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -6
+          }
+        ],
+        "successMessages": [
+          "你冷静报了三个点。",
+          "队友没吼，但打回来了。",
+          "你松了口气。"
+        ],
+        "failureMessages": [
+          "你报完点，队友还是没接住。",
+          "耳机里安静了。"
+        ],
+        "successNextEventId": "emotional-leader-finale",
+        "failureNextEventId": "emotional-leader-finale"
+      }
+    },
+    {
+      "id": "roar-clutch",
+      "label": "吼着打，把气势喊出来",
+      "description": "情绪是武器，也在烧自己。",
+      "requirements": [
+        {
+          "type": "ATTRIBUTE",
+          "attribute": "LEADERSHIP",
+          "minimum": 61
+        }
+      ],
+      "successChance": {
+        "baseChance": 0.35,
+        "modifiers": [
+          {
+            "attribute": "LEADERSHIP",
+            "perPoint": 0.004,
+            "minimum": 50
+          },
+          {
+            "attribute": "MORALE",
+            "perPoint": 0.002,
+            "minimum": 50
+          }
+        ]
+      },
+      "outcome": {
+        "successEffects": [
+          {
+            "type": "ATTRIBUTE_CHANGE",
+            "attribute": "LEADERSHIP",
+            "delta": 4
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": 10
+          },
+          {
+            "type": "NARRATIVE_METRIC_CHANGE",
+            "metric": "FAN_REPUTATION",
+            "delta": 5
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 6
+          },
+          {
+            "type": "CAREER_STAT_CHANGE",
+            "stat": "CLUTCH_WON",
+            "delta": 1
+          }
+        ],
+        "failureEffects": [
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "STRESS",
+            "delta": 12
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "MORALE",
+            "delta": -8
+          },
+          {
+            "type": "PLAYER_STAT_CHANGE",
+            "stat": "ENERGY",
+            "delta": -8
+          }
+        ],
+        "successMessages": [
+          "你吼完最后一个字，打掉了最后一个。",
+          "全场炸了。",
+          "你坐下，手还在抖。"
+        ],
+        "failureMessages": [
+          "你吼到一半，枪空了。",
+          "你倒在地上，吼声还在耳机里。"
+        ],
+        "successNextEventId": "emotional-leader-finale",
+        "failureNextEventId": "emotional-leader-finale"
+      }
+    }
+  ],
+  "autoEffects": []
+}
