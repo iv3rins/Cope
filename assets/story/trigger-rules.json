@@ -1,14 +1,4 @@
 {
   "schemaVersion": 1,
-  "rules": [
-    {
-      "id": "contract-expired-free-agency",
-      "name": "合同到期进入自由市场",
-      "factType": "CONTRACT_EXPIRED",
-      "conditions": [],
-      "eventId": "shared-contract-expired",
-      "priority": 100,
-      "oncePerCareer": false
-    }
-  ]
+  "rules": []
 }
