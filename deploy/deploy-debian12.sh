@@ -48,6 +48,18 @@ rsync -a --delete "${APP_DIR}/assets/" "${WEB_ROOT}/assets/"
 rsync -a "${APP_DIR}/public/engine.bundle.js" "${WEB_ROOT}/public/engine.bundle.js"
 rsync -a "${APP_DIR}/index.html" "${APP_DIR}/app.js" "${APP_DIR}/styles.css" "${WEB_ROOT}/"
 
+log "清理旧域名残留站点（防止 server_name 冲突）"
+LEGACY_DOMAINS=("game.n1komajor.top")
+for legacy in "${LEGACY_DOMAINS[@]}"; do
+  for f in /etc/nginx/sites-enabled/* /etc/nginx/sites-available/*; do
+    [[ -e "${f}" ]] || continue
+    if grep -q "server_name .*${legacy}" "${f}" 2>/dev/null; then
+      log "移除旧域名残留站点：${f}"
+      rm -f "${f}"
+    fi
+  done
+done
+
 log "配置 Nginx"
 mkdir -p "${WEB_ROOT}"
 cat > "${NGINX_SITE}" <<NGINX
