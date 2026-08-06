@@ -26,6 +26,7 @@
     "baselinePotential": 0.78,
     "annualDebutWindow": 4
   },
+  "eventNameTemplate": "年度赛事 {season}",
   "realPlayerDecay": {
     "peakThroughAge": 27,
     "gradualDeclineEndAge": 30,

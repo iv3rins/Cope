@@ -38,5 +38,12 @@
       "mvp": "暂无 MVP 记录"
     },
     "restartLabel": "寻找下一条世界线"
-  }
+  },
+  "grades": [
+    { "grade": "S", "minimumRating": 1.2 },
+    { "grade": "A", "minimumRating": 1.1 },
+    { "grade": "B", "minimumRating": 1.0 },
+    { "grade": "C", "minimumRating": 0.9 },
+    { "grade": "D", "minimumRating": 0 }
+  ]
 }

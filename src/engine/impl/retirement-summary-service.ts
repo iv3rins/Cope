@@ -7,7 +7,15 @@ import type {
 import type { PlayerProfile } from '../profile';
 
 export class RetirementSummaryServiceImpl implements RetirementSummaryService {
-  public async generate(input: { readonly player: PlayerProfile }): Promise<RetirementSummary> {
+  private readonly defaultGradeRules: readonly { readonly grade: 'S' | 'A' | 'B' | 'C' | 'D'; readonly minimumRating: number }[] = [
+    { grade: 'S', minimumRating: 1.2 },
+    { grade: 'A', minimumRating: 1.1 },
+    { grade: 'B', minimumRating: 1.0 },
+    { grade: 'C', minimumRating: 0.9 },
+    { grade: 'D', minimumRating: 0 },
+  ];
+
+  public async generate(input: { readonly player: PlayerProfile; readonly gradeRules?: readonly { readonly grade: 'S' | 'A' | 'B' | 'C' | 'D'; readonly minimumRating: number }[] }): Promise<RetirementSummary> {
     const player = this.copy(input.player);
     if (!player.isRetired || !player.retiredAt) {
       throw new Error('RetirementSummary can only be generated for a retired player with retiredAt set.');
@@ -45,7 +53,7 @@ export class RetirementSummaryServiceImpl implements RetirementSummaryService {
     for (const record of archive) ratingSeasons.set(record.year, [...(ratingSeasons.get(record.year) ?? []), record.rating]);
     const seasonRatings = [...ratingSeasons.entries()].map(([year, ratings]) => ({ year, rating: ratings.reduce((sum, value) => sum + value, 0) / ratings.length }));
     const peakSeason = seasonRatings.reduce<{ year: number | null; rating: number }>((best, item) => item.rating > best.rating ? item : best, { year: null, rating: 0 });
-    const grade = peakRating >= 1.2 ? 'S' : peakRating >= 1.1 ? 'A' : peakRating >= 1.0 ? 'B' : peakRating >= 0.9 ? 'C' : 'D';
+    const grade = (input.gradeRules ?? this.defaultGradeRules).find((rule) => peakRating >= rule.minimumRating)?.grade ?? 'D';
 
     return {
       player: {

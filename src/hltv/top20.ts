@@ -98,6 +98,8 @@ export interface Top20RankedEntry extends Top20Candidate {
   readonly rank: number;
   /** true when the candidate filled a slot without meeting that slot's threshold. */
   readonly thresholdFallback: boolean;
+  /** 数据驱动的评语（可选）；由组合根按排名/荣誉/表现特征匹配后附加。 */
+  readonly quote?: import('./top20-quotes').Top20QuoteMatch;
 }
 
 export interface Top20Ranking {

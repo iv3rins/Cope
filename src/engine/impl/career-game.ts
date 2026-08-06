@@ -45,6 +45,12 @@ export interface CareerGameRuntimeServices {
     readonly maxEventsPerSeason: number;
     readonly minimumTournamentGap: number;
   };
+  /** 可选经济结算服务；注入后 finishSeason 按周开销累计生活支出。 */
+  readonly economy?: import('../economy').EconomyTickService;
+  /** 可选周开销规则；缺省时回退 0（不产生生活支出）。 */
+  readonly economyRules?: import('../economy').EconomyRuleRepository;
+  /** 自然退役年龄；缺省 40（与旧行为一致）。 */
+  readonly naturalRetirementAge?: number;
 }
 
 export class CareerGameImpl implements CareerGame {
@@ -219,7 +225,16 @@ export class CareerGameImpl implements CareerGame {
       return total + contract.salaryPerMonth * Math.max(0, Math.min(6, monthFraction));
     }, 0);
     const roundedSalaryIncome = Math.max(0, Math.round(salaryIncome));
-    const expenses = 0;
+    const weeksInHalf = 26;
+    let expenses = 0;
+    if (this.runtime.economyRules) {
+      const weeklyExpense = await this.runtime.economyRules.getDefaultWeeklyExpense(state.player);
+      const weeklyIncome = await this.runtime.economyRules.getJobIncome(state.player);
+      expenses = Math.max(0, Math.round((weeklyExpense - weeklyIncome) * weeksInHalf));
+    } else if (this.runtime.economy) {
+      const tick = await this.runtime.economy.tick({ player: state.player, period: 'WEEK', occurredAt: state.currentDate });
+      expenses = Math.max(0, Math.round(-(tick.balanceAfter - tick.balanceBefore) * weeksInHalf));
+    }
     if (half === 2) {
       for (const result of results) {
         await this.dependencies.hltv.settleTournament({ type: 'TOURNAMENT_COMPLETED', occurredAt: state.currentDate, result });
@@ -389,7 +404,7 @@ export class CareerGameImpl implements CareerGame {
         expiredContract = expiration.contract;
       }
     }
-    if (!player.isRetired && player.age >= 40) {
+    if (!player.isRetired && player.age >= (this.runtime.naturalRetirementAge ?? 40)) {
       player = await this.dependencies.retirement.retire({ player, reason: '达到职业生涯自然退役年龄', retiredAt: nextDate });
       contracts = contracts.map((contract) => contract.playerId === player.id && contract.status === 'ACTIVE' ? { ...contract, status: 'TERMINATED' as const, termination: { reason: 'MUTUAL_AGREEMENT' as const, terminatedAt: nextDate, matchedConditions: [], note: '选手自然退役，合同同步终止。' } } : contract);
     }
@@ -463,6 +478,25 @@ export class CareerGameImpl implements CareerGame {
     let player = result.profile;
     let contracts = [...envelope.state.contracts];
     let terminatedContractId = result.terminatedContractId;
+    const appliedTournamentInterventionIds: string[] = [];
+    for (const effect of result.appliedEffects) {
+      if (effect.type === 'TOURNAMENT_INTERVENTION') {
+        const intervention: import('../../hltv/tournament').TournamentIntervention = {
+          id: `story-${decision.eventId}-${decision.optionId}-${appliedTournamentInterventionIds.length}`,
+          editionId: effect.editionId,
+          sourceStoryEventId: decision.eventId,
+          sourceOptionId: decision.optionId,
+          type: effect.interventionType,
+          ...(effect.delta !== undefined ? { delta: effect.delta } : {}),
+          ...(effect.opponentTeamId !== undefined ? { opponentTeamId: effect.opponentTeamId } : {}),
+          ...(effect.forceUpset !== undefined ? { forceUpset: effect.forceUpset } : {}),
+          occurredAt: envelope.state.currentDate,
+          description: effect.description,
+        };
+        const applied = await this.dependencies.hltv.applyTournamentIntervention(intervention);
+        appliedTournamentInterventionIds.push(applied.intervention.id);
+      }
+    }
     for (const effect of result.appliedEffects) {
       if (effect.type === 'FORCE_CONTRACT_TERMINATION') {
         const termination = await contractService.terminate({ profile: player, effect, sourceStoryEventId: decision.eventId, sourceOptionId: decision.optionId, occurredAt: envelope.state.currentDate });
@@ -527,7 +561,7 @@ export class CareerGameImpl implements CareerGame {
       ...(resumedTournament ? { tournamentPhase: 'IN' as const, tournamentMatchCursor: (envelope.state.tournamentMatchCursor ?? 0) + 1 } : {}),
     };
     await this.saveEnvelope({ ...envelope, state: nextPhase ? { ...nextState, seasonPhase: nextPhase } : nextState });
-    return { ...result, profile: player, terminatedContractId };
+    return { ...result, profile: player, terminatedContractId, appliedTournamentInterventionIds: [...result.appliedTournamentInterventionIds, ...appliedTournamentInterventionIds] };
   }
 
   public async findAvailableStoryEvents(input: { readonly period: EventPeriod; readonly randomRoll: number }): Promise<readonly StoryEvent[]> {

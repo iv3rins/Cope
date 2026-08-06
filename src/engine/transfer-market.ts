@@ -51,7 +51,7 @@ export interface TransferMarketResult {
 /** AI 战队经理从队伍短板到候选人签约的完整市场服务。 */
 export interface TransferMarketService {
   assessTeam(input: { readonly teamId: HltvTeamId; readonly at: string }): Promise<TeamStrengthAssessment>;
-  findCandidates(input: { readonly teamId: HltvTeamId; readonly weaknesses: readonly TeamWeakness[]; readonly maxResults: number }): Promise<readonly TransferCandidate[]>;
+  findCandidates(input: { readonly teamId: HltvTeamId; readonly weaknesses: readonly TeamWeakness[]; readonly maxResults: number; readonly npcPlayers?: readonly NpcPlayerProfile[] }): Promise<readonly TransferCandidate[]>;
   releasePlayer(input: { readonly teamId: HltvTeamId; readonly playerId: HltvPlayerId; readonly reason: string; readonly occurredAt: string }): Promise<TransferMarketDecision>;
   signCandidate(input: { readonly teamId: HltvTeamId; readonly candidate: TransferCandidate; readonly occurredAt: string }): Promise<TransferMarketDecision>;
   runManagerWindow(input: { readonly teamId: HltvTeamId; readonly at: string; readonly maxMoves: number; readonly npcPlayers?: readonly NpcPlayerProfile[] }): Promise<TransferMarketResult>;

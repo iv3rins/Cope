@@ -32,6 +32,12 @@
     "maxEventsPerSeason": 2,
     "minimumTournamentGap": 1
   },
+  "economy": {
+    "weeklyExpense": 25
+  },
+  "retirement": {
+    "naturalRetirementAge": 40
+  },
   "talent": {
     "geniusProbability": 0.5,
     "genius": {

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "id": "major-champion",
+      "rankRange": { "minimum": 1, "maximum": 1 },
+      "honorClass": "MAJOR",
+      "template": "{nickname} 登顶年度最佳选手，Major 奖杯与稳定输出让 {teamName} 重回巅峰。"
+    },
+    {
+      "id": "top-one",
+      "rankRange": { "minimum": 1, "maximum": 1 },
+      "template": "{nickname} 以统治级表现拿下年度第一，{teamName} 的核心发动机。"
+    },
+    {
+      "id": "elite-core",
+      "rankRange": { "minimum": 2, "maximum": 5 },
+      "honorClass": "SUPER_ELITE",
+      "template": "{nickname} 是 {teamName} 的中流砥柱，大场面表现让他在年度 TOP5 占据一席。"
+    },
+    {
+      "id": "consistent-elite",
+      "rankRange": { "minimum": 2, "maximum": 5 },
+      "template": "{nickname} 全年保持 {aps} 的高效输出，稳居年度前五。"
+    },
+    {
+      "id": "rising-star",
+      "rankRange": { "minimum": 6, "maximum": 12 },
+      "template": "{nickname} 的进步肉眼可见，已成为 {teamName} 冲击冠军的重要拼图。"
+    },
+    {
+      "id": "solid-performer",
+      "rankRange": { "minimum": 13, "maximum": 20 },
+      "minimumRating": 1.05,
+      "template": "{nickname} 用稳定的数据证明自己是年度前二十选手。"
+    },
+    {
+      "id": "last-entry",
+      "rankRange": { "minimum": 13, "maximum": 20 },
+      "template": "{nickname} 凭借全勤与关键场次表现跻身年度 TOP20 末段。"
+    }
+  ],
+  "defaultTemplate": "{nickname} 凭借全年稳定表现进入年度 TOP20。"
+}

@@ -55,12 +55,24 @@ export interface NarrativeBalanceConfig {
   readonly minimumTournamentGap: number;
 }
 
+export interface EconomyBalanceConfig {
+  /** 生活周开销（游戏货币单位）；缺失或为零时经济 tick 不产生支出。 */
+  readonly weeklyExpense: number;
+}
+
+export interface RetirementBalanceConfig {
+  /** 自然退役年龄；达到该年龄的下一周期自动退役。 */
+  readonly naturalRetirementAge: number;
+}
+
 export interface BalanceConfig {
   readonly schemaVersion: number;
   readonly rating: RatingBalanceConfig;
   readonly prodigy: ProdigyEasterEggConfig;
   readonly talent: TalentBalanceConfig;
   readonly narrative: NarrativeBalanceConfig;
+  readonly economy?: EconomyBalanceConfig;
+  readonly retirement?: RetirementBalanceConfig;
 }
 
 const POSITIVE_ATTRIBUTE_KEYS: readonly (keyof PlayerAttributes)[] = ['aim', 'gameSense', 'leadership', 'clutch', 'consistency'];
@@ -188,11 +200,27 @@ export function validateBalanceConfig(payload: unknown): BalanceConfig {
   const minimumTournamentGap = requireFinite(narrative, 'minimumTournamentGap', 'narrative');
   if (!Number.isSafeInteger(maxEventsPerSeason) || maxEventsPerSeason < 0 || maxEventsPerSeason > 100) throw new Error('Balance config: narrative.maxEventsPerSeason must be an integer in [0, 100].');
   if (!Number.isSafeInteger(minimumTournamentGap) || minimumTournamentGap < 0 || minimumTournamentGap > 10) throw new Error('Balance config: narrative.minimumTournamentGap must be an integer in [0, 10].');
+  let economy: EconomyBalanceConfig | undefined;
+  if (payload.economy !== undefined) {
+    if (!isRecord(payload.economy)) throw new Error('Balance config: economy must be an object.');
+    const weeklyExpense = requireFinite(payload.economy, 'weeklyExpense', 'economy');
+    if (weeklyExpense < 0) throw new Error('Balance config: economy.weeklyExpense must be non-negative.');
+    economy = { weeklyExpense };
+  }
+  let retirement: RetirementBalanceConfig | undefined;
+  if (payload.retirement !== undefined) {
+    if (!isRecord(payload.retirement)) throw new Error('Balance config: retirement must be an object.');
+    const naturalRetirementAge = requireFinite(payload.retirement, 'naturalRetirementAge', 'retirement');
+    if (!Number.isSafeInteger(naturalRetirementAge) || naturalRetirementAge < 30 || naturalRetirementAge > 45) throw new Error('Balance config: retirement.naturalRetirementAge must be an integer in [30, 45].');
+    retirement = { naturalRetirementAge };
+  }
   return {
     schemaVersion: 2,
     rating: { base: requireFinite(rating, 'base', 'rating'), abilityDivisor, conditionFactor: requireFinite(rating, 'conditionFactor', 'rating'), rollSpan: requireFinite(rating, 'rollSpan', 'rating'), clampMinimum, clampMaximum, aggregateCeiling, hotStreak: { probability: requireProbability(hotStreak, 'probability', 'rating.hotStreak'), minimumBoost, maximumBoost, ceiling } },
     prodigy: { partialProbability, almostAllProbability, partialAttributeCount, almostAllAttributes: attributes as (keyof PlayerAttributes)[] },
     narrative: { maxEventsPerSeason, minimumTournamentGap },
     talent: { geniusProbability: requireProbability(talent, 'geniusProbability', 'talent'), genius: validateTalentBand(talent.genius, 'talent.genius'), ordinary: validateTalentBand(talent.ordinary, 'talent.ordinary'), maxedStartTier: tiers as Extract<TeamTier, 'T1' | 'T2'>[], maxedStartContracts: validateStartupContracts(talent.maxedStartContracts), powerFantasyGuaranteedMax: talent.powerFantasyGuaranteedMax, powerFantasyHighTierProbability: requireProbability(talent, 'powerFantasyHighTierProbability', 'talent') },
+    ...(economy ? { economy } : {}),
+    ...(retirement ? { retirement } : {}),
   };
 }

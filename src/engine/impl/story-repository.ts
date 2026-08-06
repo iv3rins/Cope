@@ -119,7 +119,16 @@ export class StoryRepositoryImpl implements StoryEventDirectory {
         && typeof buyoutMultiplier === 'number' && Number.isFinite(buyoutMultiplier) && buyoutMultiplier >= 0 && buyoutMultiplier <= 10;
     }
     if (value.type === 'FORCE_CONTRACT_TERMINATION') return Array.isArray(value.requirements) && value.requirements.every((item) => this.isCondition(item)) && typeof value.reason === 'string' && typeof value.note === 'string';
-    const known = ['TEAM_TRANSFER', 'ROLE_CHANGE', 'WORLDLINE_CHANGE', 'FLAG_ADD', 'FLAG_REMOVE', 'TROPHY_CHANGE', 'CAREER_STAT_CHANGE', 'ADVANCE_STORY', 'TOURNAMENT_INTERVENTION'];
+    if (value.type === 'TOURNAMENT_INTERVENTION') {
+      const interventionTypes = ['TEAM_STRENGTH', 'OPPONENT_STRENGTH', 'UPSET_CHANCE', 'FORCE_UPSET'];
+      if (typeof value.editionId !== 'string' || value.editionId.length === 0) return false;
+      if (!interventionTypes.includes(String(value.interventionType))) return false;
+      if (value.delta !== undefined && (typeof value.delta !== 'number' || !Number.isFinite(value.delta))) return false;
+      if (value.opponentTeamId !== undefined && value.opponentTeamId !== null && typeof value.opponentTeamId !== 'string') return false;
+      if (value.forceUpset !== undefined && value.forceUpset !== null && typeof value.forceUpset !== 'boolean') return false;
+      return typeof value.description === 'string';
+    }
+    const known = ['TEAM_TRANSFER', 'ROLE_CHANGE', 'WORLDLINE_CHANGE', 'FLAG_ADD', 'FLAG_REMOVE', 'TROPHY_CHANGE', 'CAREER_STAT_CHANGE', 'ADVANCE_STORY'];
     return known.includes(value.type);
   }
 

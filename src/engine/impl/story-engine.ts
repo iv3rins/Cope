@@ -196,7 +196,8 @@ export class StoryEngineImpl implements StoryEngine {
         case 'ADVANCE_STORY':
           break;
         case 'TOURNAMENT_INTERVENTION':
-          throw new Error('Tournament interventions require a tournament event gateway.');
+          // Engine 只声明修正意图；CareerGame 通过 EngineHltvGateway 在 decide 后落地。
+          break;
         case 'CONTRACT_RENEWAL':
           // Contract lifecycle is finalized by CareerGame after this decision.
           break;

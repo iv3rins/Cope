@@ -28,7 +28,7 @@ export class DailyActionServiceImpl implements DailyActionService {
     if (input.player.isRetired) return this.rejected(input.player, action, input.randomRoll, 'PLAYER_UNAVAILABLE');
     if (!this.requirementsMet(input.player, action)) return this.rejected(input.player, action, input.randomRoll, 'REQUIREMENT_NOT_MET');
 
-    const deltas = this.deltasFor(action.id, input.randomRoll);
+    const deltas = this.deltasFor(action, input.randomRoll);
     return { player: this.apply(input.player, deltas), action: this.copy(action), appliedDeltas: deltas, randomRoll: input.randomRoll, completed: true };
   }
 
@@ -47,18 +47,17 @@ export class DailyActionServiceImpl implements DailyActionService {
     });
   }
 
-  private deltasFor(actionId: string, randomRoll: number): readonly DailyActionDelta[] {
-    switch (actionId) {
-      case 'faceit-grind': return [
-        { stat: 'ENERGY', delta: -18, source: 'ACTION_BASE' },
-        { stat: 'STRESS', delta: 5, source: 'ACTION_BASE' },
-        { stat: 'ATTRIBUTE', attribute: 'AIM', delta: randomRoll >= 0.8 ? 3 : 1, source: randomRoll >= 0.8 ? 'RANDOM_OUTCOME' : 'ACTION_BASE' },
-      ];
-      case 'stream': return [{ stat: 'ENERGY', delta: -10, source: 'ACTION_BASE' }, { stat: 'BALANCE', delta: 180 + Math.floor(randomRoll * 120), source: 'RANDOM_OUTCOME' }, { stat: 'STRESS', delta: 6, source: 'ACTION_BASE' }];
-      case 'rest': return [{ stat: 'ENERGY', delta: 30, source: 'ACTION_BASE' }, { stat: 'MORALE', delta: 12, source: 'ACTION_BASE' }, { stat: 'STRESS', delta: -10, source: 'ACTION_BASE' }];
-      case 'review-demo': return [{ stat: 'ENERGY', delta: -12, source: 'ACTION_BASE' }, { stat: 'ATTRIBUTE', attribute: 'GAME_SENSE', delta: randomRoll >= 0.75 ? 3 : 1, source: randomRoll >= 0.75 ? 'RANDOM_OUTCOME' : 'ACTION_BASE' }];
-      default: return [];
-    }
+  private deltasFor(action: DailyActionDefinition, randomRoll: number): readonly DailyActionDelta[] {
+    return (action.deltas ?? []).map((rule) => {
+      if (rule.randomRange) {
+        const span = Math.max(0, rule.randomRange.maximum - rule.delta);
+        return { stat: rule.stat, ...(rule.attribute ? { attribute: rule.attribute } : {}), delta: rule.delta + Math.floor(randomRoll * span), source: rule.source };
+      }
+      if (rule.randomBonus && randomRoll >= rule.randomBonus.threshold) {
+        return { stat: rule.stat, ...(rule.attribute ? { attribute: rule.attribute } : {}), delta: rule.delta + rule.randomBonus.delta, source: rule.source };
+      }
+      return { stat: rule.stat, ...(rule.attribute ? { attribute: rule.attribute } : {}), delta: rule.delta, source: rule.source };
+    });
   }
 
   private apply(profile: PlayerProfile, deltas: readonly DailyActionDelta[]): PlayerProfile {

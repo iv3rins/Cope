@@ -102,7 +102,7 @@ export interface RetirementSummary {
 
 /** 退役总结生成器，负责从档案和赛事归档构造展示 DTO。 */
 export interface RetirementSummaryService {
-  generate(input: { readonly player: PlayerProfile }): Promise<RetirementSummary>;
+  generate(input: { readonly player: PlayerProfile; readonly gradeRules?: readonly { readonly grade: 'S' | 'A' | 'B' | 'C' | 'D'; readonly minimumRating: number }[] }): Promise<RetirementSummary>;
 }
 
 /** 退役归档服务，负责幂等退役、写入时间和结算最终状态。 */

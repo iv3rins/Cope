@@ -1,5 +1,6 @@
 ﻿import type { DailyActionDefinition, DailyActionRepository } from './engine/daily-action';
-import type { EconomyTickService, EconomyTickResult } from './engine/economy';
+import type { EconomyRuleRepository, EconomyTickService, EconomyTickResult } from './engine/economy';
+import { matchTop20Quote } from './hltv/top20-quotes';
 import type { EventTriggerService } from './engine/event-trigger';
 import type { CareerGame, CareerGameDependencies, CareerGameFactory } from './engine/game';
 import type { EngineHltvGateway, EngineHltvGatewayFactory } from './engine/hltv-gateway';
@@ -33,6 +34,7 @@ import { InMemoryStateRepository } from './engine/impl/in-memory-state-repositor
 import { LocalStorageStateRepository } from './engine/impl/local-storage-state-repository';
 import { SessionGuardedStateRepository } from './engine/impl/session-guarded-state-repository';
 import { PlayerProgressionServiceImpl } from './engine/impl/player-progression-service';
+import type { RetirementSummary, RetirementSummaryService, RetirementService } from './engine/retirement';
 import { RetirementSummaryServiceImpl } from './engine/impl/retirement-summary-service';
 import { StoryEngineImpl } from './engine/impl/story-engine';
 import { StoryEventPackReader, StoryRepositoryImpl } from './engine/impl/story-repository';
@@ -130,6 +132,8 @@ type BrowserTop20SimulationRules = {
     readonly baselinePotential: number;
     readonly annualDebutWindow: number;
   };
+  /** 虚拟选手年度赛事名称模板；{season} 会被替换为具体赛季。 */
+  readonly eventNameTemplate?: string;
   readonly realPlayerDecay: {
     readonly peakThroughAge: number;
     readonly gradualDeclineEndAge: number;
@@ -169,6 +173,11 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
   private readonly evidence = new Map<number, Map<string, Top20SeasonEvidence>>();
   private readonly completedTournamentIds = new Set<string>();
   private readonly top20 = new Top20RankingServiceImpl();
+  /** 赛事干预转发目标；组合根在 TournamentServiceImpl 构造完成后注入，避免循环依赖。 */
+  private interventionSink: (intervention: TournamentIntervention) => Promise<TournamentInterventionAppliedFact> | TournamentInterventionAppliedFact | null = null;
+  public bindInterventionSink(sink: (intervention: TournamentIntervention) => Promise<TournamentInterventionAppliedFact> | TournamentInterventionAppliedFact | null): void {
+    this.interventionSink = sink;
+  }
   public constructor(
     private readonly careerPlayer: PlayerProfile,
     private readonly identities: ReadonlyMap<string, Top20IdentityRecord>,
@@ -176,6 +185,7 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
     private readonly teamNames: ReadonlyMap<string, string> = new Map(),
     initialEvidence: readonly Top20SeasonEvidence[] = [],
     private readonly simulationRules: BrowserTop20SimulationRules,
+    private readonly quotes: import('./hltv/top20-quotes').Top20QuoteAsset | null = null,
   ) {
     for (const entry of initialEvidence) {
       const seasonEvidence = this.evidence.get(entry.season) ?? new Map<string, Top20SeasonEvidence>();
@@ -184,7 +194,17 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
     }
   }
   public async freezeVrsSnapshot(input: { readonly season: number; readonly half: 1 | 2 }): Promise<string> { return `browser-vrs-${input.season}-h${input.half}`; }
-  public async applyTournamentIntervention(intervention: TournamentIntervention): Promise<TournamentInterventionAppliedFact> { this.interventions.set(intervention.id, { ...intervention }); return { type: 'TOURNAMENT_INTERVENTION_APPLIED', occurredAt: intervention.occurredAt, intervention: { ...intervention } }; }
+  public async applyTournamentIntervention(intervention: TournamentIntervention): Promise<TournamentInterventionAppliedFact> {
+    if (this.interventionSink) {
+      const applied = await this.interventionSink(intervention);
+      if (applied) {
+        this.interventions.set(intervention.id, { ...intervention });
+        return applied;
+      }
+    }
+    this.interventions.set(intervention.id, { ...intervention });
+    return { type: 'TOURNAMENT_INTERVENTION_APPLIED', occurredAt: intervention.occurredAt, intervention: { ...intervention } };
+  }
   public async settleTournament(fact: TournamentCompletedFact): Promise<void> { await this.append(fact); }
   public async hasCompleted(editionId: string): Promise<boolean> { return this.completedTournamentIds.has(editionId); }
   public async append(fact: TournamentFact): Promise<void> {
@@ -228,6 +248,9 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
     const veteranYears = age - decay.gradualDeclineEndAge;
     return Math.max(decay.minimumMultiplier, decay.veteranBaseMultiplier - (decay.gradualDeclineEndAge - decay.peakThroughAge) * decay.gradualDeclinePerYear - veteranYears * decay.veteranDeclinePerYear);
   }
+  private virtualEventName(season: number): string {
+    return (this.simulationRules.eventNameTemplate ?? '年度赛事 {season}').replace('{season}', String(season));
+  }
   private seedVirtualEvidence(season: number): void {
     const rules = this.simulationRules.virtualGeneration;
     if (!rules) return;
@@ -245,9 +268,9 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
       const honorRoll = this.roll(`${identity.playerId}|${season}|honor`);
       const mvpProbability = this.simulationRules.honorPool.mvp / Math.max(1, this.simulationRules.honorPool.mvp + this.simulationRules.honorPool.evp + this.simulationRules.honorPool.vp);
       const evpProbability = (this.simulationRules.honorPool.mvp + this.simulationRules.honorPool.evp) / Math.max(1, this.simulationRules.honorPool.mvp + this.simulationRules.honorPool.evp + this.simulationRules.honorPool.vp);
-      const honors = honorRoll < mvpProbability ? [{ type: 'MVP' as const, honorClass: 'LARGE' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1' as const }] : honorRoll < evpProbability ? [{ type: 'EVP' as const, honorClass: 'LARGE' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1' as const }] : [{ type: 'VP' as const, honorClass: 'MEDIUM' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1' as const }];
+      const honors = honorRoll < mvpProbability ? [{ type: 'MVP' as const, honorClass: 'LARGE' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: this.virtualEventName(season), tier: 'T1' as const }] : honorRoll < evpProbability ? [{ type: 'EVP' as const, honorClass: 'LARGE' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: this.virtualEventName(season), tier: 'T1' as const }] : [{ type: 'VP' as const, honorClass: 'MEDIUM' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: this.virtualEventName(season), tier: 'T1' as const }];
       const projection = this.simulationRules.evidenceProjection;
-      target.set(identity.playerId, { season, player: { playerId: identity.playerId, nickname: identity.nickname, countryCode: identity.countryCode, teamName: identity.teamName ?? identity.teamId ?? 'Virtual Team', careerPlayer: false, source: 'VIRTUAL' }, tournaments: [{ eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1', maps: 80, rating, adr: projection.adrBase + rating * projection.adrRatingFactor, kast: projection.kastBase + rating * projection.kastRatingFactor, playoffMaps: Math.max(projection.minimumPlayoffMaps, Math.round(80 * projection.playoffMapRatio)), playoffRating: rating + 0.02, top5Maps: Math.max(projection.minimumTop5Maps, Math.round(80 * projection.top5MapRatio)), top5Rating: rating, finalMaps: Math.max(projection.minimumFinalMaps, Math.round(80 * projection.finalMapRatio)), finalRating: rating + 0.01, title: honors.some((honor) => honor.type === 'MVP'), honors, majorPlayoffChoke: false }] });
+      target.set(identity.playerId, { season, player: { playerId: identity.playerId, nickname: identity.nickname, countryCode: identity.countryCode, teamName: identity.teamName ?? identity.teamId ?? 'Virtual Team', careerPlayer: false, source: 'VIRTUAL' }, tournaments: [{ eventId: `virtual-${identity.playerId}-${season}`, eventName: this.virtualEventName(season), tier: 'T1', maps: 80, rating, adr: projection.adrBase + rating * projection.adrRatingFactor, kast: projection.kastBase + rating * projection.kastRatingFactor, playoffMaps: Math.max(projection.minimumPlayoffMaps, Math.round(80 * projection.playoffMapRatio)), playoffRating: rating + 0.02, top5Maps: Math.max(projection.minimumTop5Maps, Math.round(80 * projection.top5MapRatio)), top5Rating: rating, finalMaps: Math.max(projection.minimumFinalMaps, Math.round(80 * projection.finalMapRatio)), finalRating: rating + 0.01, title: honors.some((honor) => honor.type === 'MVP'), honors, majorPlayoffChoke: false }] });
     }
     this.evidence.set(season, target);
   }
@@ -286,7 +309,9 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
       const player = entry.player.careerPlayer ? entry.player : existing.player;
       byPlayer.set(entry.player.playerId, { season, player, tournaments });
     }
-    return this.top20.calculate({ season, rules: this.rankingRules, evidence: [...byPlayer.values()] });
+    const ranking = await this.top20.calculate({ season, rules: this.rankingRules, evidence: [...byPlayer.values()] });
+    if (!this.quotes) return ranking;
+    return { ...ranking, entries: ranking.entries.map((entry) => ({ ...entry, quote: matchTop20Quote(entry, this.quotes) })) };
   }
 
   public async synchronizeCareerHonors(profile: PlayerProfile, ranking: Top20Ranking): Promise<PlayerProfile> {
@@ -364,6 +389,15 @@ class BrowserEconomyService implements EconomyTickService {
     const amount = (input.player.life.incomePerWeek - input.player.life.expensePerWeek) * multiplier;
     const balanceAfter = input.player.life.balance + amount;
     return { player: { ...input.player, life: { ...input.player.life, balance: balanceAfter } }, period: input.period, entries: [], balanceBefore: input.player.life.balance, balanceAfter, bankrupt: this.isBankrupt(balanceAfter), bankruptcyReason: balanceAfter < 0 ? 'NEGATIVE_BALANCE' : null };
+  }
+}
+
+class BrowserEconomyRuleRepository implements EconomyRuleRepository {
+  public constructor(private readonly config: import('./hltv/balance-config').BalanceConfig) {}
+  public async getDefaultWeeklyExpense(): Promise<number> { return this.config.economy?.weeklyExpense ?? 0; }
+  public async getJobIncome(player: PlayerProfile): Promise<number> {
+    const jobs: Readonly<Record<PlayerProfile['life']['currentJob'], number>> = { NONE: 0, STUDENT: 0, NET_CAFE_CASHIER: 80, ELO_BOOSTER: 160, SMALL_STREAMER: 240 };
+    return jobs[player.life.currentJob] ?? 0;
   }
 }
 
@@ -576,7 +610,9 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
   });
   const teamNames = new Map((standingsPayload?.teams ?? []).map((team) => [team.id, team.name]));
   const latestEnvelope = await stateRepository.load(config.gameId);
-  const gateway = new BrowserGateway(player, identityMap, rankingRules, teamNames, npcSeasonEvidence, simulationRules);
+  const quotesResponse = await fetch('assets/top20_quotes/quotes.json').catch(() => null);
+  const quotes = quotesResponse && quotesResponse.ok ? await quotesResponse.json() as import('./hltv/top20-quotes').Top20QuoteAsset : null;
+  const gateway = new BrowserGateway(player, identityMap, rankingRules, teamNames, npcSeasonEvidence, simulationRules, quotes);
   for (const result of latestEnvelope?.state.tournamentResults ?? []) {
     await gateway.append({ type: 'TOURNAMENT_COMPLETED', occurredAt: latestEnvelope?.state.currentDate ?? new Date().toISOString(), result });
   }
@@ -613,15 +649,22 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
       return await response.json() as import('./hltv/tournament-service-impl').TournamentCalendarAsset;
     },
   });
+  gateway.bindInterventionSink(async (intervention) => tournaments.applyIntervention(intervention));
   const triggerRules = new AssetEventTriggerRuleRepository(async () => {
     const response = await fetch('assets/story/trigger-rules.json').catch(() => null);
     if (!response || !response.ok) return null;
     return response.json() as Promise<import('./engine/impl/event-trigger-service').EventTriggerRuleAsset>;
   }, storyRepository);
   const triggers: EventTriggerService = new EventTriggerServiceImpl(triggerRules, new ConditionEvaluatorImpl());
+  const summaryUiResponse = await fetch('assets/career/summary-ui.json').catch(() => null);
+  const summaryUi = summaryUiResponse && summaryUiResponse.ok ? await summaryUiResponse.json() as { readonly grades?: readonly { readonly grade: 'S' | 'A' | 'B' | 'C' | 'D'; readonly minimumRating: number }[] } : null;
+  const gradeRules = summaryUi?.grades?.length ? summaryUi.grades : undefined;
+  const retirementSummary: RetirementSummaryService = gradeRules
+    ? { generate: async (input) => new RetirementSummaryServiceImpl().generate({ ...input, gradeRules }) }
+    : new RetirementSummaryServiceImpl();
   const dependencies: CareerGameDependencies = {
     playerId: config.gameId, difficultyMode: config.mode, hltv: gateway, progression,
-    dailyActions, economy: new BrowserEconomyService(), triggers, retirement: new RetirementServiceImpl(), retirementSummary: new RetirementSummaryServiceImpl(), stateRepository,
+    dailyActions, economy: new BrowserEconomyService(), triggers, retirement: new RetirementServiceImpl(), retirementSummary, stateRepository,
   };
   const npcGeneration = new NpcGenerationServiceImpl([], 0x9e3779b9);
   const npcGenerationProfiles: readonly NpcGenerationProfile[] = [
@@ -636,7 +679,7 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
   const vrsSaveVersion = (await stateRepository.load(config.gameId))?.state.vrsProjectionRulesVersion;
   if (vrsSaveVersion && vrsSaveVersion !== vrsResultProjector.rulesVersion) throw new Error(`VRS projection rules version mismatch: save=${vrsSaveVersion}, runtime=${vrsResultProjector.rulesVersion}.`);
   const factory = new CareerGameFactoryImpl(storyReader, {
-    progressionRules, dailyActions, tournaments, clock, random, transferTargets, npcGeneration, npcGenerationProfiles, transferMarket, transferMarketTeamIds, vrsResultProjector, narrative: balanceConfig.narrative,
+    progressionRules, dailyActions, tournaments, clock, random, transferTargets, npcGeneration, npcGenerationProfiles, transferMarket, transferMarketTeamIds, vrsResultProjector, narrative: balanceConfig.narrative, economy: new BrowserEconomyService(), economyRules: new BrowserEconomyRuleRepository(balanceConfig), naturalRetirementAge: balanceConfig.retirement?.naturalRetirementAge ?? 40,
       teamTier: (teamId) => teamTiers.get(teamId),
       vrsSnapshot: async ({ season, half }): Promise<VrsInviteSnapshot> => {
       const response = await fetch('assets/teams/teams.json').catch(() => null);
