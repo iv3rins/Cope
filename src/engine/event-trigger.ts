@@ -7,6 +7,7 @@ import type { PlayerProfile } from './profile';
 export type TriggerFact =
   | LowFinalRatingFact
   | ContractTerminatedFact
+  | ContractExpiredFact
   | BankruptFact
   | TournamentUpsetFact
   | AgeMilestoneFact;
@@ -21,6 +22,12 @@ export interface LowFinalRatingFact {
 
 export interface ContractTerminatedFact {
   readonly type: 'CONTRACT_TERMINATED';
+  readonly playerId: string;
+  readonly contract: PlayerContract;
+}
+
+export interface ContractExpiredFact {
+  readonly type: 'CONTRACT_EXPIRED';
   readonly playerId: string;
   readonly contract: PlayerContract;
 }

@@ -84,7 +84,7 @@ export class EngineHltvGatewayFactoryImpl implements EngineHltvGatewayFactory {
       freezeVrsSnapshot: async ({ season, half }) => hltv.vrs.getCurrent().then((ranking) => `${ranking.id}:${season}:${half}`),
       applyTournamentIntervention: (intervention) => hltv.tournaments.applyIntervention(intervention),
       settleTournament: async (fact) => { await hltv.tournaments.settle({ edition: { id: fact.result.editionId } as never, result: fact.result }); },
-      findTop20: (season) => hltv.top20Evidence.findSeasonEvidence(season).then((evidence) => hltv.top20.calculate({ season, rules: { version: 'v3-reference-aps', minimumT1MajorMaps: 40, honorBaseScore: { MVP: 800, EVP: 320, VP: 96 }, honorClassMultiplier: { NONE: 0.25, MEDIUM: 0.7, LARGE: 1, ELITE: 1.1, SUPER_ELITE: 1.3, MAJOR: 1.5 } }, evidence })),
+      findTop20: async (season) => hltv.top20Evidence.findSeasonEvidence(season).then((evidence) => hltv.top20.calculate({ season, rules: { version: 'fact-driven-aps-v4', minimumT1MajorMaps: 40, honorBaseScore: { MVP: 800, EVP: 320, VP: 96 }, honorClassMultiplier: { NONE: 0.25, MEDIUM: 0.7, LARGE: 1, ELITE: 1.1, SUPER_ELITE: 1.3, MAJOR: 1.5 } }, evidence })),
       synchronizeCareerHonors: async (profile, ranking) => ranking.careerPlayerRank ? { ...profile, trophies: { ...profile.trophies, top20Records: [...profile.trophies.top20Records.filter((record) => record.year !== ranking.season), { year: ranking.season, rank: ranking.careerPlayerRank }] } } : profile,
     };
   }
@@ -107,12 +107,62 @@ class BrowserRandomSource {
 }
 
 type BrowserTop20SimulationRules = {
+  readonly schemaVersion: number;
+  readonly honorPool: { readonly mvp: number; readonly evp: number; readonly vp: number };
+  readonly evidenceProjection: {
+    readonly ratingFloor: number;
+    readonly adrBase: number;
+    readonly adrRatingFactor: number;
+    readonly kastBase: number;
+    readonly kastRatingFactor: number;
+    readonly playoffMapRatio: number;
+    readonly top5MapRatio: number;
+    readonly finalMapRatio: number;
+    readonly minimumPlayoffMaps: number;
+    readonly minimumTop5Maps: number;
+    readonly minimumFinalMaps: number;
+  };
+  readonly virtualGeneration: {
+    readonly baseProbability: number;
+    readonly prodigyProbability: number;
+    readonly prodigyPotential: number;
+    readonly risingPotential: number;
+    readonly baselinePotential: number;
+    readonly annualDebutWindow: number;
+  };
   readonly realPlayerDecay: {
+    readonly peakThroughAge: number;
+    readonly gradualDeclineEndAge: number;
+    readonly gradualDeclinePerYear: number;
+    readonly veteranBaseMultiplier: number;
+    readonly veteranDeclinePerYear: number;
+    readonly careerGraceYears: number;
     readonly careerDeclinePerYear: number;
     readonly careerDeclineCap: number;
     readonly minimumMultiplier: number;
   };
 };
+
+function isValidTop20SimulationRules(value: BrowserTop20SimulationRules): boolean {
+  if (!value || value.schemaVersion !== 1 || !value.realPlayerDecay || !value.virtualGeneration || !value.evidenceProjection || !value.honorPool) return false;
+  const finiteNonNegative = (candidate: number): boolean => Number.isFinite(candidate) && candidate >= 0;
+  const probability = (candidate: number): boolean => finiteNonNegative(candidate) && candidate <= 1;
+  const integer = (candidate: number): boolean => Number.isInteger(candidate) && candidate >= 0;
+  const honorPool = [value.honorPool.mvp, value.honorPool.evp, value.honorPool.vp];
+  const projection = value.evidenceProjection;
+  const generation = value.virtualGeneration;
+  const decay = value.realPlayerDecay;
+  return honorPool.every(finiteNonNegative)
+    && honorPool.some((candidate) => candidate > 0)
+    && [projection.ratingFloor, projection.adrBase, projection.adrRatingFactor, projection.kastBase, projection.kastRatingFactor].every(finiteNonNegative)
+    && [projection.playoffMapRatio, projection.top5MapRatio, projection.finalMapRatio].every(probability)
+    && [projection.minimumPlayoffMaps, projection.minimumTop5Maps, projection.minimumFinalMaps].every(integer)
+    && [generation.baseProbability, generation.prodigyProbability, generation.prodigyPotential, generation.risingPotential, generation.baselinePotential].every(probability)
+    && Number.isInteger(generation.annualDebutWindow) && generation.annualDebutWindow > 0
+    && [decay.peakThroughAge, decay.gradualDeclineEndAge, decay.careerGraceYears].every(integer)
+    && decay.gradualDeclineEndAge >= decay.peakThroughAge
+    && [decay.gradualDeclinePerYear, decay.veteranBaseMultiplier, decay.veteranDeclinePerYear, decay.careerDeclinePerYear, decay.careerDeclineCap, decay.minimumMultiplier].every(probability);
+}
 
 class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top20EvidenceRepository {
   private readonly interventions = new Map<string, TournamentIntervention>();
@@ -125,7 +175,7 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
     private readonly rankingRules: import('./hltv/top20').Top20Rules,
     private readonly teamNames: ReadonlyMap<string, string> = new Map(),
     initialEvidence: readonly Top20SeasonEvidence[] = [],
-    private readonly simulationRules?: BrowserTop20SimulationRules,
+    private readonly simulationRules: BrowserTop20SimulationRules,
   ) {
     for (const entry of initialEvidence) {
       const seasonEvidence = this.evidence.get(entry.season) ?? new Map<string, Top20SeasonEvidence>();
@@ -147,19 +197,66 @@ class BrowserGateway implements EngineHltvGateway, TournamentFactRepository, Top
     return [...(this.evidence.get(season)?.values() ?? [])].map((entry) => JSON.parse(JSON.stringify(entry)) as Top20SeasonEvidence);
   }
   private seedSeasonEvidence(season: number): void {
+    this.seedVirtualEvidence(season);
     const baselineSeason = Math.min(...this.evidence.keys());
     const baseline = this.evidence.get(baselineSeason);
     if (!baseline || !Number.isFinite(baselineSeason) || season === baselineSeason) return;
     const years = Math.max(0, season - baselineSeason);
-    const decay = this.simulationRules?.realPlayerDecay;
-    const multiplier = Math.max(decay?.minimumMultiplier ?? 0.55, 1 - Math.min(decay?.careerDeclineCap ?? 0.12, years * (decay?.careerDeclinePerYear ?? 0.012)));
+    const decay = this.simulationRules.realPlayerDecay;
     const projected = new Map<string, Top20SeasonEvidence>(this.evidence.get(season) ?? []);
     for (const entry of baseline.values()) {
       if (entry.player.careerPlayer) continue;
-      const tournaments = entry.tournaments.map((event) => ({ ...event, eventId: `${event.eventId}-${season}`, eventName: event.eventName.replace(String(baselineSeason), String(season)), rating: Math.max(0.8, event.rating * multiplier), playoffRating: Math.max(0.8, event.playoffRating * multiplier), top5Rating: Math.max(0.8, event.top5Rating * multiplier), finalRating: event.finalRating === null ? null : Math.max(0.8, event.finalRating * multiplier), honors: event.honors.map((honor) => ({ ...honor, eventId: `${honor.eventId}-${season}`, eventName: honor.eventName.replace(String(baselineSeason), String(season)) })) }));
+      const identity = this.identities.get(entry.player.playerId);
+      const age = identity?.birthYear === undefined ? 23 : season - identity.birthYear;
+      const potential = identity?.potential ?? Math.max(0.72, 1.01 - (identity?.placement ?? 20) * 0.01);
+      if (identity?.careerStartYear !== undefined && season < identity.careerStartYear) continue;
+      if (identity?.source === 'REAL' && age > decay.gradualDeclineEndAge + decay.careerGraceYears) continue;
+      const multiplier = this.realPlayerMultiplier(age, potential);
+      const tournaments = entry.tournaments.map((event) => {
+        const eventHonors = this.dynamicHonors(event.honors, season, this.roll(`${entry.player.playerId}|${event.eventId}|honors|${season}`));
+        return { ...event, eventId: `${event.eventId}-${season}`, eventName: event.eventName.replace(String(baselineSeason), String(season)), rating: Math.max(this.simulationRules.evidenceProjection.ratingFloor, event.rating * multiplier), adr: (event.adr ?? 0) * multiplier, kast: (event.kast ?? 0) * multiplier, playoffRating: Math.max(this.simulationRules.evidenceProjection.ratingFloor, event.playoffRating * multiplier), top5Rating: Math.max(this.simulationRules.evidenceProjection.ratingFloor, event.top5Rating * multiplier), finalRating: event.finalRating === null ? null : Math.max(this.simulationRules.evidenceProjection.ratingFloor, event.finalRating * multiplier), honors: eventHonors };
+      });
       if (!projected.has(entry.player.playerId)) projected.set(entry.player.playerId, { ...entry, season, tournaments });
     }
     this.evidence.set(season, projected);
+  }
+  private realPlayerMultiplier(age: number, potential: number): number {
+    const decay = this.simulationRules.realPlayerDecay;
+    if (!decay) return 1;
+    if (age <= decay.peakThroughAge) return 1 + Math.max(0, potential - 0.78) * 0.12;
+    if (age <= decay.gradualDeclineEndAge) return Math.max(decay.minimumMultiplier, decay.veteranBaseMultiplier - (age - decay.peakThroughAge) * decay.gradualDeclinePerYear);
+    const veteranYears = age - decay.gradualDeclineEndAge;
+    return Math.max(decay.minimumMultiplier, decay.veteranBaseMultiplier - (decay.gradualDeclineEndAge - decay.peakThroughAge) * decay.gradualDeclinePerYear - veteranYears * decay.veteranDeclinePerYear);
+  }
+  private seedVirtualEvidence(season: number): void {
+    const rules = this.simulationRules.virtualGeneration;
+    if (!rules) return;
+    const target = this.evidence.get(season) ?? new Map<string, Top20SeasonEvidence>();
+    for (const identity of this.identities.values()) {
+      if (identity.source !== 'VIRTUAL' || target.has(identity.playerId)) continue;
+      const roll = this.roll(`${identity.playerId}|debut`);
+      const debutSeason = 2026 + Math.floor(roll * Math.max(1, rules.annualDebutWindow));
+      if (season < debutSeason) continue;
+      const emergence = this.roll(`${identity.playerId}|${season}|emergence`);
+      const probability = emergence < rules.baseProbability
+        ? emergence < rules.baseProbability * rules.prodigyProbability ? rules.prodigyPotential : rules.risingPotential
+        : rules.baselinePotential;
+      const rating = 0.98 + probability * 0.28;
+      const honorRoll = this.roll(`${identity.playerId}|${season}|honor`);
+      const mvpProbability = this.simulationRules.honorPool.mvp / Math.max(1, this.simulationRules.honorPool.mvp + this.simulationRules.honorPool.evp + this.simulationRules.honorPool.vp);
+      const evpProbability = (this.simulationRules.honorPool.mvp + this.simulationRules.honorPool.evp) / Math.max(1, this.simulationRules.honorPool.mvp + this.simulationRules.honorPool.evp + this.simulationRules.honorPool.vp);
+      const honors = honorRoll < mvpProbability ? [{ type: 'MVP' as const, honorClass: 'LARGE' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1' as const }] : honorRoll < evpProbability ? [{ type: 'EVP' as const, honorClass: 'LARGE' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1' as const }] : [{ type: 'VP' as const, honorClass: 'MEDIUM' as const, eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1' as const }];
+      const projection = this.simulationRules.evidenceProjection;
+      target.set(identity.playerId, { season, player: { playerId: identity.playerId, nickname: identity.nickname, countryCode: identity.countryCode, teamName: identity.teamName ?? identity.teamId ?? 'Virtual Team', careerPlayer: false, source: 'VIRTUAL' }, tournaments: [{ eventId: `virtual-${identity.playerId}-${season}`, eventName: `年度赛事 ${season}`, tier: 'T1', maps: 80, rating, adr: projection.adrBase + rating * projection.adrRatingFactor, kast: projection.kastBase + rating * projection.kastRatingFactor, playoffMaps: Math.max(projection.minimumPlayoffMaps, Math.round(80 * projection.playoffMapRatio)), playoffRating: rating + 0.02, top5Maps: Math.max(projection.minimumTop5Maps, Math.round(80 * projection.top5MapRatio)), top5Rating: rating, finalMaps: Math.max(projection.minimumFinalMaps, Math.round(80 * projection.finalMapRatio)), finalRating: rating + 0.01, title: honors.some((honor) => honor.type === 'MVP'), honors, majorPlayoffChoke: false }] });
+    }
+    this.evidence.set(season, target);
+  }
+  private roll(seed: string): number {
+    return deriveDeterministicRoll(seed, 'top20-simulation');
+  }
+  private dynamicHonors(honors: readonly import('./hltv/top20').Top20HonorEvidence[], season: number, roll: number): readonly import('./hltv/top20').Top20HonorEvidence[] {
+    if (roll < 0.3) return [];
+    return honors.map((honor) => ({ ...honor, eventId: `${honor.eventId}-${season}`, eventName: honor.eventName.replace(/\d{4}/u, String(season)) }));
   }
   private projectTournamentEvidence(result: TournamentResult): void {
     if (result.tier !== 'T1' && result.tier !== 'MAJOR') return;
@@ -456,10 +553,12 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
   if (!rankingRulesResponse?.ok) throw new Error('Unable to load required TOP20 ranking rules.');
   const rankingRules = await rankingRulesResponse.json() as import('./hltv/top20').Top20Rules;
   const simulationRulesResponse = await fetch('assets/top20/simulation-rules.json').catch(() => null);
-  const simulationRules = simulationRulesResponse && simulationRulesResponse.ok ? await simulationRulesResponse.json() as BrowserTop20SimulationRules : undefined;
+  if (!simulationRulesResponse?.ok) throw new Error('Unable to load required TOP20 simulation rules.');
+  const simulationRules = await simulationRulesResponse.json() as BrowserTop20SimulationRules;
+  if (!isValidTop20SimulationRules(simulationRules)) throw new Error('TOP20 simulation rules are invalid.');
   const realPlayersResponse = await fetch('assets/top20/real-players.json').catch(() => null);
   const realPlayersPayload = realPlayersResponse && realPlayersResponse.ok ? await realPlayersResponse.json() as { readonly players: readonly Top20IdentityRecord[] } : { players: [] };
-  for (const identity of realPlayersPayload.players) identityMap.set(identity.playerId, identity);
+  for (const identity of realPlayersPayload.players) identityMap.set(identity.playerId, { ...identity, source: 'REAL' });
   const virtualPlayersResponse = await fetch('assets/top20/virtual-players.json').catch(() => null);
   const virtualPlayersPayload = virtualPlayersResponse && virtualPlayersResponse.ok ? await virtualPlayersResponse.json() as { readonly players: readonly Top20IdentityRecord[] } : { players: [] };
   for (const identity of virtualPlayersPayload.players) identityMap.set(identity.playerId, { ...identity, source: 'VIRTUAL' });
@@ -537,7 +636,7 @@ async function composeCareerGame(config: BrowserCareerConfig, restoredState: Car
   const vrsSaveVersion = (await stateRepository.load(config.gameId))?.state.vrsProjectionRulesVersion;
   if (vrsSaveVersion && vrsSaveVersion !== vrsResultProjector.rulesVersion) throw new Error(`VRS projection rules version mismatch: save=${vrsSaveVersion}, runtime=${vrsResultProjector.rulesVersion}.`);
   const factory = new CareerGameFactoryImpl(storyReader, {
-    progressionRules, dailyActions, tournaments, clock, random, transferTargets, npcGeneration, npcGenerationProfiles, transferMarket, transferMarketTeamIds, vrsResultProjector,
+    progressionRules, dailyActions, tournaments, clock, random, transferTargets, npcGeneration, npcGenerationProfiles, transferMarket, transferMarketTeamIds, vrsResultProjector, narrative: balanceConfig.narrative,
       teamTier: (teamId) => teamTiers.get(teamId),
       vrsSnapshot: async ({ season, half }): Promise<VrsInviteSnapshot> => {
       const response = await fetch('assets/teams/teams.json').catch(() => null);

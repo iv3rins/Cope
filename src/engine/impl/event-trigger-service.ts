@@ -135,6 +135,7 @@ export class EventTriggerServiceImpl implements EventTriggerService {
       case 'TOURNAMENT_UPSET': return fact.editionId;
       case 'LOW_FINAL_RATING_STREAK': return fact.tournamentIds.join(',') || 'streak';
       case 'CONTRACT_TERMINATED': return fact.contract.id;
+      case 'CONTRACT_EXPIRED': return fact.contract.id;
       case 'PLAYER_BANKRUPT': return String(fact.balance);
       case 'AGE_MILESTONE': return String(fact.age);
     }

@@ -5,6 +5,19 @@
     "evp": 12,
     "vp": 28
   },
+  "evidenceProjection": {
+    "ratingFloor": 0.55,
+    "adrBase": 70,
+    "adrRatingFactor": 15,
+    "kastBase": 65,
+    "kastRatingFactor": 15,
+    "playoffMapRatio": 0.3,
+    "top5MapRatio": 0.375,
+    "finalMapRatio": 0.0625,
+    "minimumPlayoffMaps": 24,
+    "minimumTop5Maps": 30,
+    "minimumFinalMaps": 5
+  },
   "virtualGeneration": {
     "baseProbability": 0.55,
     "prodigyProbability": 0.9,

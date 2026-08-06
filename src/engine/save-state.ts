@@ -1,3 +1,4 @@
+import type { AgeProgressionResult } from './progression';
 import type { VrsInviteSnapshot } from '../hltv/team';
 import type { TournamentEdition, TournamentIntervention, TournamentProgressState, TournamentResult, TournamentStandInAssignment, TournamentStandInOffer } from '../hltv/tournament';
 import type { Top20Ranking } from '../hltv/top20';
@@ -39,6 +40,10 @@ export interface HalfSeasonSettlement {
   readonly mapsPlayed: number;
   readonly kills: number;
   readonly clutchWon: number;
+  /** 年度成长审计；仅跨年结算存在。 */
+  readonly progression?: AgeProgressionResult | null;
+  /** 第二半年结算前的合同到期预警。 */
+  readonly contractExpiryWarning?: { readonly contractId: string; readonly teamId: string; readonly endsAt: string } | null;
   /** 年度第二半年结算时，榜单公示已经完成。 */
   readonly top20Published?: boolean;
   readonly top20Ranking?: Top20Ranking | null;
@@ -81,6 +86,8 @@ export interface CareerGameState {
   /** Opaque, serializable state owned by TournamentService. CareerGame must not inspect payload. */
   readonly activeTournamentState?: TournamentProgressState | null;
   readonly halfSeasonSettlement?: HalfSeasonSettlement | null;
+  /** 最近一次跨年成长审计，供下一阶段报告展示。 */
+  readonly latestAgeProgression?: AgeProgressionResult | null;
 
   readonly player: PlayerProfile;
   readonly contracts: readonly PlayerContract[];
@@ -98,6 +105,8 @@ export interface CareerGameState {
   readonly repeatableEventHistory?: readonly { readonly eventId: string; readonly season: number }[];
   /** Random narrative events shown in this season. System-triggered events do not consume this quota. */
   readonly seasonNarrativeEventCount?: number;
+  /** Tournament cursor where the last quota-consuming event was shown; used to enforce narrative pacing. */
+  readonly lastNarrativeTournamentCursor?: number;
   /** Legacy half-season counter retained for save migration only. */
   readonly storyEventsThisHalf?: number;
   readonly pendingSystemEvents?: readonly import('./event-trigger').TriggeredEvent[];

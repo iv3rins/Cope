@@ -28,6 +28,10 @@
       "consistency"
     ]
   },
+  "narrative": {
+    "maxEventsPerSeason": 2,
+    "minimumTournamentGap": 1
+  },
   "talent": {
     "geniusProbability": 0.5,
     "genius": {

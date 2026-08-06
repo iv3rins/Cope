@@ -50,11 +50,17 @@ export interface TalentBalanceConfig {
   readonly powerFantasyHighTierProbability: number;
 }
 
+export interface NarrativeBalanceConfig {
+  readonly maxEventsPerSeason: number;
+  readonly minimumTournamentGap: number;
+}
+
 export interface BalanceConfig {
   readonly schemaVersion: number;
   readonly rating: RatingBalanceConfig;
   readonly prodigy: ProdigyEasterEggConfig;
   readonly talent: TalentBalanceConfig;
+  readonly narrative: NarrativeBalanceConfig;
 }
 
 const POSITIVE_ATTRIBUTE_KEYS: readonly (keyof PlayerAttributes)[] = ['aim', 'gameSense', 'leadership', 'clutch', 'consistency'];
@@ -80,6 +86,7 @@ export const DEFAULT_BALANCE_CONFIG: BalanceConfig = {
   schemaVersion: 2,
   rating: { base: 0.72, abilityDivisor: 210, conditionFactor: 0.01, rollSpan: 0.24, clampMinimum: 0.55, clampMaximum: 1.75, aggregateCeiling: 1.35, hotStreak: { probability: 0.012, minimumBoost: 0.35, maximumBoost: 0.55, ceiling: 1.65 } },
   prodigy: { partialProbability: 0.001, almostAllProbability: 0.0005, partialAttributeCount: 2, almostAllAttributes: ['aim', 'gameSense', 'leadership', 'clutch', 'consistency'] },
+  narrative: { maxEventsPerSeason: 2, minimumTournamentGap: 1 },
   talent: {
     geniusProbability: 0.5,
     genius: { attributes: DEFAULT_GENIUS_ATTRIBUTES, storylines: [{ id: 'lone-hero', weight: 1 }, { id: 'young-guns', weight: 1 }, { id: 'silent-ace', weight: 1 }, { id: 'version-victim', weight: 1 }, { id: 'system-core', weight: 1 }, { id: 'rule-breaker', weight: 1 }] },
@@ -152,8 +159,8 @@ function validateStartupContracts(value: unknown): TalentBalanceConfig['maxedSta
 
 export function validateBalanceConfig(payload: unknown): BalanceConfig {
   if (!isRecord(payload) || payload.schemaVersion !== 2) throw new Error('Balance config: schemaVersion must be 2.');
-  const rating = payload.rating, prodigy = payload.prodigy, talent = payload.talent;
-  if (!isRecord(rating) || !isRecord(rating.hotStreak) || !isRecord(prodigy) || !isRecord(talent)) throw new Error('Balance config: missing rating, prodigy, or talent section.');
+  const rating = payload.rating, prodigy = payload.prodigy, talent = payload.talent, narrative = payload.narrative;
+  if (!isRecord(rating) || !isRecord(rating.hotStreak) || !isRecord(prodigy) || !isRecord(talent) || !isRecord(narrative)) throw new Error('Balance config: missing rating, prodigy, talent, or narrative section.');
   const hotStreak = rating.hotStreak;
   const minimumBoost = requireFinite(hotStreak, 'minimumBoost', 'rating.hotStreak');
   const maximumBoost = requireFinite(hotStreak, 'maximumBoost', 'rating.hotStreak');
@@ -177,10 +184,15 @@ export function validateBalanceConfig(payload: unknown): BalanceConfig {
   if (abilityDivisor <= 0) throw new Error('Balance config: rating.abilityDivisor must be positive.');
   if (clampMinimum > clampMaximum) throw new Error('Balance config: rating clamp bounds are invalid.');
   if (aggregateCeiling < clampMinimum || aggregateCeiling > ceiling) throw new Error('Balance config: rating ceilings are inconsistent.');
+  const maxEventsPerSeason = requireFinite(narrative, 'maxEventsPerSeason', 'narrative');
+  const minimumTournamentGap = requireFinite(narrative, 'minimumTournamentGap', 'narrative');
+  if (!Number.isSafeInteger(maxEventsPerSeason) || maxEventsPerSeason < 0 || maxEventsPerSeason > 100) throw new Error('Balance config: narrative.maxEventsPerSeason must be an integer in [0, 100].');
+  if (!Number.isSafeInteger(minimumTournamentGap) || minimumTournamentGap < 0 || minimumTournamentGap > 10) throw new Error('Balance config: narrative.minimumTournamentGap must be an integer in [0, 10].');
   return {
     schemaVersion: 2,
     rating: { base: requireFinite(rating, 'base', 'rating'), abilityDivisor, conditionFactor: requireFinite(rating, 'conditionFactor', 'rating'), rollSpan: requireFinite(rating, 'rollSpan', 'rating'), clampMinimum, clampMaximum, aggregateCeiling, hotStreak: { probability: requireProbability(hotStreak, 'probability', 'rating.hotStreak'), minimumBoost, maximumBoost, ceiling } },
     prodigy: { partialProbability, almostAllProbability, partialAttributeCount, almostAllAttributes: attributes as (keyof PlayerAttributes)[] },
+    narrative: { maxEventsPerSeason, minimumTournamentGap },
     talent: { geniusProbability: requireProbability(talent, 'geniusProbability', 'talent'), genius: validateTalentBand(talent.genius, 'talent.genius'), ordinary: validateTalentBand(talent.ordinary, 'talent.ordinary'), maxedStartTier: tiers as Extract<TeamTier, 'T1' | 'T2'>[], maxedStartContracts: validateStartupContracts(talent.maxedStartContracts), powerFantasyGuaranteedMax: talent.powerFantasyGuaranteedMax, powerFantasyHighTierProbability: requireProbability(talent, 'powerFantasyHighTierProbability', 'talent') },
   };
 }

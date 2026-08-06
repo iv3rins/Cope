@@ -1,4 +1,5 @@
 import type { GameClock, RandomSource } from '../engine/runtime';
+import type { HonorClass } from './tournament';
 import type {
   QualificationDecision,
   TournamentAdvanceResult,
@@ -19,6 +20,15 @@ import type {
 import type { MatchPlayerSnapshot, MatchSimulationResult, MatchSimulationService } from './match';
 import { tierForRank, type HltvPlayerId, type TeamRosterSlot, type VrsInviteSnapshot } from './team';
 import { DEFAULT_BALANCE_CONFIG, type RatingBalanceConfig } from './balance-config';
+
+const HONOR_CLASS_PRIORITY: Readonly<Record<HonorClass, number>> = {
+  NONE: 0,
+  MEDIUM: 1,
+  LARGE: 2,
+  ELITE: 3,
+  SUPER_ELITE: 4,
+  MAJOR: 5,
+};
 
 export interface TournamentCalendarAssetEdition {
   readonly id: string;
@@ -188,9 +198,12 @@ export class TournamentServiceImpl implements TournamentService {
           ? candidate.tier === 'T2' || candidate.tier === 'T1' || candidate.tier === 'MAJOR'
           : candidate.tier === 'T2' || candidate.tier === 'T1')
       .filter((candidate) => candidate.tier !== 'MAJOR' || (snapshotRank !== null && snapshotRank >= 1 && snapshotRank <= 32));
-    const candidates = teamTier === 'T3'
-      ? [...filtered.filter((candidate) => candidate.tier === 'T2'), ...filtered.filter((candidate) => candidate.tier === 'T1').slice(0, 1)]
-      : filtered;
+    const t1Cap = teamTier === 'T1' ? Number.MAX_SAFE_INTEGER : 1;
+    const candidates = [
+      ...filtered.filter((candidate) => candidate.tier === 'T2'),
+      ...filtered.filter((candidate) => candidate.tier === 'T1').sort((left, right) => HONOR_CLASS_PRIORITY[right.honorClass] - HONOR_CLASS_PRIORITY[left.honorClass] || (right.prizePool ?? 0) - (left.prizePool ?? 0) || left.id.localeCompare(right.id)).slice(0, t1Cap),
+      ...filtered.filter((candidate) => candidate.tier === 'MAJOR'),
+    ].sort((left, right) => left.calendarOrder - right.calendarOrder);
 
     return candidates
       .map((candidate, index) => {

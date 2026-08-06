@@ -4,7 +4,7 @@
     "period": "自由球员时期",
     "eyebrow": "等待下一次机会",
     "title": "暂时离开赛场",
-    "description": "没有合同期间，你不必关注每一场赛事。选择直播或休息，时间会直接推进到下一个转会窗口；战队邀请和生涯事件出现时会自动停下。",
+    "description": "合同结束后，你会在这里统一处理替补邀约、正式报价和场外安排。每项机会都有明确入口，不会再与转会事件割裂。",
     "actionButtonTemplate": "{name}并继续",
     "actionFallbacks": {
       "stream": "直播",
@@ -12,6 +12,12 @@
     },
     "resultTemplate": "你选择了{name}，接下来继续等待新的机会。",
     "unavailable": "当前没有可执行的场外安排。",
+    "opportunityTitle": "当前机会",
+    "standInLabel": "短期替补邀约",
+    "standInAccept": "接受替补邀约",
+    "standInReject": "拒绝",
+    "marketLabel": "查看正式转会市场",
+    "noOpportunities": "目前没有队伍报价；你可以安排训练并等待窗口更新。",
     "error": "这次安排未能完成，请重新选择。"
   }
 }
