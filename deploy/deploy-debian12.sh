@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 APP_NAME="cope"
-DOMAIN="game.n1komajor.top"
+DOMAIN="copo.iver.top"
 REPO_URL="https://github.com/iv3rins/Cope.git"
 APP_DIR="/opt/${APP_NAME}"
 WEB_ROOT="${APP_DIR}/public"
