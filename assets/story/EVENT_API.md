@@ -74,6 +74,38 @@ assets/story/
 
 ## 4. 事件文件（events）——完整 Schema
 
+### 4.0 事件调度：你的事件何时出现、如何被选中（重要）
+
+引擎按以下顺序为每个流程窗口寻找事件（`findCareerEvent`），**命中即停**：
+
+1. **强制系统事件**：触发规则（`trigger-rules.json`）生成的 `pendingSystemEvents` 中 `period` 匹配的事件（如"合同到期"）。
+2. **事务事件**：存在待处理转会报价时，`system:true` 且 `consumesTransferOffer:true` 的事件（用于转会确认）。
+3. **当前故事线事件**：存档中 `currentStoryEventId` 指向的事件（主线推进）。
+4. **同阶段候选事件**：先取 `priority` 最高的一档形成候选池，池内按 `weight` 加权随机抽取（`weight` ≤ 0 视为不可抽取，缺省 1）。
+
+**配额与间隔（balance 配置 `narrative`）**
+- 非 `system` 事件每赛季最多出现 `maxEventsPerSeason` 个（当前 2）。
+- 两次剧情事件之间至少间隔 `minimumTournamentGap` 场赛事（当前 1）。
+- `system:true` 事件豁免以上配额。
+
+**去重语义**
+- `repeatable:true`：同赛季内不重复出现（引擎记录 `{eventId, season}`）。
+- 非 repeatable（默认）：整个生涯只触发一次。
+
+**窗口 → period 映射**（决定事件在哪个 UI 窗口出现）
+
+| window | 实际查询的 period |
+|---|---|
+| SEASON_START / PRE_TOURNAMENT / POST_TOURNAMENT | `NORMAL` |
+| SEASON_END | `FINAL_DECISIVE_MOMENT` |
+| REPORT | `AFTER_TOP20` |
+| TRANSFER_WINDOW | `TRANSFER_WINDOW` |
+| OFFSEASON | `OFFSEASON` |
+
+**phase 推导**（未显式写 `phase` 时）：`FINAL_DECISIVE_MOMENT` → `IN_TOURNAMENT`；`AFTER_TOP20` / `OFFSEASON` / `TRANSFER_WINDOW` → `POST_TOURNAMENT`；其余 → `PRE_TOURNAMENT`。
+
+> 创作要点：想让事件"一定出现"用 `system:true`（豁免配额）；想让事件"优先出现"调高 `priority`；想让候选池内分布可控用 `weight`；想整生涯只播一次就别设 `repeatable`。
+
 ### 4.1 顶层字段
 
 ```json
